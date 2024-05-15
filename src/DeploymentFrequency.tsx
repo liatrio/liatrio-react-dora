@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList } from 'recharts';
 import { generateDistinctColors } from './Helpers';
 
 enum DeploymentState {
@@ -183,7 +183,9 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
                 />
                 <ReferenceLine y={0} stroke="#000" />
                 {repositories.map((repo, idx) => (
-                    <Bar key={idx} dataKey={repo.name} stackId="a" fill={colors[repo.color]} />
+                    <Bar key={idx} dataKey={repo.name} stackId="a" fill={colors[repo.color]}>
+                        <LabelList dataKey={repo.name} fontWeight="bold" fontSize='16' fill='#000000' />
+                    </Bar>
                 ))}
             </BarChart>
         </ResponsiveContainer>
