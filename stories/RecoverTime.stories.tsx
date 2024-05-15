@@ -1,6 +1,6 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import RecoverTime from '../src/DeploymentFrequency'
+import RecoverTime from '../src/RecoverTime'
 
 export default {
     title: 'RecoverTime',
