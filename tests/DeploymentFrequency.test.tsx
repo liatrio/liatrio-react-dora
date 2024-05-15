@@ -3,8 +3,8 @@ import { render } from '@testing-library/react'
 import DeploymentFrequency from '../src/DeploymentFrequency'
 import '@testing-library/jest-dom'
 
-test('renders component with text', () => {
-    const { getByTestId } = render(<DeploymentFrequency />)
+test('renders component', () => {
+    const { getByTestId } = render(<DeploymentFrequency api="" repositories={[]} />)
     const element = getByTestId('DeploymentFrequency')
     expect(element).toBeInTheDocument()
 })

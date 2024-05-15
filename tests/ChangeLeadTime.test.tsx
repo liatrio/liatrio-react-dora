@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import ChangeLeadTime from '../src/ChangeLeadTime'
 import '@testing-library/jest-dom'
 
-test('renders component with text', () => {
+test('renders component', () => {
     const { getByTestId } = render(<ChangeLeadTime />)
     const element = getByTestId('ChangeLeadTime')
     expect(element).toBeInTheDocument()
