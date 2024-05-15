@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "types": [
+      "@storybook/react",
+      "jest"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
