@@ -31,7 +31,7 @@ const deploymentRecordReviver = (key: string, value: any) => {
 export interface DeploymentFrequencyProps {
     api: string,
     team: string,
-    repositories: string[],
+    repositories?: string[],
     includeFailures?: boolean,
     environment?: string,
     data?: string,
@@ -50,7 +50,7 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
         return allDeploymentRecords.reduce((acc, record) => {
             const dateKey = record.created_at.toISOString().split('T')[0]
 
-            if((props.repositories.length > 0 && !props.repositories.includes(record.repository))
+            if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
                 || (props.includeFailures !== true && record.state === DeploymentState.failure)
                 || (props.environment !== undefined && record.environment !== props.environment)
                 || (props.team !== undefined && record.team !== props.team)
