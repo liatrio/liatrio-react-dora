@@ -132,7 +132,8 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
             
             fetchData(props.api, body, deploymentRecordReviver, organizeData)
         } else {
-            organizeData(props.data)
+            const data: DeploymentRecord[] = JSON.parse(props.data, deploymentRecordReviver)
+            organizeData(data)
         }
     }, [props.api, props.repositories])
     
