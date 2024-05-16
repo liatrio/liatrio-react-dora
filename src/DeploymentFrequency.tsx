@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList } from 'recharts'
-import { generateDistinctColors } from './Helpers'
+import { fetchData, generateDistinctColors } from './Helpers'
 
 enum DeploymentState {
     success,
@@ -34,7 +34,9 @@ export interface DeploymentFrequencyProps {
     repositories: string[],
     includeFailures?: boolean,
     environment?: string,
-    data?: string
+    data?: string,
+    end?: Date,
+    start?: Date
 }
 
 const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
@@ -123,36 +125,14 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
 
     useEffect(() => {
         if(!props.data) {
-            const fetchData = async () => {
-                const end = new Date()
-                const start = new Date()
-                
-                start.setDate(end.getDate() - 30)
-
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        repositories: props.repositories,
-                        team: props.team,
-                        start: start,
-                        end: end
-                    })
-                }
-
-                try {
-                    const response = await fetch(props.api, options)
-                    const json = await response.text()
-                    
-                    organizeData(json)
-                } catch (error) {
-                    console.error('Error fetching data:', error)
-                }
+            const body = {
+                repositories: props.repositories,
+                team: props.team,
+                start: props.start,
+                end: props.end
             }
-
-            fetchData()
+            
+            fetchData(props.api, body, deploymentRecordReviver, organizeData)
         } else {
             organizeData(props.data)
         }
