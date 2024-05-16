@@ -135,7 +135,7 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
             const data: DeploymentRecord[] = JSON.parse(props.data, deploymentRecordReviver)
             organizeData(data)
         }
-    }, [props.api, props.repositories])
+    }, [props.api, props.repositories, props.team, props.start, props.end, props.includeFailures, props.environment])
     
     return (
         <ResponsiveContainer width="100%" height="100%">
