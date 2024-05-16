@@ -44,10 +44,8 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
     const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupData = (data: string) : Map<string, DeploymentRecord[]> => {
-        const allDeploymentRecords: DeploymentRecord[] = JSON.parse(data, deploymentRecordReviver)
-
-        return allDeploymentRecords.reduce((acc, record) => {
+    const filterAndGroupData = (data: DeploymentRecord[]) : Map<string, DeploymentRecord[]> => {
+        return data.reduce((acc, record) => {
             const dateKey = record.created_at.toISOString().split('T')[0]
 
             if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
@@ -117,7 +115,7 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
         setRepositories(repositoryColors)
     }
 
-    const organizeData = (data: string) => {
+    const organizeData = (data: DeploymentRecord[]) => {
         const groupedRecordsByCreated = filterAndGroupData(data)
 
         summarizeAndColorizeData(groupedRecordsByCreated)
