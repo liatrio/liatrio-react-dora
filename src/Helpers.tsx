@@ -6,7 +6,7 @@ export const generateDistinctColors = (count: number) => {
   for (let i = 0; i < count; i++) {
       hue += goldenRatioConjugate
       hue %= 1
-      const color = hslToHex(hue, 0.5, 0.6) // Convert HSL color to hex
+      const color = hslToHex(hue, 0.9, 0.6) // Convert HSL color to hex
       colors.push(color)
   }
 
