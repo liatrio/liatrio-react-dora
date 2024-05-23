@@ -3,7 +3,6 @@
     "target": "ES2022",
     "module": "commonjs",
     "strict": true,
-    "emitDeclarationOnly": true,
     "jsx": "react",
     "esModuleInterop": true,
     "declaration": true,

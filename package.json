@@ -2,8 +2,8 @@
   "name": "liatrio-react-dora",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/bundle.js",
-  "types": "dist/idnex.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "storybook": "storybook dev",
