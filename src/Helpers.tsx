@@ -1,3 +1,11 @@
+const hslToHex = (h: number, s: number, l: number) => {
+  const hue = Math.round(360 * h)
+  const saturation = Math.round(100 * s)
+  const lightness = Math.round(100 * l)
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
+
 export const generateDistinctColors = (count: number) => {
   const colors = []
   const goldenRatioConjugate = 0.618033988749895
@@ -11,14 +19,6 @@ export const generateDistinctColors = (count: number) => {
   }
 
   return colors
-}
-
-const hslToHex = (h: number, s: number, l: number) => {
-  const hue = Math.round(360 * h)
-  const saturation = Math.round(100 * s)
-  const lightness = Math.round(100 * l)
-
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
 
 export const fetchData = async (api: string, body: any, reviver: (key: string, value: any) => any, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
