@@ -4,7 +4,7 @@ import './ChangeLeadTimeTooltip.css'
 
 const ChangeLeadTimeTooltip = ({active, payload}: ChangeLeadTimeTooltipProps) => {
   if(!active || !payload || !payload.length) {
-      return
+      return (<></>)
   }
 
   return (
