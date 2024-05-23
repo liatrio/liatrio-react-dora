@@ -34,7 +34,6 @@ jobs:
           mkdir -p package
           cp -r dist package/
           cp package.json package/
-          cp README.md package/
           cp LICENSE package/
         shell: bash
 
