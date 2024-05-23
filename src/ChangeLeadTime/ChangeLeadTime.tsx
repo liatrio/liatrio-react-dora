@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors } from './Helpers'
+import { fetchData, generateDistinctColors } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
 import { ChangeLeadTimeProps, CycleGraphRecord, CycleMeanRecord, CycleRecord } from './ChangeLeadTimeTypes'
 

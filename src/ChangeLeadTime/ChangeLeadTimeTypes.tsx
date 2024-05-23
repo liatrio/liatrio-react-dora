@@ -1,6 +1,6 @@
 export interface ChangeLeadTimeProps {
   api: string
-  data: string
+  data?: string
   repositories?: string[]
   team?: string
   start?: Date
