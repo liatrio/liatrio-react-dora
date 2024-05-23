@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { fetchData, generateDistinctColors } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
@@ -79,10 +79,10 @@ const buildMeans = (data: Map<string, CycleGraphRecord[]>) : CycleMeanRecord[] =
 
 const ChangeLeadTime = (props: ChangeLeadTimeProps) => {
     const [cycleData, setCycleData] = useState<Map<string, CycleGraphRecord[]>>(new Map<string, CycleGraphRecord[]>())
-    const [meanData, setMeanData] = useState<CycleMeanRecord[]>([])
+    // const [meanData, setMeanData] = useState<CycleMeanRecord[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupCycleData = (data: CycleRecord[]) : Map<string, CycleGraphRecord[]> => {
+    const filterAndGroupCycleData = useCallback((data: CycleRecord[]) : Map<string, CycleGraphRecord[]> => {
         return data.reduce((acc, record) => {
             const dateKey = record.repository
 
@@ -102,15 +102,15 @@ const ChangeLeadTime = (props: ChangeLeadTimeProps) => {
         
             return acc
         }, new Map<string, CycleGraphRecord[]>())
-    }
+    }, [props.repositories, props.team])
 
-    const organizeData = (data: CycleRecord[]) => {
+    const organizeData = useCallback((data: CycleRecord[]) => {
         const groupedData = filterAndGroupCycleData(data)
-        const meanData = buildMeans(groupedData)
+        // const meanData = buildMeans(groupedData)
         setCycleData(groupedData)
-        setMeanData(meanData)
+        // setMeanData(meanData)
         setColors(generateDistinctColors(groupedData.size))
-    }
+    }, [filterAndGroupCycleData])
 
     useEffect(() => {
         if(!props.data) {
@@ -126,7 +126,7 @@ const ChangeLeadTime = (props: ChangeLeadTimeProps) => {
             const data: CycleRecord[] = JSON.parse(props.data, cycleRecordReviver)
             organizeData(data)
         }
-    }, [props.api, props.repositories, props.team, props.start, props.end])
+    }, [props.api, props.repositories, props.team, props.start, props.end, props.data, organizeData])
 
     return (
         <ResponsiveContainer width="100%" height="100%">
