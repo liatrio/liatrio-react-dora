@@ -40,7 +40,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: my-component-library
+          name: liatrio-react-dora
           path: package/
 
       - name: Create GitHub Release
@@ -60,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./package/package.tgz
-          asset_name: liatrio-dora-react-v${{ github.sha }}.tgz
+          asset_path: ./package
+          asset_name: liatrio-react-dora-v${{ github.sha }}.tgz
           asset_content_type: application/gzip
