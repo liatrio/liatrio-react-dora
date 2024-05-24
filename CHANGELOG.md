@@ -6,6 +6,8 @@
 
 ### Unknown
 
+* do not commit npm version ([`bee8229`](https://github.com/liatrio/liatrio-react-dora/commit/bee8229182ca375ea4fccfbc5419d28c68a335f2))
+
 * re-add find tag ([`beae164`](https://github.com/liatrio/liatrio-react-dora/commit/beae1644dd0089d6f93864eac683807461232fb3))
 
 * Fix property name ([`8c32c5e`](https://github.com/liatrio/liatrio-react-dora/commit/8c32c5e1217c22306f5c020d0b7276b804c5467d))
