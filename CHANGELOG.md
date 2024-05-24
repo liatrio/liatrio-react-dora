@@ -6,6 +6,8 @@
 
 ### Unknown
 
+* Fix property name ([`8c32c5e`](https://github.com/liatrio/liatrio-react-dora/commit/8c32c5e1217c22306f5c020d0b7276b804c5467d))
+
 * Change how we get release id ([`8bd458f`](https://github.com/liatrio/liatrio-react-dora/commit/8bd458f50954e35dfce557b3f339cda698b22364))
 
 * fix script error ([`1162712`](https://github.com/liatrio/liatrio-react-dora/commit/116271299192ff6cb9877c630995b8b05d332ec0))
