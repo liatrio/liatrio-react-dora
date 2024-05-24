@@ -1,7 +1,7 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import ChangeLeadTime from '../src/ChangeLeadTime/ChangeLeadTime'
-import { ChangeLeadTimeProps } from '../src/ChangeLeadTime/ChangeLeadTimeTypes'
+import { ChangeLeadTimeProps } from '../src/ChangeLeadTime/ChangeLeadTime.types'
 
 export default {
     title: 'ChangeLeadTime',

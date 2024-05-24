@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Build the project
-        run: npm run build
+        run: npm run rollup
 
       - name: Package the build artifacts
         run: |
@@ -36,7 +36,7 @@ jobs:
           cp package.json package/
           cp LICENSE package/
           cd package
-          npm pack
+          tar -czf ../liatrio-react-dora-v${{ github.sha }}.tgz *
         shell: bash
 
       - name: Create GitHub Release
@@ -56,6 +56,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./package/*.tgz
+          asset_path: ./liatrio-react-dora-v${{ github.sha }}.tgz
           asset_name: liatrio-react-dora-v${{ github.sha }}.tgz
           asset_content_type: application/gzip

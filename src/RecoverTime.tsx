@@ -1,6 +1,10 @@
 import React from 'react'
 
-const RecoverTime = () => {
+interface RecoverTimeProps {
+
+}
+
+const RecoverTime : React.FC<RecoverTimeProps> = (props: RecoverTimeProps) => {
 
     return (
         <div data-testid="RecoverTime">

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { fetchData, generateDistinctColors } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
-import { ChangeLeadTimeProps, CycleGraphRecord, CycleMeanRecord, CycleRecord } from './ChangeLeadTimeTypes'
+import { ChangeLeadTimeProps, CycleGraphRecord, CycleMeanRecord, CycleRecord } from './ChangeLeadTime.types'
 
 const dateKeys = ['openedAt', 'mergedAt', 'devDeployedAt', 'testDeployedAt', 'prodDeployedAt']
 
@@ -77,7 +77,7 @@ const buildMeans = (data: Map<string, CycleGraphRecord[]>) : CycleMeanRecord[] =
     return meansByDay
 }
 
-const ChangeLeadTime = (props: ChangeLeadTimeProps) => {
+const ChangeLeadTime : React.FC<ChangeLeadTimeProps> = (props: ChangeLeadTimeProps) => {
     const [cycleData, setCycleData] = useState<Map<string, CycleGraphRecord[]>>(new Map<string, CycleGraphRecord[]>())
     // const [meanData, setMeanData] = useState<CycleMeanRecord[]>([])
     const [colors, setColors] = useState<string[]>([])
@@ -129,25 +129,27 @@ const ChangeLeadTime = (props: ChangeLeadTimeProps) => {
     }, [props.api, props.repositories, props.team, props.start, props.end, props.data, organizeData])
 
     return (
-        <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart
-                margin={{
-                    top: 20,
-                    right: 20,
-                    left: 20,
-                    bottom: 20,
-                }}
-            >
-                <CartesianGrid />
-                <XAxis type="number" dataKey="start" name="Date" domain={['auto', 'auto']} tickFormatter={(date) => (new Date(date)).toLocaleDateString() }/>
-                <YAxis type="number" dataKey="totalCycle" name="Time" unit="hrs" />
-                <Tooltip content={<ChangeLeadTimeTooltip />} />
-                <Legend />
-                {Array.from(cycleData.keys()).map((key, idx) => (
-                    <Scatter key={key} name={key} data={cycleData.get(key)} fill={colors[idx]} />
-                ))}
-            </ScatterChart>
-        </ResponsiveContainer>
+        <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
+            <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart
+                    margin={{
+                        top: 20,
+                        right: 20,
+                        left: 20,
+                        bottom: 20,
+                    }}
+                >
+                    <CartesianGrid />
+                    <XAxis type="number" dataKey="start" name="Date" domain={['auto', 'auto']} tickFormatter={(date: string | number | Date) => { console.log(date); return (new Date(date)).toLocaleDateString(); } }/>
+                    <YAxis type="number" dataKey="totalCycle" name="Time" unit="hrs" />
+                    <Tooltip content={<ChangeLeadTimeTooltip />} />
+                    <Legend />
+                    {Array.from(cycleData.keys()).map((key, idx) => (
+                        <Scatter key={key} name={key} data={cycleData.get(key)} fill={colors[idx]} />
+                    ))}
+                </ScatterChart>
+            </ResponsiveContainer>
+        </div>
     )
 }
 

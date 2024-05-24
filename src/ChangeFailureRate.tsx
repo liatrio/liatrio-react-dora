@@ -1,6 +1,8 @@
 import React from 'react'
 
-const ChangeFailureRate = () => {
+interface ChangeFailureRateProps {}
+
+const ChangeFailureRate : React.FC<ChangeFailureRateProps> = (props: ChangeFailureRateProps) => {
 
     return (
         <div data-testid="ChangeFailureRate">

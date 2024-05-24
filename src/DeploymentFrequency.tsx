@@ -39,7 +39,7 @@ export interface DeploymentFrequencyProps {
     start?: Date
 }
 
-const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
+const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: DeploymentFrequencyProps) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
     const [colors, setColors] = useState<string[]>([])
@@ -138,36 +138,38 @@ const DeploymentFrequency = (props: DeploymentFrequencyProps) => {
     }, [props.api, props.repositories, props.team, props.start, props.end, props.includeFailures, props.environment])
     
     return (
-        <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-                width={500}
-                height={300}
-                data={graphData}
-                stackOffset="sign"
-                margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend
-                    align="center"
-                    verticalAlign="bottom"
-                    layout="horizontal"
-                />
-                <ReferenceLine y={0} stroke="#000" />
-                {repositories.map((repo, idx) => (
-                    <Bar key={idx} dataKey={repo.name} stackId="a" fill={colors[repo.color]}>
-                        <LabelList dataKey={repo.name} fontWeight="bold" fontSize='16' fill='#000000' />
-                    </Bar>
-                ))}
-            </BarChart>
-        </ResponsiveContainer>
+        <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                    width={500}
+                    height={300}
+                    data={graphData}
+                    stackOffset="sign"
+                    margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend
+                        align="center"
+                        verticalAlign="bottom"
+                        layout="horizontal"
+                    />
+                    <ReferenceLine y={0} stroke="#000" />
+                    {repositories.map((repo, idx) => (
+                        <Bar key={idx} dataKey={repo.name} stackId="a" fill={colors[repo.color]}>
+                            <LabelList dataKey={repo.name} fontWeight="bold" fontSize='16' fill='#000000' />
+                        </Bar>
+                    ))}
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
     )
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
-import { ChangeLeadTimeTooltipProps } from "./ChangeLeadTimeTypes"
+import { ChangeLeadTimeTooltipProps } from "./ChangeLeadTime.types"
 import './ChangeLeadTimeTooltip.css'
 
-const ChangeLeadTimeTooltip = ({active, payload}: ChangeLeadTimeTooltipProps) => {
+const ChangeLeadTimeTooltip : React.FC<ChangeLeadTimeTooltipProps> = ({active, payload}: ChangeLeadTimeTooltipProps) => {
   if(!active || !payload || !payload.length) {
       return (<></>)
   }
