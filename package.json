@@ -5,6 +5,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types.d.ts",
+  "files": ["./dist", "LICENSE"],
   "scripts": {
     "build": "npm run clean && tsc",
     "rollup": "rollup -c --bundleConfigAsCjs",

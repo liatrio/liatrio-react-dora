@@ -2,8 +2,8 @@ name: Build and Package React Component Library
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Fetch all tags
+        run: git fetch --tags
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -26,36 +31,34 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Version Package
+        run: npm version ${{ steps.find_tag.outputs.tag_name }}
+
       - name: Build the project
         run: npm run rollup
 
       - name: Package the build artifacts
-        run: |
-          mkdir -p package
-          cp -r dist package/
-          cp package.json package/
-          cp LICENSE package/
-          cd package
-          tar -czf ../liatrio-react-dora-v${{ github.sha }}.tgz *
-        shell: bash
+        run: npm pack
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release by tag
+        id: get_release
+        uses: actions/github-script@v6
         with:
-          tag_name: v${{ github.sha }}
-          release_name: Release ${{ github.sha }}
-          draft: false
-          prerelease: false
+          script: |
+            const release = await github.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: ${{ steps.find_tag.outputs.tag_name }}
+            });
+            core.setOutput('release_id', release.data.id);
+            core.setOutput('upload_url', release.data.upload_url);
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./liatrio-react-dora-v${{ github.sha }}.tgz
-          asset_name: liatrio-react-dora-v${{ github.sha }}.tgz
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./liatrio-react-dora-${{ steps.find_tag.outputs.tag_name }}.tgz
+          asset_name: liatrio-react-dora-${{ steps.find_tag.outputs.tag_name }}.tgz
           asset_content_type: application/gzip
