@@ -6,6 +6,8 @@
 
 ### Unknown
 
+* fix script error ([`1162712`](https://github.com/liatrio/liatrio-react-dora/commit/116271299192ff6cb9877c630995b8b05d332ec0))
+
 * at semver release flow, update build ([`cba27b5`](https://github.com/liatrio/liatrio-react-dora/commit/cba27b514b1a43b0cbcc6d4a103b33f152278c0b))
 
 * fix tests, use rollup instead ([`cba0e80`](https://github.com/liatrio/liatrio-react-dora/commit/cba0e80ce6ce10b15e50211dd377467218d97468))
