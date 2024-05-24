@@ -49,9 +49,9 @@ jobs:
       - name: Get release by tag
         id: get_release
         run: |
-          release_info=$(gh release view ${{ steps.find_tag.outputs.tag_name }} --json id,upload_url)
+          release_info=$(gh release view ${{ steps.find_tag.outputs.tag_name }} --json id,uploadUrl)
           release_id=$(echo $release_info | jq -r '.id')
-          upload_url=$(echo $release_info | jq -r '.upload_url')
+          upload_url=$(echo $release_info | jq -r '.uploadUrl')
           echo "::set-output name=release_id::$release_id"
           echo "::set-output name=upload_url::$upload_url"
 
