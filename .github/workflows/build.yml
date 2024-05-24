@@ -28,6 +28,7 @@ jobs:
         run: |
           tag_name=$(git describe --tags --abbrev=0)
           echo "tag_name=${tag_name}" >> $GITHUB_OUTPUT
+          echo "tag_name_clean=${tag_name#v}" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -38,7 +39,7 @@ jobs:
         run: npm install
 
       - name: Version Package
-        run: npm version ${{ steps.find_tag.outputs.tag_name }} --no-git-tag-version
+        run: npm version ${{ steps.find_tag.outputs.tag_name_clean }} --no-git-tag-version
 
       - name: Build the project
         run: npm run rollup
@@ -67,6 +68,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./liatrio-react-dora-${{ steps.find_tag.outputs.tag_name }}.tgz
-          asset_name: liatrio-react-dora-${{ steps.find_tag.outputs.tag_name }}.tgz
+          asset_path: ./liatrio-react-dora-${{ steps.find_tag.outputs.tag_name_clean }}.tgz
+          asset_name: liatrio-react-dora-${{ steps.find_tag.outputs.tag_name_clean }}.tgz
           asset_content_type: application/gzip
