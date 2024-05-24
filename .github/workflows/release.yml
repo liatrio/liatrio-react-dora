@@ -5,6 +5,10 @@ on:
       - main
     paths-ignore:
       - "LICENSE"
+      - "CHANGELOG.md"
+      - "manifests/base/kustomization.yaml"
+    tags-ignore:
+      - '*'
 
 jobs:
   release:
