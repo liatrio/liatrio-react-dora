@@ -23,6 +23,12 @@ jobs:
       - name: Fetch all tags
         run: git fetch --tags
 
+      - name: Find nearest tag
+        id: find_tag
+        run: |
+          tag_name=$(git describe --tags --abbrev=0)
+          echo "tag_name=${tag_name}" >> $GITHUB_OUTPUT
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
