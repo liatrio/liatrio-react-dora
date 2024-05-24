@@ -2,6 +2,13 @@
 
 
 
+## v0.0.2 (2024-05-24)
+
+### Fix
+
+* fix(workflow): adjust bad shell script ([`67cdebe`](https://github.com/liatrio/liatrio-react-dora/commit/67cdebe1207804518c99cd9803bc34e101998e9d))
+
+
 ## v0.0.1 (2024-05-24)
 
 ### Fix
