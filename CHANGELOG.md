@@ -2,6 +2,13 @@
 
 
 
+## v0.0.3 (2024-05-24)
+
+### Fix
+
+* fix(workflow): syntax error in shell script ([`6253bfa`](https://github.com/liatrio/liatrio-react-dora/commit/6253bfa950cb516ad88c22794b03396b266ea49b))
+
+
 ## v0.0.2 (2024-05-24)
 
 ### Fix
