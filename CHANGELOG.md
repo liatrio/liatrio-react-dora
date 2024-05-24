@@ -2,6 +2,15 @@
 
 
 
+## v0.0.1 (2024-05-24)
+
+### Fix
+
+* fix(workflow): prevent recursive workflows ([`ee41147`](https://github.com/liatrio/liatrio-react-dora/commit/ee41147fdb186b78281bde1a13aa84faf9b2fbce))
+
+* fix(workflow): use the gitref as the tag instead of searching for it ([`824473a`](https://github.com/liatrio/liatrio-react-dora/commit/824473ab90c0a519f8a40d2ed4a21599df2d77d7))
+
+
 ## v0.0.0 (2024-05-24)
 
 ### Unknown
