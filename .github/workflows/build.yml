@@ -38,7 +38,7 @@ jobs:
         run: npm install
 
       - name: Version Package
-        run: npm version ${{ steps.find_tag.outputs.tag_name }}
+        run: npm version ${{ steps.find_tag.outputs.tag_name }} --no-git-tag-version
 
       - name: Build the project
         run: npm run rollup
