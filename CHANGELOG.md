@@ -6,6 +6,8 @@
 
 ### Unknown
 
+* Change how we get release id ([`8bd458f`](https://github.com/liatrio/liatrio-react-dora/commit/8bd458f50954e35dfce557b3f339cda698b22364))
+
 * fix script error ([`1162712`](https://github.com/liatrio/liatrio-react-dora/commit/116271299192ff6cb9877c630995b8b05d332ec0))
 
 * at semver release flow, update build ([`cba27b5`](https://github.com/liatrio/liatrio-react-dora/commit/cba27b514b1a43b0cbcc6d4a103b33f152278c0b))
