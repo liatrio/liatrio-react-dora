@@ -2,6 +2,13 @@
 
 
 
+## v0.0.4 (2024-05-25)
+
+### Fix
+
+* fix(dep): be more flexible with react/ts peer dep: ([`6f1090d`](https://github.com/liatrio/liatrio-react-dora/commit/6f1090d1a37b0ccbb608108da2f400f88e210658))
+
+
 ## v0.0.3 (2024-05-24)
 
 ### Fix
