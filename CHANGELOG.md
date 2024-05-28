@@ -2,6 +2,13 @@
 
 
 
+## v0.0.5 (2024-05-28)
+
+### Fix
+
+* fix(DF): don&#39;t require team ([`fc74098`](https://github.com/liatrio/liatrio-react-dora/commit/fc740986f8c6294290cbebf186756296b5b318d9))
+
+
 ## v0.0.4 (2024-05-25)
 
 ### Fix
