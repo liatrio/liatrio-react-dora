@@ -30,7 +30,7 @@ const deploymentRecordReviver = (key: string, value: any) => {
 
 export interface DeploymentFrequencyProps {
     api: string,
-    team: string,
+    team?: string,
     repositories?: string[],
     includeFailures?: boolean,
     environment?: string,
