@@ -21,7 +21,7 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
-export const fetchData = async (api: string, body: any, reviver: (key: string, value: any) => any, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
+export const fetchData = async (api: string, body: any, reviver: (key: string, value: any) => any, onSuccess: (data: any) => void, getAuthHeaderValue?: () => Promise<string | undefined>, onFailure?: (data: any) => void) => {
   if(!body.end) {
     body.end = new Date()
   }
@@ -31,12 +31,23 @@ export const fetchData = async (api: string, body: any, reviver: (key: string, v
     body.start.setDate(body.end.getDate() - 30)
   }
 
+  let headers = {}
+
+  if(getAuthHeaderValue) {
+    headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await getAuthHeaderValue()
+    }
+  } else {
+    headers = {
+      'Content-Type': 'application/json',
+    }
+  }
+
   const options = {
       method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
+      headers: headers,
+      body: JSON.stringify(body),
   }
 
   try {

@@ -121,7 +121,7 @@ const ChangeLeadTime : React.FC<ChangeLeadTimeProps> = (props: ChangeLeadTimePro
                 end: props.end
             }
             
-            fetchData(props.api, body, cycleRecordReviver, organizeData)
+            fetchData(props.api, body, cycleRecordReviver, organizeData, props.getAuthHeaderValue)
         } else {
             const data: CycleRecord[] = JSON.parse(props.data, cycleRecordReviver)
             organizeData(data)

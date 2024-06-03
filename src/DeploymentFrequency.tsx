@@ -9,7 +9,6 @@ enum DeploymentState {
 
 interface DeploymentRecord {
     created_at: Date,
-    updated_at: Date,
     environment: string,
     state: DeploymentState,
     repository: string,
@@ -17,7 +16,7 @@ interface DeploymentRecord {
 }
 
 const deploymentRecordReviver = (key: string, value: any) => {
-    if (key === 'created_at' || key === 'updated_at') {
+    if (key === 'created_at') {
         return new Date(value)
     }
 
@@ -30,6 +29,7 @@ const deploymentRecordReviver = (key: string, value: any) => {
 
 export interface DeploymentFrequencyProps {
     api: string,
+    getAuthHeaderValue?: () => Promise<string | undefined>,
     team?: string,
     repositories?: string[],
     includeFailures?: boolean,
@@ -130,7 +130,7 @@ const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: Deploym
                 end: props.end
             }
             
-            fetchData(props.api, body, deploymentRecordReviver, organizeData)
+            fetchData(props.api, body, deploymentRecordReviver, organizeData, props.getAuthHeaderValue)
         } else {
             const data: DeploymentRecord[] = JSON.parse(props.data, deploymentRecordReviver)
             organizeData(data)
