@@ -2,6 +2,13 @@
 
 
 
+## v0.0.6 (2024-06-03)
+
+### Fix
+
+* fix: add a way to supply auto to the api ([`8a131a0`](https://github.com/liatrio/liatrio-react-dora/commit/8a131a0ce6fbc48df888879f85f827c7f1db019d))
+
+
 ## v0.0.5 (2024-05-28)
 
 ### Fix
