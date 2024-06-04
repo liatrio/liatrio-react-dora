@@ -14,6 +14,22 @@ Or
 yarn add https://github.com/liatrio/liatrio-react-dora/releases/download/v0.0.6/liatrio-react-dora-0.0.7.tgz
 ```
 
+# Usage
+
+To use these charts, you can do as follows:
+
+```
+import { DeploymentFrequency } from `liatrio-react-dora`
+
+...
+<div style={{width: "600px", height: "400px"}}>
+    <DeploymentFrequency api="http://some.url" />
+</div>
+
+```
+
+It is important that the chart component be wrapped in an element of some size somewhere up the tree, otherwise the chart may have unexpected behavior.
+
 # Chart Properties
 
 Each chart has a set of common properties and unique properties.
