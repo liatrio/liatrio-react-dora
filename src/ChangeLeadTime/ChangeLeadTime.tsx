@@ -114,6 +114,10 @@ const ChangeLeadTime : React.FC<ChangeLeadTimeProps> = (props: ChangeLeadTimePro
 
     useEffect(() => {
         if(!props.data) {
+            if(!props.api) {
+                return;
+            }
+            
             const body = {
                 repositories: props.repositories,
                 team: props.team,

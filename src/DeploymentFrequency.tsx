@@ -28,7 +28,7 @@ const deploymentRecordReviver = (key: string, value: any) => {
 }
 
 export interface DeploymentFrequencyProps {
-    api: string,
+    api?: string,
     getAuthHeaderValue?: () => Promise<string | undefined>,
     team?: string,
     repositories?: string[],
@@ -123,6 +123,10 @@ const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: Deploym
 
     useEffect(() => {
         if(!props.data) {
+            if(!props.api) {
+                return;
+            }
+            
             const body = {
                 repositories: props.repositories,
                 team: props.team,

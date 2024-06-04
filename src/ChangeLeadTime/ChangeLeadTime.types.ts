@@ -1,5 +1,5 @@
 export interface ChangeLeadTimeProps {
-  api: string,
+  api?: string,
   getAuthHeaderValue?: () => Promise<string | undefined>,
   data?: string
   repositories?: string[]
