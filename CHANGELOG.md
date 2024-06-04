@@ -2,6 +2,13 @@
 
 
 
+## v0.0.7 (2024-06-04)
+
+### Fix
+
+* fix: add README, make  optional ([`a574af7`](https://github.com/liatrio/liatrio-react-dora/commit/a574af7e0eb6eed2facab761d81d9c7fa5a1a434))
+
+
 ## v0.0.6 (2024-06-03)
 
 ### Fix
