@@ -9,7 +9,6 @@ enum DeploymentState {
 
 interface DeploymentRecord {
     created_at: Date,
-    environment: string,
     state: DeploymentState,
     repository: string,
     team: string
@@ -32,8 +31,6 @@ export interface DeploymentFrequencyProps {
     getAuthHeaderValue?: () => Promise<string | undefined>,
     team?: string,
     repositories?: string[],
-    includeFailures?: boolean,
-    environment?: string,
     data?: string,
     end?: Date,
     start?: Date
@@ -49,8 +46,6 @@ const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: Deploym
             const dateKey = record.created_at.toISOString().split('T')[0]
 
             if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
-                || (props.includeFailures !== true && record.state === DeploymentState.failure)
-                || (props.environment !== undefined && record.environment !== props.environment)
                 || (props.team !== undefined && record.team !== props.team)
             ) {
                 return acc
@@ -78,32 +73,21 @@ const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: Deploym
             }
 
             for(const record of records ?? []) {
-                let keyModifier = ""
-
-                if(props.includeFailures) {
-                    if(record.state === DeploymentState.failure) {
-                        keyModifier += "-failure"
-                    } else {
-                        keyModifier += "-success"
-                    }
-                }
-
-                const key = record.repository + keyModifier
-                const count = dayData[key]
+                const count = dayData[record.repository]
 
                 if(!count) {
-                    dayData[`${key}`] = record.state === DeploymentState.success ? 1 : -1
+                    dayData[record.repository] = 1
 
-                    const colorIndex = repositoryColors.findIndex(f => f.name === key)
+                    const colorIndex = repositoryColors.findIndex(f => f.name === record.repository)
 
                     if(colorIndex < 0) {
                         repositoryColors.push({
                             color: repositoryColors.length,
-                            name: key
+                            name: record.repository
                         })
                     }
                 } else {
-                    dayData[`${key}`] = count + (record.state === DeploymentState.success ? 1 : -1)
+                    dayData[record.repository] = count + 1
                 }
             }
             
@@ -139,7 +123,7 @@ const DeploymentFrequency : React.FC<DeploymentFrequencyProps> = (props: Deploym
             const data: DeploymentRecord[] = JSON.parse(props.data, deploymentRecordReviver)
             organizeData(data)
         }
-    }, [props.api, props.repositories, props.team, props.start, props.end, props.includeFailures, props.environment])
+    }, [props.api, props.repositories, props.team, props.start, props.end])
     
     return (
         <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>

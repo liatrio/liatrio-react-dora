@@ -1,18 +1,178 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import RecoverTime from '../src/RecoverTime'
+import RecoverTime, { RecoverTimeProps } from '../src/RecoverTime'
 
 export default {
     title: 'RecoverTime',
     component: RecoverTime,
 } as Meta
 
-const Template: StoryFn<RecoverTimeProps> = (args: any) => <RecoverTime {...args} />
+const Template: StoryFn<RecoverTimeProps> = (args: any) => (<div style={{height: "400px", width: "600px"}}><RecoverTime {...args} /></div>)
 
 export const Example = Template.bind({})
 
 Example.args = {
-}
-
-interface RecoverTimeProps {
+    api: "",
+    repositories: ['Games'],
+    data: `[{
+        "created_at": "2024-04-30T12:36:27.572Z",
+        "repository": "Games",
+        "fixed_at": "2024-04-30T13:49:27.572Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-04-30T13:08:05.583Z",
+        "repository": "Games",
+        "fixed_at": "2024-04-30T13:51:05.583Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-01T13:47:36.684Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-01T15:39:36.684Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-01T20:48:40.385Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-02T00:12:40.385Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-02T15:10:51.806Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-02T18:22:51.806Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-03T18:26:42.155Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-03T20:13:42.155Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-03T17:51:01.482Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-03T18:27:01.482Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-05T21:32:58.265Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-06T00:51:58.265Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-05T14:09:51.741Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-05T17:49:51.741Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-06T12:58:54.563Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-06T15:42:54.563Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-06T15:37:44.868Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-06T17:45:44.868Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-07T11:13:29.278Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-07T12:49:29.278Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-09T12:51:32.999Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-09T13:52:32.999Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-09T14:47:57.619Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-09T16:33:57.619Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-11T20:21:15.764Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-11T23:55:15.764Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-11T13:54:14.743Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-11T16:25:14.743Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-13T19:50:20.397Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-13T21:50:20.397Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-13T14:37:46.700Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-13T15:38:46.700Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-14T21:14:58.696Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-15T01:06:58.696Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-16T21:42:28.618Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-16T22:39:28.618Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-16T12:18:47.822Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-16T14:22:47.822Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-20T20:41:13.512Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-20T21:16:13.512Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-20T16:41:01.653Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-20T18:37:01.653Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-21T15:39:15.885Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-21T17:26:15.885Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-22T15:30:47.943Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-22T17:01:47.943Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-23T21:45:11.845Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-23T22:42:11.845Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-23T19:34:09.277Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-23T20:25:09.277Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-24T18:33:38.476Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-24T20:14:38.476Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-27T20:50:16.319Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-27T23:28:16.319Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-27T12:43:06.416Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-27T14:11:06.416Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-29T18:15:55.442Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-29T20:38:55.442Z",
+        "team": "Nintendo"
+      }, {
+        "created_at": "2024-05-30T21:06:56.855Z",
+        "repository": "Games",
+        "fixed_at": "2024-05-30T22:15:56.855Z",
+        "team": "Nintendo"
+      }]`
 }
