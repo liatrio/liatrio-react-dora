@@ -2,6 +2,13 @@
 
 
 
+## v0.1.1 (2024-06-14)
+
+### Fix
+
+* fix: adjust file version ([`bc4e52e`](https://github.com/liatrio/liatrio-react-dora/commit/bc4e52e0103185517ab8b91ab4aa501639eb1df0))
+
+
 ## v0.1.0 (2024-06-14)
 
 ### Feature
