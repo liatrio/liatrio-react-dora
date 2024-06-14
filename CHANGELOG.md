@@ -2,6 +2,21 @@
 
 
 
+## v0.1.0 (2024-06-14)
+
+### Feature
+
+* feat: fixing versioning ([`97b4733`](https://github.com/liatrio/liatrio-react-dora/commit/97b47332760aa778a7d9a911971f4155ecf2d9b3))
+
+### Unknown
+
+* feature: implement cfg and rt ([`4826ac8`](https://github.com/liatrio/liatrio-react-dora/commit/4826ac8aa060a2fd90607635c91d43288ba80a4c))
+
+* Add catalog-info.yaml config file (#12) ([`b0f82ef`](https://github.com/liatrio/liatrio-react-dora/commit/b0f82ef31a25dd3c062d7310faadbc7b4a55b251))
+
+* add usage to readme ([`10f9c43`](https://github.com/liatrio/liatrio-react-dora/commit/10f9c43b22df35295f0d6ff3a78536dfb1cd3bdf))
+
+
 ## v0.0.7 (2024-06-04)
 
 ### Fix
