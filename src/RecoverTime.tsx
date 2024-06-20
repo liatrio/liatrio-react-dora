@@ -1,38 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList, LineChart, Line } from 'recharts'
-import { fetchData, generateDistinctColors } from './Helpers'
+import { fetchData, generateDistinctColors, Props, Record } from './Helpers'
 
-interface RecoverTimeRecord {
-    created_at: Date,
-    repository: string,
-    fixed_at: Date,
-    team: string
-}
-
-const recoverTimeRecordReviver = (key: string, value: any) => {
-    if (['created_at', 'fixed_at'].includes(key)) {
-        return new Date(value)
-    }
-
-    return value
-}
-
-export interface RecoverTimeProps {
-    api?: string,
-    getAuthHeaderValue?: () => Promise<string | undefined>,
-    team?: string,
-    repositories?: string[],
-    data?: string,
-    end?: Date,
-    start?: Date
-}
-
-const RecoverTime : React.FC<RecoverTimeProps> = (props: RecoverTimeProps) => {
+const RecoverTime : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupData = (data: RecoverTimeRecord[]) : Map<string, RecoverTimeRecord[]> => {
+    const filterAndGroupData = (data: Record[]) : Map<string, Record[]> => {
         return data.reduce((acc, record) => {
             const dateKey = record.created_at.toISOString().split('T')[0]
 
@@ -49,10 +24,10 @@ const RecoverTime : React.FC<RecoverTimeProps> = (props: RecoverTimeProps) => {
             acc.get(dateKey)?.push(record)
         
             return acc
-        }, new Map<string, RecoverTimeRecord[]>())
+        }, new Map<string, Record[]>())
     }
 
-    const summarizeAndColorizeData = (data: Map<string, RecoverTimeRecord[]>) => {
+    const summarizeAndColorizeData = (data: Map<string, Record[]>) => {
         const graphData: any[] = []
         const repositoryColors: {color: number, name: string}[] = []
         
@@ -106,31 +81,15 @@ const RecoverTime : React.FC<RecoverTimeProps> = (props: RecoverTimeProps) => {
         setRepositories(repositoryColors)
     }
 
-    const organizeData = (data: RecoverTimeRecord[]) => {
+    const organizeData = (data: Record[]) => {
         const groupedRecordsByCreated = filterAndGroupData(data)
 
         summarizeAndColorizeData(groupedRecordsByCreated)
     }
 
     useEffect(() => {
-        if(!props.data) {
-            if(!props.api) {
-                return;
-            }
-            
-            const body = {
-                repositories: props.repositories,
-                team: props.team,
-                start: props.start,
-                end: props.end
-            }
-            
-            fetchData(props.api, body, recoverTimeRecordReviver, organizeData, props.getAuthHeaderValue)
-        } else {
-            const data: RecoverTimeRecord[] = JSON.parse(props.data, recoverTimeRecordReviver)
-            organizeData(data)
-        }
-    }, [props.api, props.repositories, props.team, props.start, props.end])
+        fetchData(props, organizeData)
+    }, [props])
 
     return (
         <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>

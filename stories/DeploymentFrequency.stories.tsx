@@ -1,13 +1,14 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import DeploymentFrequency, { DeploymentFrequencyProps } from '../src/DeploymentFrequency'
+import DeploymentFrequency from '../src/DeploymentFrequency'
+import { Props } from '../src/Helpers'
 
 export default {
     title: 'DeploymentFrequency',
     component: DeploymentFrequency,
 } as Meta
 
-const Template: StoryFn<DeploymentFrequencyProps> = (args: any) => (<div style={{height: "400px", width: "600px"}}><DeploymentFrequency {...args} /></div>)
+const Template: StoryFn<Props> = (args: any) => (<div style={{height: "400px", width: "600px"}}><DeploymentFrequency {...args} /></div>)
 
 export const Example = Template.bind({})
 

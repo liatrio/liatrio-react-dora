@@ -1,38 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList } from 'recharts'
-import { fetchData, generateDistinctColors } from './Helpers'
+import { fetchData, generateDistinctColors, Record, Props } from './Helpers'
 
-interface ChangeFailureRateRecord {
-    created_at: Date,
-    repository: string,
-    status: boolean,
-    team: string
-}
-
-const changeFailureRateRecordReviver = (key: string, value: any) => {
-    if (key === 'created_at') {
-        return new Date(value)
-    }
-
-    return value
-}
-
-export interface ChangeFailureRateProps {
-    api?: string,
-    getAuthHeaderValue?: () => Promise<string | undefined>,
-    team?: string,
-    repositories?: string[],
-    data?: string,
-    end?: Date,
-    start?: Date
-}
-
-const ChangeFailureRate : React.FC<ChangeFailureRateProps> = (props: ChangeFailureRateProps) => {
+const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupData = (data: ChangeFailureRateRecord[]) : Map<string, ChangeFailureRateRecord[]> => {
+    const filterAndGroupData = (data: Record[]) : Map<string, Record[]> => {
         return data.reduce((acc, record) => {
             const dateKey = record.created_at.toISOString().split('T')[0]
 
@@ -49,10 +24,10 @@ const ChangeFailureRate : React.FC<ChangeFailureRateProps> = (props: ChangeFailu
             acc.get(dateKey)?.push(record)
         
             return acc
-        }, new Map<string, ChangeFailureRateRecord[]>())
+        }, new Map<string, Record[]>())
     }
 
-    const summarizeAndColorizeData = (data: Map<string, ChangeFailureRateRecord[]>) => {
+    const summarizeAndColorizeData = (data: Map<string, Record[]>) => {
         const graphData: any[] = []
         const repositoryColors: {color: number, name: string}[] = []
         
@@ -101,31 +76,15 @@ const ChangeFailureRate : React.FC<ChangeFailureRateProps> = (props: ChangeFailu
         setRepositories(repositoryColors)
     }
 
-    const organizeData = (data: ChangeFailureRateRecord[]) => {
+    const organizeData = (data: Record[]) => {
         const groupedRecordsByCreated = filterAndGroupData(data)
 
         summarizeAndColorizeData(groupedRecordsByCreated)
     }
 
     useEffect(() => {
-        if(!props.data) {
-            if(!props.api) {
-                return;
-            }
-            
-            const body = {
-                repositories: props.repositories,
-                team: props.team,
-                start: props.start,
-                end: props.end
-            }
-            
-            fetchData(props.api, body, changeFailureRateRecordReviver, organizeData, props.getAuthHeaderValue)
-        } else {
-            const data: ChangeFailureRateRecord[] = JSON.parse(props.data, changeFailureRateRecordReviver)
-            organizeData(data)
-        }
-    }, [props.api, props.repositories, props.team, props.start, props.end])
+        fetchData(props, organizeData)
+    }, [props])
 
     return (
         <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>

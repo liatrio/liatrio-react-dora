@@ -1,13 +1,14 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import ChangeFailureRate, { ChangeFailureRateProps } from '../src/ChangeFailureRate'
+import ChangeFailureRate from '../src/ChangeFailureRate'
+import { Props } from '../src/Helpers'
 
 export default {
     title: 'ChangeFailureRate',
     component: ChangeFailureRate,
 } as Meta
 
-const Template: StoryFn<ChangeFailureRateProps> = (args: any) => (<div style={{height: "400px", width: "600px"}}><ChangeFailureRate {...args} /></div>)
+const Template: StoryFn<Props> = (args: any) => (<div style={{height: "400px", width: "600px"}}><ChangeFailureRate {...args} /></div>)
 
 export const Example = Template.bind({})
 
