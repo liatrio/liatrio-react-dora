@@ -1,13 +1,14 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import RecoverTime, { RecoverTimeProps } from '../src/RecoverTime'
+import RecoverTime from '../src/RecoverTime'
+import { Props } from '../src/Helpers'
 
 export default {
     title: 'RecoverTime',
     component: RecoverTime,
 } as Meta
 
-const Template: StoryFn<RecoverTimeProps> = (args: any) => (<div style={{height: "400px", width: "600px"}}><RecoverTime {...args} /></div>)
+const Template: StoryFn<Props> = (args: any) => (<div style={{height: "400px", width: "600px"}}><RecoverTime {...args} /></div>)
 
 export const Example = Template.bind({})
 

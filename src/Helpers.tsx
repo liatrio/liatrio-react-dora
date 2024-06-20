@@ -1,3 +1,36 @@
+export interface Props {
+  api?: string,
+  getAuthHeaderValue?: () => Promise<string | undefined>,
+  team?: string,
+  repositories?: string[],
+  data?: string,
+  end?: Date,
+  start?: Date
+}
+
+export interface Record {
+  repository: string,
+  team: string
+  title: string,
+  user: string,
+  sha: string,
+  status: boolean,
+  opened_at: Date,
+  merged_at: Date,
+  created_at: Date,
+  fixed_at: Date
+}
+
+const date_keys = ['opened_at', 'merged_at', 'created_at', 'fixed_at']
+
+export const recordReviver = (key: string, value: any) => {
+  if (date_keys.includes(key)) {
+      return new Date(value)
+  }
+
+  return value
+}
+
 const hslToHex = (h: number, s: number, l: number) => {
   const hue = Math.round(360 * h)
   const saturation = Math.round(100 * s)
@@ -21,7 +54,25 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
-export const fetchData = async (api: string, body: any, reviver: (key: string, value: any) => any, onSuccess: (data: any) => void, getAuthHeaderValue?: () => Promise<string | undefined>, onFailure?: (data: any) => void) => {
+export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
+
+  if(props.data) {
+    const data: Record[] = JSON.parse(props.data, recordReviver)
+    onSuccess(data)
+    return
+  }
+
+  if(!props.api) {
+    return
+  }
+
+  const body = {
+      repositories: props.repositories,
+      team: props.team,
+      start: props.start,
+      end: props.end
+  }
+
   if(!body.end) {
     body.end = new Date()
   }
@@ -33,10 +84,10 @@ export const fetchData = async (api: string, body: any, reviver: (key: string, v
 
   let headers = {}
 
-  if(getAuthHeaderValue) {
+  if(props.getAuthHeaderValue) {
     headers = {
       'Content-Type': 'application/json',
-      'Authorization': await getAuthHeaderValue()
+      'Authorization': await props.getAuthHeaderValue()
     }
   } else {
     headers = {
@@ -51,10 +102,10 @@ export const fetchData = async (api: string, body: any, reviver: (key: string, v
   }
 
   try {
-      const response = await fetch(api, options)
+      const response = await fetch(props.api, options)
       const json = await response.text()
       
-      const parsedData = JSON.parse(json, reviver)
+      const parsedData = JSON.parse(json, recordReviver)
 
       onSuccess(parsedData)
   } catch (error) {

@@ -1,88 +1,34 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors } from '../Helpers'
+import { fetchData, generateDistinctColors, Record, Props } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
-import { ChangeLeadTimeProps, CycleGraphRecord, CycleMeanRecord, CycleRecord } from './ChangeLeadTime.types'
+import { CycleGraphRecord } from './ChangeLeadTime.types'
 
-const dateKeys = ['openedAt', 'mergedAt', 'devDeployedAt', 'testDeployedAt', 'prodDeployedAt']
-
-const cycleRecordReviver = (key: string, value: any) => {
-    if (dateKeys.includes(key)) {
-        return new Date(value)
-    }
-
-    return value
-}
-
-const calculateRecordSummary = (record: CycleRecord) : CycleGraphRecord => {
-    const mergedAt = record.mergedAt.getTime()
-    const prodDeployedAt = record.prodDeployedAt.getTime()
-    const openedAt = record.openedAt.getTime()
-    const testDeployedAt = record.testDeployedAt.getTime()
-    const devDeployedAt = record.devDeployedAt.getTime()
+const calculateRecordSummary = (record: Record) : CycleGraphRecord => {
+    const mergedAt = record.merged_at.getTime()
+    const prodDeployedAt = record.created_at.getTime()
+    const openedAt = record.opened_at.getTime()
 
     const totalCycle = parseFloat(((prodDeployedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
     const timeInPR = parseFloat(((mergedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
-    const timeInPipeline = parseFloat(((devDeployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
-    const timeInDev = parseFloat(((testDeployedAt - devDeployedAt) / (1000 * 60 * 60)).toFixed(2))
-    const timeInTest = parseFloat(((prodDeployedAt - testDeployedAt) / (1000 * 60 * 60)).toFixed(2))
-    const start = (new Date(record.mergedAt.toISOString().split('T')[0])).getTime()
+    const timeInTest = parseFloat(((prodDeployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
+    const start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
 
     return {
         totalCycle,
         start,
         timeInPR,
-        timeInPipeline,
-        timeInDev,
         timeInTest,
         data: record
     }
 }
 
-const buildMeans = (data: Map<string, CycleGraphRecord[]>) : CycleMeanRecord[] => {
-    const groupedData = new Map<number, CycleGraphRecord[]>();
-
-    data.forEach((records, key) => {
-        records.forEach(record => {
-            const dateKey = (new Date(record.data.openedAt.toISOString().split('T')[0])).getTime()
-            
-            if (!groupedData.has(dateKey)) {
-                groupedData.set(dateKey, [])
-            }
-
-            groupedData.get(dateKey)!.push(record)
-        })
-    })
-
-    const meansByDay : CycleMeanRecord[] = []
-
-    groupedData.forEach((records, date) => {
-        const totalRecords = records.length;
-        const totalTimeInPipeline = records.reduce((sum, record) => sum + record.timeInPipeline, 0)
-        const totalTimeInPR = records.reduce((sum, record) => sum + record.timeInPR, 0)
-        const totalTimeInDev = records.reduce((sum, record) => sum + record.timeInDev, 0)
-        const totalTimeInTest = records.reduce((sum, record) => sum + record.timeInTest, 0)
-
-        meansByDay.push({
-            start: date,
-            meanTimeInPipeline: totalTimeInPipeline / totalRecords,
-            meanTimeInPR: totalTimeInPR / totalRecords,
-            meanTimeInDev: totalTimeInDev / totalRecords,
-            meanTimeInTest: totalTimeInTest / totalRecords
-        })
-    })
-
-    meansByDay.sort((l, r) => l.start - r.start)
-
-    return meansByDay
-}
-
-const ChangeLeadTime : React.FC<ChangeLeadTimeProps> = (props: ChangeLeadTimeProps) => {
+const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [cycleData, setCycleData] = useState<Map<string, CycleGraphRecord[]>>(new Map<string, CycleGraphRecord[]>())
     // const [meanData, setMeanData] = useState<CycleMeanRecord[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupCycleData = useCallback((data: CycleRecord[]) : Map<string, CycleGraphRecord[]> => {
+    const filterAndGroupCycleData = useCallback((data: Record[]) : Map<string, CycleGraphRecord[]> => {
         return data.reduce((acc, record) => {
             const dateKey = record.repository
 
@@ -104,33 +50,15 @@ const ChangeLeadTime : React.FC<ChangeLeadTimeProps> = (props: ChangeLeadTimePro
         }, new Map<string, CycleGraphRecord[]>())
     }, [props.repositories, props.team])
 
-    const organizeData = useCallback((data: CycleRecord[]) => {
+    const organizeData = useCallback((data: Record[]) => {
         const groupedData = filterAndGroupCycleData(data)
-        // const meanData = buildMeans(groupedData)
         setCycleData(groupedData)
-        // setMeanData(meanData)
         setColors(generateDistinctColors(groupedData.size))
     }, [filterAndGroupCycleData])
 
     useEffect(() => {
-        if(!props.data) {
-            if(!props.api) {
-                return;
-            }
-            
-            const body = {
-                repositories: props.repositories,
-                team: props.team,
-                start: props.start,
-                end: props.end
-            }
-            
-            fetchData(props.api, body, cycleRecordReviver, organizeData, props.getAuthHeaderValue)
-        } else {
-            const data: CycleRecord[] = JSON.parse(props.data, cycleRecordReviver)
-            organizeData(data)
-        }
-    }, [props.api, props.repositories, props.team, props.start, props.end, props.data, organizeData])
+        fetchData(props, organizeData)
+    }, [props])
 
     return (
         <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
