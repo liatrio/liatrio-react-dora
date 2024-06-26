@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.1.3 (2024-06-26)
+
+### Fix
+
+* fix: account for &#39;records&#39; property from api ([`4cab273`](https://github.com/liatrio/liatrio-react-dora/commit/4cab273d6b22b2ab2c7f2ff1b22e5c3477b989e6))
+
 ## v0.1.2 (2024-06-20)
 
 ### Fix
