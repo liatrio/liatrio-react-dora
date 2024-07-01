@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v0.2.0 (2024-07-01)
+
+### Feature
+
+* feat: Score card (#15)
+
+* fix: update components to use new condensed api endpoint
+
+* chore: skeleton of ScoreCard
+
+* fix: code cleanup
+
+* fix: make score board dynamic
+
+* fix: make popover look a little better ([`d62de35`](https://github.com/liatrio/liatrio-react-dora/commit/d62de356e9bc2cbc6570a1533f5c0033f7afbc85))
+
 ## v0.1.3 (2024-06-26)
 
 ### Fix
