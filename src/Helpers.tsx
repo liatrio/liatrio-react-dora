@@ -107,7 +107,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
       
       const parsedData = JSON.parse(json, recordReviver)
 
-      onSuccess(parsedData)
+      onSuccess(parsedData.records)
   } catch (error) {
       if(onFailure) {
         onFailure(error)

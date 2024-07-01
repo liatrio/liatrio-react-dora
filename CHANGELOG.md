@@ -1,13 +1,22 @@
 # CHANGELOG
 
+## v0.1.3 (2024-06-26)
 
+### Fix
+
+* fix: account for &#39;records&#39; property from api ([`4cab273`](https://github.com/liatrio/liatrio-react-dora/commit/4cab273d6b22b2ab2c7f2ff1b22e5c3477b989e6))
+
+## v0.1.2 (2024-06-20)
+
+### Fix
+
+* fix: update components to use new condensed api endpoint (#14) ([`755a113`](https://github.com/liatrio/liatrio-react-dora/commit/755a1136221d837675b46cc5b268223b60228c87))
 
 ## v0.1.1 (2024-06-14)
 
 ### Fix
 
 * fix: adjust file version ([`bc4e52e`](https://github.com/liatrio/liatrio-react-dora/commit/bc4e52e0103185517ab8b91ab4aa501639eb1df0))
-
 
 ## v0.1.0 (2024-06-14)
 
@@ -23,13 +32,11 @@
 
 * add usage to readme ([`10f9c43`](https://github.com/liatrio/liatrio-react-dora/commit/10f9c43b22df35295f0d6ff3a78536dfb1cd3bdf))
 
-
 ## v0.0.7 (2024-06-04)
 
 ### Fix
 
 * fix: add README, make  optional ([`a574af7`](https://github.com/liatrio/liatrio-react-dora/commit/a574af7e0eb6eed2facab761d81d9c7fa5a1a434))
-
 
 ## v0.0.6 (2024-06-03)
 
@@ -37,13 +44,11 @@
 
 * fix: add a way to supply auto to the api ([`8a131a0`](https://github.com/liatrio/liatrio-react-dora/commit/8a131a0ce6fbc48df888879f85f827c7f1db019d))
 
-
 ## v0.0.5 (2024-05-28)
 
 ### Fix
 
 * fix(DF): don&#39;t require team ([`fc74098`](https://github.com/liatrio/liatrio-react-dora/commit/fc740986f8c6294290cbebf186756296b5b318d9))
-
 
 ## v0.0.4 (2024-05-25)
 
@@ -51,20 +56,17 @@
 
 * fix(dep): be more flexible with react/ts peer dep: ([`6f1090d`](https://github.com/liatrio/liatrio-react-dora/commit/6f1090d1a37b0ccbb608108da2f400f88e210658))
 
-
 ## v0.0.3 (2024-05-24)
 
 ### Fix
 
 * fix(workflow): syntax error in shell script ([`6253bfa`](https://github.com/liatrio/liatrio-react-dora/commit/6253bfa950cb516ad88c22794b03396b266ea49b))
 
-
 ## v0.0.2 (2024-05-24)
 
 ### Fix
 
 * fix(workflow): adjust bad shell script ([`67cdebe`](https://github.com/liatrio/liatrio-react-dora/commit/67cdebe1207804518c99cd9803bc34e101998e9d))
-
 
 ## v0.0.1 (2024-05-24)
 
@@ -73,7 +75,6 @@
 * fix(workflow): prevent recursive workflows ([`ee41147`](https://github.com/liatrio/liatrio-react-dora/commit/ee41147fdb186b78281bde1a13aa84faf9b2fbce))
 
 * fix(workflow): use the gitref as the tag instead of searching for it ([`824473a`](https://github.com/liatrio/liatrio-react-dora/commit/824473ab90c0a519f8a40d2ed4a21599df2d77d7))
-
 
 ## v0.0.0 (2024-05-24)
 
