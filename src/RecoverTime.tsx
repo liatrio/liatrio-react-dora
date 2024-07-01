@@ -1,90 +1,53 @@
 import React, { useState, useEffect } from 'react'
-import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList, LineChart, Line } from 'recharts'
-import { fetchData, generateDistinctColors, Props, Record } from './Helpers'
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LineChart, Line } from 'recharts'
+import { extractUniqueRepositories, fetchData, generateDistinctColors, Props, Record } from './Helpers'
+
+export const extractAvgRecoverTimePerDay = (data: Record[]) => {
+    let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
+        const date = record.created_at.toISOString().split('T')[0]
+        let entry = acc.get(date)
+
+        if (!entry) {
+            entry = {
+                date: date
+            }
+
+            acc.set(date, entry)
+        }
+
+        if(!entry[record.repository]) {
+            entry[record.repository] = {
+                count: 1,
+                totalTime: record.recoverTime,
+                avgTime: record.recoverTime
+            }
+        } else {
+            entry[record.repository].count++
+            entry[record.repository].totalTime += record.recoverTime
+            entry[record.repository].avgTime += entry[record.repository].totalTime / entry[record.repository].count
+        }
+    
+        return acc
+    }, new Map<string, Record[]>())
+
+    return Array.from(reduced.values())
+}
 
 const RecoverTime : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
-    const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
+    const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupData = (data: Record[]) : Map<string, Record[]> => {
-        return data.reduce((acc, record) => {
-            const dateKey = record.created_at.toISOString().split('T')[0]
-
-            if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
-                || (props.team !== undefined && record.team !== props.team)
-            ) {
-                return acc
-            }
-
-            if (!acc.has(dateKey)) {
-                acc.set(dateKey, [])
-            }
-
-            acc.get(dateKey)?.push(record)
-        
-            return acc
-        }, new Map<string, Record[]>())
-    }
-
-    const summarizeAndColorizeData = (data: Map<string, Record[]>) => {
-        const graphData: any[] = []
-        const repositoryColors: {color: number, name: string}[] = []
-        
-        for(const date of data.keys()) {
-            const records = data.get(date)
-
-            let dayData: any = {
-                date: date,
-            }
-
-            for(const record of records ?? []) {
-                const repoDay = dayData[record.repository]
-
-                if(!repoDay) {
-                    let graphRecord: any = {
-                        count: 1,
-                        time: parseFloat(((record.fixed_at.getTime() - record.created_at.getTime()) / (1000 * 60 * 60)).toFixed(2))
-                    }
-
-                    const colorIndex = repositoryColors.findIndex(f => f.name === record.repository)
-
-                    if(colorIndex < 0) {
-                        repositoryColors.push({
-                            color: repositoryColors.length,
-                            name: record.repository
-                        })
-                    }
-
-                    dayData[record.repository] = graphRecord;
-                } else {
-                    repoDay.count += 1
-                    repoDay.time += parseFloat(((record.fixed_at.getTime() - record.created_at.getTime()) / (1000 * 60 * 60)).toFixed(2))
-                }
-            }
-
-            for(const key in dayData) {
-                if(key === 'date') {
-                    continue
-                }
-
-                const repoDay = dayData[key]
-
-                dayData[key] = repoDay.time / repoDay.count
-            }
-            
-            graphData.push(dayData)
-        }
-
-        setColors(generateDistinctColors(repositoryColors.length))
-        setGraphData(graphData)
-        setRepositories(repositoryColors)
-    }
-
     const organizeData = (data: Record[]) => {
-        const groupedRecordsByCreated = filterAndGroupData(data)
+        const extractedData = extractAvgRecoverTimePerDay(data)
+        
+        setGraphData(extractedData)
 
-        summarizeAndColorizeData(groupedRecordsByCreated)
+        const repositories = extractUniqueRepositories(data)
+
+        setRepositories(repositories)
+
+        setColors(generateDistinctColors(repositories.length))
     }
 
     useEffect(() => {
@@ -117,7 +80,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
                     />
                     <ReferenceLine y={0} stroke="#000" />
                     {repositories.map((repo, idx) => (
-                        <Line key={idx} dataKey={repo.name} fill={colors[repo.color]} />
+                        <Line key={repo} dataKey={`${repo}.avgTime`} fill={colors[idx]} />
                     ))}
                 </LineChart>
             </ResponsiveContainer>

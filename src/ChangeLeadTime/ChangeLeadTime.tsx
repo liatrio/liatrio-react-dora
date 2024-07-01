@@ -2,59 +2,33 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { fetchData, generateDistinctColors, Record, Props } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
-import { CycleGraphRecord } from './ChangeLeadTime.types'
 
-const calculateRecordSummary = (record: Record) : CycleGraphRecord => {
-    const mergedAt = record.merged_at.getTime()
-    const prodDeployedAt = record.created_at.getTime()
-    const openedAt = record.opened_at.getTime()
+export const extractChangeLeadTimePerRepository = (data: Record[]) => {
+    let reduced = data.reduce((acc, record) => {
+        const repository = record.repository
 
-    const totalCycle = parseFloat(((prodDeployedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
-    const timeInPR = parseFloat(((mergedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
-    const timeInTest = parseFloat(((prodDeployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
-    const start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
+        if (!acc.has(repository)) {
+            acc.set(repository, [])
+        }
 
-    return {
-        totalCycle,
-        start,
-        timeInPR,
-        timeInTest,
-        data: record
-    }
+        acc.get(repository)?.push(record)
+    
+        return acc
+    }, new Map<string, Record[]>())
+
+    return reduced
 }
 
 const ChangeLeadTime : React.FC<Props> = (props: Props) => {
-    const [cycleData, setCycleData] = useState<Map<string, CycleGraphRecord[]>>(new Map<string, CycleGraphRecord[]>())
-    // const [meanData, setMeanData] = useState<CycleMeanRecord[]>([])
+    const [graphData, setGraphData] = useState<Map<string, Record[]>>(new Map<string, Record[]>())
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupCycleData = useCallback((data: Record[]) : Map<string, CycleGraphRecord[]> => {
-        return data.reduce((acc, record) => {
-            const dateKey = record.repository
-
-            if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
-                || (props.team !== undefined && record.team !== props.team)
-            ) {
-                return acc
-            }
-
-            if (!acc.has(dateKey)) {
-                acc.set(dateKey, [])
-            }
-
-            const summaryRecord = calculateRecordSummary(record)
-
-            acc.get(dateKey)?.push(summaryRecord)
-        
-            return acc
-        }, new Map<string, CycleGraphRecord[]>())
-    }, [props.repositories, props.team])
-
     const organizeData = useCallback((data: Record[]) => {
-        const groupedData = filterAndGroupCycleData(data)
-        setCycleData(groupedData)
-        setColors(generateDistinctColors(groupedData.size))
-    }, [filterAndGroupCycleData])
+        const extractedData = extractChangeLeadTimePerRepository(data)
+        setGraphData(extractedData)
+
+        setColors(generateDistinctColors(extractedData.size))
+    }, [])
 
     useEffect(() => {
         fetchData(props, organizeData)
@@ -76,8 +50,8 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit="hrs" />
                     <Tooltip content={<ChangeLeadTimeTooltip />} />
                     <Legend />
-                    {Array.from(cycleData.keys()).map((key, idx) => (
-                        <Scatter key={key} name={key} data={cycleData.get(key)} fill={colors[idx]} />
+                    {Array.from(graphData.keys()).map((key, idx) => (
+                        <Scatter key={key} name={key} data={graphData.get(key)} fill={colors[idx]} />
                     ))}
                 </ScatterChart>
             </ResponsiveContainer>
