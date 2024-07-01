@@ -1,74 +1,50 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Treemap, ReferenceLine, LabelList } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props} from './Helpers'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts'
+import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories} from './Helpers'
+
+export const extractDeploymentsPerDay = (data: Record[]) => {
+    const reduced = data.reduce((acc: Map<string, any>, record: Record) => {
+        if(record.status === false) {
+            return acc
+        }
+
+        const date = record.created_at.toISOString().split('T')[0]
+        let entry = acc.get(date)
+
+        if (!entry) {
+            entry = {
+                date: date
+            }
+
+            acc.set(date, entry)
+        }
+
+        if(!entry[record.repository]) {
+            entry[record.repository] = 1
+        } else {
+            entry[record.repository]++
+        }
+    
+        return acc
+    }, new Map<string, Record[]>())
+
+    return Array.from(reduced.values())
+}
 
 const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
-    const [repositories, setRepositories] = useState<{color: number, name: string}[]>([])
+    const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
 
-    const filterAndGroupData = (data: Record[]) : Map<string, Record[]> => {
-        return data.reduce((acc, record) => {
-            const dateKey = record.created_at.toISOString().split('T')[0]
-
-            if((props.repositories && props.repositories.length > 0 && !props.repositories.includes(record.repository))
-                || (props.team !== undefined && record.team !== props.team)
-            ) {
-                return acc
-            }
-
-            if (!acc.has(dateKey)) {
-                acc.set(dateKey, [])
-            }
-
-            acc.get(dateKey)?.push(record)
-        
-            return acc
-        }, new Map<string, Record[]>())
-    }
-
-    const summarizeAndColorizeData = (data: Map<string, Record[]>) => {
-        const graphData: any[] = []
-        const repositoryColors: {color: number, name: string}[] = []
-        
-        for(const date of data.keys()) {
-            const records = data.get(date)
-
-            let dayData: any = {
-                date: date,
-            }
-
-            for(const record of records ?? []) {
-                const count = dayData[record.repository]
-
-                if(!count) {
-                    dayData[record.repository] = 1
-
-                    const colorIndex = repositoryColors.findIndex(f => f.name === record.repository)
-
-                    if(colorIndex < 0) {
-                        repositoryColors.push({
-                            color: repositoryColors.length,
-                            name: record.repository
-                        })
-                    }
-                } else {
-                    dayData[record.repository] = count + 1
-                }
-            }
-            
-            graphData.push(dayData)
-        }
-
-        setColors(generateDistinctColors(repositoryColors.length))
-        setGraphData(graphData)
-        setRepositories(repositoryColors)
-    }
-
     const organizeData = (data: Record[]) => {
-        const groupedRecordsByCreated = filterAndGroupData(data)
+        const extractedData = extractDeploymentsPerDay(data)
+        setGraphData(extractedData)
 
-        summarizeAndColorizeData(groupedRecordsByCreated)
+        const repositories = extractUniqueRepositories(data)
+
+        setRepositories(repositories)
+
+        setColors(generateDistinctColors(repositories.length))
     }
 
     useEffect(() => {
@@ -101,8 +77,8 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     />
                     <ReferenceLine y={0} stroke="#000" />
                     {repositories.map((repo, idx) => (
-                        <Bar key={idx} dataKey={repo.name} stackId="a" fill={colors[repo.color]}>
-                            <LabelList dataKey={repo.name} fontWeight="bold" fontSize='16' fill='#000000' />
+                        <Bar key={idx} dataKey={repo} stackId="a" fill={colors[idx]}>
+                            <LabelList dataKey={repo} fontWeight="bold" fontSize='16' fill='#000000' />
                         </Bar>
                     ))}
                 </BarChart>

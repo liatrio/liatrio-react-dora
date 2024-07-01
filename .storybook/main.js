@@ -5,5 +5,7 @@ module.exports = {
   framework: {
     name: '@storybook/react-webpack5',
     options: {}
-  }
+  },
+
+  staticDirs: [{from:'../images',to:'/images'}]
 }

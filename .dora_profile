@@ -1,0 +1,8 @@
+target_change_lead_time=2h
+max_change_lead_time=8h
+target_recovery_rate=1h
+max_recovery_rate=2h
+target_deployment_frequency=1d
+max_deployment_frequency=1w
+target_change_failure_rate=0%
+max_change_failure_rate=10%

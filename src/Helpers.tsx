@@ -1,24 +1,33 @@
 export interface Props {
-  api?: string,
-  getAuthHeaderValue?: () => Promise<string | undefined>,
-  team?: string,
-  repositories?: string[],
-  data?: string,
-  end?: Date,
+  api?: string
+  getAuthHeaderValue?: () => Promise<string | undefined>
+  team?: string
+  repositories?: string[]
+  data?: string
+  end?: Date
   start?: Date
 }
 
 export interface Record {
-  repository: string,
+  repository: string
   team: string
-  title: string,
-  user: string,
-  sha: string,
-  status: boolean,
-  opened_at: Date,
-  merged_at: Date,
-  created_at: Date,
+  title: string
+  user: string
+  sha: string
+  status: boolean
+  opened_at: Date
+  merged_at: Date
+  created_at: Date
   fixed_at: Date
+  totalCycle: number
+  start: number
+  timeInPR: number
+  timeInTest: number
+  recoverTime: number
+}
+
+export interface SummurizedRecord {
+
 }
 
 const date_keys = ['opened_at', 'merged_at', 'created_at', 'fixed_at']
@@ -39,6 +48,16 @@ const hslToHex = (h: number, s: number, l: number) => {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
 
+export const extractUniqueRepositories = (data: Record[]) => {
+  const repositorySet = new Set<string>()
+
+  data.forEach(record => {
+      repositorySet.add(record.repository)
+  })
+
+  return Array.from(repositorySet)
+}
+
 export const generateDistinctColors = (count: number) => {
   const colors = []
   const goldenRatioConjugate = 0.618033988749895
@@ -54,11 +73,44 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
+export const expandData = (data: Record[]) => {
+  data.forEach((record) => {
+    if(record.merged_at && record.opened_at && record.created_at) {
+      const mergedAt = record.merged_at.getTime()
+      const prodDeployedAt = record.created_at.getTime()
+      const openedAt = record.opened_at.getTime()
+
+      record.totalCycle = parseFloat(((prodDeployedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
+      record.timeInPR = parseFloat(((mergedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
+      record.timeInTest = parseFloat(((prodDeployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
+      record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
+    }
+
+    if(record.fixed_at && record.created_at) {
+      record.recoverTime = parseFloat(((record.fixed_at.getTime() - record.created_at.getTime()) / (1000 * 60 * 60)).toFixed(2))
+    }
+  })
+}
+
+export const filterData = (props: Props, data: Record[]) : Record[] => {
+  return data.filter(record => {
+    const repositoryMatch = props.repositories === undefined || props.repositories.length === 0 || props.repositories.includes(record.repository)
+    const teamMatch = !props.team || record.team === props.team
+    return repositoryMatch && teamMatch
+  });
+}
+
 export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
 
   if(props.data) {
-    const data: Record[] = JSON.parse(props.data, recordReviver)
-    onSuccess(data)
+    let parsedData: Record[] = JSON.parse(props.data, recordReviver)
+
+    parsedData = filterData(props, parsedData)
+
+    expandData(parsedData)
+
+    onSuccess(parsedData)
+
     return
   }
 
@@ -105,7 +157,11 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
       const response = await fetch(props.api, options)
       const json = await response.text()
       
-      const parsedData = JSON.parse(json, recordReviver)
+      let parsedData = JSON.parse(json, recordReviver)
+
+      parsedData = filterData(props, parsedData)
+
+      expandData(parsedData)
 
       onSuccess(parsedData.records)
   } catch (error) {
