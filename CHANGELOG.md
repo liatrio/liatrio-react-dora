@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.1 (2024-07-01)
+
+### Fix
+
+* fix: expose fetchData ([`ecb7c74`](https://github.com/liatrio/liatrio-react-dora/commit/ecb7c74faf035d938858d80d2cc4eec86505619f))
+
 ## v0.2.0 (2024-07-01)
 
 ### Feature
