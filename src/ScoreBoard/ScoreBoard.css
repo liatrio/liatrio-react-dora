@@ -27,3 +27,10 @@
   color: white;
 }
 
+.popover-content {
+  background-color: #494949;
+  border: 2px solid #494949;
+  border-radius: 10px;
+  padding: 10px;
+  color: white;
+}
