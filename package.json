@@ -5,7 +5,10 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types.d.ts",
-  "files": ["./dist", "LICENSE"],
+  "files": [
+    "./dist",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "npm run clean && tsc",
     "rollup": "rollup -c --bundleConfigAsCjs",
@@ -58,6 +61,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "react-tiny-popover": "^8.0.4",
     "recharts": "^2.12.7"
   }
 }
