@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.2.7 (2024-07-02)
+
+### Fix
+
+* fix: remove unnecessary fields ([`5d133e4`](https://github.com/liatrio/liatrio-react-dora/commit/5d133e4a14886fc2256e7f64aa52441e5806d8b6))
+
+* fix: remove unnecessary fields ([`d95e388`](https://github.com/liatrio/liatrio-react-dora/commit/d95e38879de6bc5927d4eea972fbe2c767a08c56))
+
 ## v0.2.6 (2024-07-02)
 
 ### Fix
