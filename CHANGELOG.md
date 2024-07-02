@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.9 (2024-07-02)
+
+### Fix
+
+* fix: change type ([`1f84417`](https://github.com/liatrio/liatrio-react-dora/commit/1f84417f9ea56645aec6802d993804e60918f597))
+
 ## v0.2.8 (2024-07-02)
 
 ### Fix
