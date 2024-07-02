@@ -56,7 +56,9 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     }, [props])
 
     return (
-        <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>
+        <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%", paddingBottom: "10px", border: "1px solid white", borderRadius: "10px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+            <div style={{color: "white", paddingTop: "10px"}}>Change Failure Rate</div>
+            <hr style={{width: "100%", position: "relative", left: "-1px"}}/>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     width={500}
