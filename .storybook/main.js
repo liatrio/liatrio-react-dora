@@ -7,5 +7,5 @@ module.exports = {
     options: {}
   },
 
-  staticDirs: [{from:'../images',to:'/images'}]
+  staticDirs: [{from:'../src/assets',to:'/src/assets'}]
 }

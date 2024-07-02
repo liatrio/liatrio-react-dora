@@ -5,6 +5,7 @@ import dts from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
+import url from '@rollup/plugin-url';
 
 const packageJson = require("./package.json");
 
@@ -30,6 +31,13 @@ export default [
       typescript({ tsconfig: "./tsconfig.json" }),
       terser(),
       postcss(),
+      url({
+        include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.gif'],
+        limit: 8192,
+        emitFiles: true,
+        fileName: '[name][hash][extname]',
+        sourceDir: path.join(__dirname, 'src'),
+      }),
     ],
     external: ["react", "react-dom"],
   },
