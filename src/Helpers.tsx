@@ -99,7 +99,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
   if(props.data) {
     let parsedData: Record[] = JSON.parse(props.data, recordReviver)
 
-    parsedData = filterData(props, parsedData)
+    parsedData = filterData(props, parsedData.records)
 
     expandData(parsedData)
 

@@ -46,7 +46,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     }}
                 >
                     <CartesianGrid />
-                    <XAxis type="number" dataKey="start" name="Date" domain={['auto', 'auto']} tickFormatter={(date: string | number | Date) => { console.log(date); return (new Date(date)).toLocaleDateString(); } }/>
+                    <XAxis type="number" dataKey="start" name="Date" domain={['auto', 'auto']} tickFormatter={(date: string | number | Date) => { return (new Date(date)).toLocaleDateString(); } }/>
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit="hrs" />
                     <Tooltip content={<ChangeLeadTimeTooltip />} />
                     <Legend />
