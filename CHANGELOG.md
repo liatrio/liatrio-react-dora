@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.8 (2024-07-02)
+
+### Fix
+
+* fix: change data inputs to account for records ([`d0450fd`](https://github.com/liatrio/liatrio-react-dora/commit/d0450fd46cbdd2dc9e6f2c414a8f80ebc9292ef5))
+
 ## v0.2.7 (2024-07-02)
 
 ### Fix
