@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.6 (2024-07-02)
+
+### Fix
+
+* fix: remove styling ([`11148bb`](https://github.com/liatrio/liatrio-react-dora/commit/11148bb58920f3b9e2f9f92cb4fb80b1bd3c4776))
+
 ## v0.2.5 (2024-07-02)
 
 ### Fix
