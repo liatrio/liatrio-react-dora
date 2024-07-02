@@ -15,7 +15,6 @@ export interface Record {
   user: string
   sha: string
   status: boolean
-  opened_at: Date
   merged_at: Date
   created_at: Date
   fixed_at: Date
@@ -30,7 +29,7 @@ export interface SummurizedRecord {
 
 }
 
-const date_keys = ['opened_at', 'merged_at', 'created_at', 'fixed_at']
+const date_keys = ['merged_at', 'created_at', 'fixed_at']
 
 export const recordReviver = (key: string, value: any) => {
   if (date_keys.includes(key)) {
@@ -75,14 +74,11 @@ export const generateDistinctColors = (count: number) => {
 
 export const expandData = (data: Record[]) => {
   data.forEach((record) => {
-    if(record.merged_at && record.opened_at && record.created_at) {
+    if(record.merged_at && record.created_at) {
       const mergedAt = record.merged_at.getTime()
-      const prodDeployedAt = record.created_at.getTime()
-      const openedAt = record.opened_at.getTime()
+      const deployedAt = record.created_at.getTime()
 
-      record.totalCycle = parseFloat(((prodDeployedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
-      record.timeInPR = parseFloat(((mergedAt - openedAt) / (1000 * 60 * 60)).toFixed(2))
-      record.timeInTest = parseFloat(((prodDeployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
+      record.totalCycle = parseFloat(((deployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
