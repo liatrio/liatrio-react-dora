@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.2 (2024-07-02)
+
+### Fix
+
+* fix: add images to deployment ([`0fbb808`](https://github.com/liatrio/liatrio-react-dora/commit/0fbb8084394fb1752bf62ff294cf6e81aed9423b))
+
 ## v0.2.1 (2024-07-01)
 
 ### Fix
