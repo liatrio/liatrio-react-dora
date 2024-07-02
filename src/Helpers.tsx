@@ -97,7 +97,7 @@ export const filterData = (props: Props, data: Record[]) : Record[] => {
 export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
 
   if(props.data) {
-    let parsedData: Record[] = JSON.parse(props.data, recordReviver)
+    let parsedData: any = JSON.parse(props.data, recordReviver)
 
     parsedData = filterData(props, parsedData.records)
 
