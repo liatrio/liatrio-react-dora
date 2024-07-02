@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.3 (2024-07-02)
+
+### Fix
+
+* fix: add missing import for path ([`c6b2bf0`](https://github.com/liatrio/liatrio-react-dora/commit/c6b2bf02d2c821e86c621d84c22a7fc42069c349))
+
 ## v0.2.2 (2024-07-02)
 
 ### Fix
