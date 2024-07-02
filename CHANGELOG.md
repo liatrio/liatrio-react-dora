@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.4 (2024-07-02)
+
+### Fix
+
+* fix: up image size ([`fb504d6`](https://github.com/liatrio/liatrio-react-dora/commit/fb504d6b86e1a5a287981898e2b3b1accb794d4d))
+
 ## v0.2.3 (2024-07-02)
 
 ### Fix
