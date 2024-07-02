@@ -6,6 +6,7 @@ import terser from "@rollup/plugin-terser";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import url from '@rollup/plugin-url';
+import path from 'path';
 
 const packageJson = require("./package.json");
 
