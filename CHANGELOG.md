@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.5 (2024-07-02)
+
+### Fix
+
+* fix: put charts in containers with titles ([`511e0c6`](https://github.com/liatrio/liatrio-react-dora/commit/511e0c62626c598b60906b03129f3e7b30384730))
+
 ## v0.2.4 (2024-07-02)
 
 ### Fix
