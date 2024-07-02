@@ -20,8 +20,6 @@ export interface Record {
   fixed_at: Date
   totalCycle: number
   start: number
-  timeInPR: number
-  timeInTest: number
   recoverTime: number
 }
 
