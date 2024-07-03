@@ -3,7 +3,7 @@ export interface Props {
   getAuthHeaderValue?: () => Promise<string | undefined>
   team?: string
   repositories?: string[]
-  data?: string
+  data?: any
   end?: Date
   start?: Date
 }
@@ -97,7 +97,7 @@ export const filterData = (props: Props, data: Record[]) : Record[] => {
 export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
 
   if(props.data) {
-    let parsedData: any = JSON.parse(props.data, recordReviver)
+    let parsedData: any = typeof props.data === "string" ? JSON.parse(props.data, recordReviver) : props.data
 
     parsedData = filterData(props, parsedData.records === undefined ? parsedData : parsedData.records)
 
@@ -150,10 +150,10 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
   try {
       const response = await fetch(props.api, options)
       const json = await response.text()
-      
+
       let parsedData = JSON.parse(json, recordReviver)
 
-      parsedData = filterData(props, parsedData.records === undefined ? parsedData : parsedData.records)
+      parsedData = filterData(props, parsedData.records)
 
       expandData(parsedData)
 
