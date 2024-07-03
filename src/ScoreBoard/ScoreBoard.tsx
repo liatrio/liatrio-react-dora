@@ -19,40 +19,24 @@ interface ScoreBoardState {
   CLTColor: string,
   RTColor: string,
   RTRate: number,
-  DFRate: string,
+  DFRate: number,
   CFRRate: number,
   CLTRate: number,
-}
-
-const getTimeFrame = (props: Props) : number => {
-  let end = props.end
-  let start = props.start
-
-  if(!end) {
-    end = new Date()
-  }
-
-  if(!start) {
-    start = new Date()
-    start.setDate(end.getDate() - 30)
-  }
-
-  return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
 }
 
 const calculateCFRRate = (data: Record[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true).length
   const totalFailedRecords = data.filter(f => f.status === false).length
 
-  return totalFailedRecords / totalSuccessfulRecords
+  return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
 }
 
 const calculatCFRColor = (rate: number) : string => {
-  if(rate === 0) {
+  if(rate < 15) {
     return greenFilter
-  } else if(rate <= 33.33) {
+  } else if(rate <= 30) {
     return yellowFilter
-  } else if(rate <= 66.66) {
+  } else if(rate <= 45) {
     return orangeFilter
   } else {
     return redFilter
@@ -60,7 +44,7 @@ const calculatCFRColor = (rate: number) : string => {
 }
 
 const calculateCLTRate = (data: Record[]) : number => {
-  let totalSuccessfulRecords = 1
+  let totalSuccessfulRecords = 0
   let totalLeadTime = 0
 
   data.forEach(record => {
@@ -69,91 +53,61 @@ const calculateCLTRate = (data: Record[]) : number => {
     }
 
     totalSuccessfulRecords++
-    totalLeadTime += record.totalCycle * 60
+    totalLeadTime += record.totalCycle
   })
 
-  return totalLeadTime / totalSuccessfulRecords
+  return totalLeadTime / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
 }
 
 const calculateCLTColor = (rate: number) : string => {
-  if(rate < 60) {
+  if(rate < 24) {
     return greenFilter
-  } else if(rate < 60 * 24) {
+  } else if(rate < 24 * 7) {
     return yellowFilter
-  } else if(rate < 60 * 24 * 7) {
+  } else if(rate < 24 * 7 * 4.33) {
     return orangeFilter
   } else {
     return redFilter
   }
 }
 
-const calculateDFRate = (data: Record[]) : string => {
+const MaxDF = 1000000
+
+const calculateDFRate = (props: Props, data: Record[]) : number => {
   let sorted = data
     .filter(f => f.status === true)
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
-
-  let categoryCounts: any = {
-    hourly: 0,
-    daily: 0,
-    weekly: 0,
-    monthly: 0,
-    biannually: 0,
-    longer: 0
-  }
   
+  if(sorted.length === 0) {
+    return MaxDF
+  }
+
+  let totalDeployTime = 0
+
   for(let index = 1; index < sorted.length; index++) {
     let diff = sorted[index].created_at.getTime() - sorted[index - 1].created_at.getTime()
-
-    const oneHour = 60 * 60 * 1000;
-    const oneDay = 24 * 60 * 60 * 1000;
-    const oneWeek = 7 * oneDay;
-    const oneMonth = 30.44 * oneDay; 
-    const halfYear = oneMonth * 6;
-
-    if(diff <= oneHour) {
-      categoryCounts.hourly++
-    } else if (diff <= oneDay) {
-      categoryCounts.daily++
-    } else if (diff <= oneWeek) {
-      categoryCounts.weekly++
-    } else if (diff <= oneMonth) {
-      categoryCounts.monthly++
-    } else if (diff <= halfYear) {
-      categoryCounts.biannually++
-    } else {
-      categoryCounts.longer++
-    }
-  }
-
-  let mostCommon = ''
-  let highest = 0
-
-  for(const category in categoryCounts) {
-    const count = categoryCounts[category]
-
-    if(count > highest) {
-      highest = count
-      mostCommon = category
-    }
+    totalDeployTime += diff
   }
   
-  return mostCommon
+  let avgDeployTime = (totalDeployTime / sorted.length) / (1000 * 60 * 60)
+  
+  return avgDeployTime
 }
 
-const calculateDFColor = (rate: string) : string => {
-  if(rate === "biannually") {
-    return redFilter
-  } else if(rate === "monthly") {
-    return orangeFilter
-  } else if(rate === "weekly") {
+const calculateDFColor = (rate: number) : string => {
+  if(rate < 12) {
+    return greenFilter
+  } else if(rate < 24 * 7) {
+    return yellowFilter
+  } else if(rate < 24 * 7 * 4.33) {
     return yellowFilter
   } else {
-    return greenFilter
+    return redFilter
   }
 }
 
 const calculateRTRate = (data: Record[]) : number => {
-  let totalFailedRecords = 1
+  let totalFailedRecords = 0
   let totalRecoveryTime = 0
 
   data.forEach(record => {
@@ -162,18 +116,18 @@ const calculateRTRate = (data: Record[]) : number => {
     }
 
     totalFailedRecords++
-    totalRecoveryTime += record.recoverTime * 60
+    totalRecoveryTime += record.recoverTime
   })
 
-  return totalRecoveryTime / totalFailedRecords
+  return totalRecoveryTime / (totalFailedRecords === 0 ? 1 : totalFailedRecords)
 }
 
 const calculateRTColor = (rate: number) : string => {
-  if(rate < 60 ) {
+  if(rate < 1 ) {
     return greenFilter
-  } else if(rate < 60 * 24) {
+  } else if(rate < 24) {
     return yellowFilter
-  } else if(rate < 60 * 24 * 7) {
+  } else if(rate < 24 * 7) {
     return orangeFilter
   } else {
     return redFilter
@@ -186,7 +140,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     CLTColor: redFilter,
     CFRColor: redFilter,
     RTColor: redFilter,
-    DFRate: "longer",
+    DFRate: 0,
     CLTRate: 0,
     CFRRate: 0,
     RTRate: 0,
@@ -198,9 +152,8 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   const [showCLTPO, setShowCLTPO] = useState(false);
 
   const organizeData = (data: Record[]) => {
-    const timeFrame = getTimeFrame(props)
 
-    const dfRate = calculateDFRate(data)
+    const dfRate = calculateDFRate(props, data)
     const cltRate = calculateCLTRate(data)
     const cfrRate = calculateCFRRate(data)
     const rtRate = calculateRTRate(data)
@@ -238,7 +191,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Deployment Frequency: {state.DFRate}</span></div>
+              <div className="popover-content"><span >Average Deployment Frequency: {state.DFRate === MaxDF ? "Unknown" : state.DFRate.toFixed(2)} hrs</span></div>
             </div>
           </ArrowContainer>
         )}
@@ -263,7 +216,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Change Lead Time: {(state.CLTRate / 60).toFixed(2)} hrs</span></div>
+              <div className="popover-content"><span >Average Change Lead Time: {state.CLTRate.toFixed(2)} hrs</span></div>
             </div>
           </ArrowContainer>
         )}
@@ -313,7 +266,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Recovery Time: {(state.RTRate / 60).toFixed(2)} hrs</span></div>
+              <div className="popover-content"><span >Average Recovery Time: {state.RTRate.toFixed(2)} hrs</span></div>
             </div>
           </ArrowContainer>
         )}
