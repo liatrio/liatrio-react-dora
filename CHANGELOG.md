@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.10 (2024-07-03)
+
+### Fix
+
+* fix: account for missing data in RT and CLT, fix wording ([`4416b04`](https://github.com/liatrio/liatrio-react-dora/commit/4416b04fed0257fa0fd5724bab02113184782da2))
+
 ## v0.2.9 (2024-07-02)
 
 ### Fix
