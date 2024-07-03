@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.12 (2024-07-03)
+
+### Fix
+
+* fix: don&#39;t look at records for onSuccess ([`f1aa9ea`](https://github.com/liatrio/liatrio-react-dora/commit/f1aa9ea479d6b4230323fdcdfaf2cb9a957f683e))
+
 ## v0.2.11 (2024-07-03)
 
 ### Fix
