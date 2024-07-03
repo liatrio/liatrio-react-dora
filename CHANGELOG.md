@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.2.15 (2024-07-03)
+
+### Fix
+
+* fix: filter out default dated fixed_at and merged_at, update test data ([`742b71a`](https://github.com/liatrio/liatrio-react-dora/commit/742b71a3703e575b2f276ecfaf37524174feeb50))
+
+* fix: adjust score board text to be easier to read ([`76ac2c6`](https://github.com/liatrio/liatrio-react-dora/commit/76ac2c63833f3a859eb020a270ce7bd8b4062b40))
+
 ## v0.2.14 (2024-07-03)
 
 ### Fix
