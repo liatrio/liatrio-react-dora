@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.11 (2024-07-03)
+
+### Fix
+
+* fix: supply records to filterData instead of whole object ([`e8296b6`](https://github.com/liatrio/liatrio-react-dora/commit/e8296b693e30123167ea83f95c41faca8100afd2))
+
 ## v0.2.10 (2024-07-03)
 
 ### Fix
