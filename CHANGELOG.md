@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.16 (2024-07-03)
+
+### Fix
+
+* fix: adjust df on score card to use most common frequency ([`4e44fd8`](https://github.com/liatrio/liatrio-react-dora/commit/4e44fd81c16e18157593ead87902fa27bfd16409))
+
 ## v0.2.15 (2024-07-03)
 
 ### Fix
