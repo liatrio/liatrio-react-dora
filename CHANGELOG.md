@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.13 (2024-07-03)
+
+### Fix
+
+* fix: account for missing records field ([`c511288`](https://github.com/liatrio/liatrio-react-dora/commit/c511288c4218ce06544792ef838301a253ce7767))
+
 ## v0.2.12 (2024-07-03)
 
 ### Fix
