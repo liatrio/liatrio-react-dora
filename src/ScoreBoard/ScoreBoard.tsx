@@ -19,7 +19,7 @@ interface ScoreBoardState {
   CLTColor: string,
   RTColor: string,
   RTRate: number,
-  DFRate: number,
+  DFRate: string,
   CFRRate: number,
   CLTRate: number,
 }
@@ -87,18 +87,65 @@ const calculateCLTColor = (rate: number) : string => {
   }
 }
 
-const calculateDFRate = (timeFrame: number, data: Record[]) : number => {
-  const totalSuccessfulRecords = data.filter(f => f.status === true).length
+const calculateDFRate = (data: Record[]) : string => {
+  let sorted = data
+    .filter(f => f.status === true)
+    .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
 
-  return totalSuccessfulRecords / timeFrame
+  let categoryCounts: any = {
+    hourly: 0,
+    daily: 0,
+    weekly: 0,
+    monthly: 0,
+    biannually: 0,
+    longer: 0
+  }
+  
+  for(let index = 1; index < sorted.length; index++) {
+    let diff = sorted[index].created_at.getTime() - sorted[index - 1].created_at.getTime()
+
+    const oneHour = 60 * 60 * 1000;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const oneWeek = 7 * oneDay;
+    const oneMonth = 30.44 * oneDay; 
+    const halfYear = oneMonth * 6;
+
+    if(diff <= oneHour) {
+      categoryCounts.hourly++
+    } else if (diff <= oneDay) {
+      categoryCounts.daily++
+    } else if (diff <= oneWeek) {
+      categoryCounts.weekly++
+    } else if (diff <= oneMonth) {
+      categoryCounts.monthly++
+    } else if (diff <= halfYear) {
+      categoryCounts.biannually++
+    } else {
+      categoryCounts.longer++
+    }
+  }
+
+  let mostCommon = ''
+  let highest = 0
+
+  for(const category in categoryCounts) {
+    const count = categoryCounts[category]
+
+    if(count > highest) {
+      highest = count
+      mostCommon = category
+    }
+  }
+  
+  return mostCommon
 }
 
-const calculateDFColor = (rate: number) : string => {
-  if(rate === 0) {
+const calculateDFColor = (rate: string) : string => {
+  if(rate === "biannually") {
     return redFilter
-  } else if(rate <= 0.25) {
+  } else if(rate === "monthly") {
     return orangeFilter
-  } else if(rate <= 1) {
+  } else if(rate === "weekly") {
     return yellowFilter
   } else {
     return greenFilter
@@ -139,7 +186,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     CLTColor: redFilter,
     CFRColor: redFilter,
     RTColor: redFilter,
-    DFRate: 0,
+    DFRate: "longer",
     CLTRate: 0,
     CFRRate: 0,
     RTRate: 0,
@@ -153,7 +200,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   const organizeData = (data: Record[]) => {
     const timeFrame = getTimeFrame(props)
 
-    const dfRate = calculateDFRate(timeFrame, data)
+    const dfRate = calculateDFRate(data)
     const cltRate = calculateCLTRate(data)
     const cfrRate = calculateCFRRate(data)
     const rtRate = calculateRTRate(data)
@@ -191,7 +238,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Deployment Frequency: {Math.ceil(state.DFRate)} per day</span></div>
+              <div className="popover-content"><span >Deployment Frequency: {state.DFRate}</span></div>
             </div>
           </ArrowContainer>
         )}
