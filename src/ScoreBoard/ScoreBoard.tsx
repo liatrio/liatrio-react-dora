@@ -191,7 +191,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Deployment Frequency: {state.DFRate} per day</span></div>
+              <div className="popover-content"><span >Average Deployment Frequency: {Math.ceil(state.DFRate)} per day</span></div>
             </div>
           </ArrowContainer>
         )}
@@ -241,7 +241,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Change Failure Rate: {state.CFRRate}%</span></div>
+              <div className="popover-content"><span >Average Change Failure Rate: {(state.CFRRate * 100).toFixed(2)}%</span></div>
             </div>
           </ArrowContainer>
         )}
@@ -266,7 +266,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Recovery Time: {state.RTRate / 60} hrs</span></div>
+              <div className="popover-content"><span >Average Recovery Time: {(state.RTRate / 60).toFixed(2)} hrs</span></div>
             </div>
           </ArrowContainer>
         )}
