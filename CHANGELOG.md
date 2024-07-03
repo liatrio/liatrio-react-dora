@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.14 (2024-07-03)
+
+### Fix
+
+* fix: account for props.data being an obj sometimes ([`8921b78`](https://github.com/liatrio/liatrio-react-dora/commit/8921b781d1d14e6dda59003c4dbe646c1c84865a))
+
 ## v0.2.13 (2024-07-03)
 
 ### Fix
