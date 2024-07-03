@@ -64,7 +64,7 @@ const calculateCLTRate = (data: Record[]) : number => {
   let totalLeadTime = 0
 
   data.forEach(record => {
-    if(record.status === false) {
+    if(record.status === false || record.totalCycle === undefined) {
       return
     }
 
@@ -110,7 +110,7 @@ const calculateRTRate = (data: Record[]) : number => {
   let totalRecoveryTime = 0
 
   data.forEach(record => {
-    if(record.status === true) {
+    if(record.status === true || record.recoverTime === undefined) {
       return
     }
 

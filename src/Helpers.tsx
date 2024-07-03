@@ -70,9 +70,16 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
+const isDefaultDate = (date: Date) : boolean => {
+  if(date.getTime() === new Date("1970-01-01T00:00:00Z").getTime()) {
+    return true
+  }
+  return false
+}
+
 export const expandData = (data: Record[]) => {
   data.forEach((record) => {
-    if(record.merged_at && record.created_at) {
+    if(record.merged_at && record.created_at && !isDefaultDate(record.merged_at)) {
       const mergedAt = record.merged_at.getTime()
       const deployedAt = record.created_at.getTime()
 
@@ -80,7 +87,7 @@ export const expandData = (data: Record[]) => {
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
-    if(record.fixed_at && record.created_at) {
+    if(record.fixed_at && record.created_at && !isDefaultDate(record.fixed_at)) {
       record.recoverTime = parseFloat(((record.fixed_at.getTime() - record.created_at.getTime()) / (1000 * 60 * 60)).toFixed(2))
     }
   })
@@ -95,15 +102,23 @@ export const filterData = (props: Props, data: Record[]) : Record[] => {
 }
 
 export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
-
   if(props.data) {
-    let parsedData: any = typeof props.data === "string" ? JSON.parse(props.data, recordReviver) : props.data
+    let data = props.data
+    let parsedData: any = {}
 
-    parsedData = filterData(props, parsedData.records === undefined ? parsedData : parsedData.records)
+    if(typeof data === "string") {
+      parsedData = JSON.parse(data, recordReviver)
+    }
 
-    expandData(parsedData)
+    if(parsedData.records) {
+      parsedData = filterData(props, parsedData.records)
 
-    onSuccess(parsedData)
+      expandData(parsedData)
+
+      onSuccess(parsedData)
+    } else {
+      onSuccess(props.data)
+    }
 
     return
   }
