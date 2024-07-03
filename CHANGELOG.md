@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.17 (2024-07-03)
+
+### Fix
+
+* fix: adjust score board for liatrios opinion ([`dc3bc8d`](https://github.com/liatrio/liatrio-react-dora/commit/dc3bc8ddb6402f3550d79599b15964d755af3e7d))
+
 ## v0.2.16 (2024-07-03)
 
 ### Fix
