@@ -157,7 +157,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
 
       expandData(parsedData)
 
-      onSuccess(parsedData.records)
+      onSuccess(parsedData)
   } catch (error) {
       if(onFailure) {
         onFailure(error)
