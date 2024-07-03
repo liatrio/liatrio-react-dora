@@ -191,7 +191,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
             arrowSize={8}
           >
             <div>
-              <div className="popover-content"><span >Average Deployment Frequency: {state.DFRate} hrs</span></div>
+              <div className="popover-content"><span >Average Deployment Frequency: {state.DFRate} per day</span></div>
             </div>
           </ArrowContainer>
         )}

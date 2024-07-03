@@ -4,6 +4,10 @@ import { extractUniqueRepositories, fetchData, generateDistinctColors, Props, Re
 
 export const extractAvgRecoverTimePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
+        if(record.status) {
+            return acc;
+        }
+
         const date = record.created_at.toISOString().split('T')[0]
         let entry = acc.get(date)
 

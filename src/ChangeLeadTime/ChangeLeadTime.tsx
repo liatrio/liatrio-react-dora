@@ -5,6 +5,12 @@ import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
 
 export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     let reduced = data.reduce((acc, record) => {
+        if(record.merged_at.getTime() === new Date("Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)").getTime()) {
+            return acc
+        }
+
+        console.log(record)
+
         const repository = record.repository
 
         if (!acc.has(repository)) {
