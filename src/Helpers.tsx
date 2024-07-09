@@ -15,6 +15,7 @@ export interface Record {
   user: string
   sha: string
   status: boolean
+  post_failure: boolean
   merged_at: Date
   created_at: Date
   fixed_at: Date

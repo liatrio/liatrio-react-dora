@@ -15,7 +15,7 @@ export const extractChangeFailureRatePerDay = (data: Record[]) => {
             acc.set(date, entry)
         }
 
-        if(record.status === true) {
+        if(record.status === true && record.post_failure === false) {
             return acc
         }
 
