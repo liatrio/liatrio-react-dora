@@ -4,10 +4,6 @@ import { fetchData, generateDistinctColors, Record, Props, extractUniqueReposito
 
 export const extractDeploymentsPerDay = (data: Record[]) => {
     const reduced = data.reduce((acc: Map<string, any>, record: Record) => {
-        if(record.status === false) {
-            return acc
-        }
-
         const date = record.created_at.toISOString().split('T')[0]
         let entry = acc.get(date)
 
