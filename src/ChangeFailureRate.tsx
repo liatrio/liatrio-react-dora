@@ -3,7 +3,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories } from './Helpers'
 
 export const extractChangeFailureRatePerDay = (data: Record[]) => {
-    let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
+    let reduced = data.reduce((acc: Map<string, any>, record: Record) => {        
+        if(record.status === true && !record.failed_at) {
+            return acc
+        }
+
         const date = record.created_at.toISOString().split('T')[0]
         let entry = acc.get(date)
 
@@ -13,10 +17,6 @@ export const extractChangeFailureRatePerDay = (data: Record[]) => {
             }
 
             acc.set(date, entry)
-        }
-
-        if(record.status === true) {
-            return acc
         }
 
         const key = record.repository
@@ -31,7 +31,11 @@ export const extractChangeFailureRatePerDay = (data: Record[]) => {
         return acc
     }, new Map<string, Record[]>())
 
-    return Array.from(reduced.values())
+    let result = Array.from(reduced.values())
+    
+    result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
+
+    return result
 }
 
 const ChangeFailureRate : React.FC<Props> = (props: Props) => {

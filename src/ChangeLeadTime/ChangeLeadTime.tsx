@@ -5,11 +5,9 @@ import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
 
 export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     let reduced = data.reduce((acc, record) => {
-        if(record.merged_at.getTime() === new Date("Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)").getTime()) {
-            return acc
+        if(!record.merged_at) {
+            return acc;
         }
-
-        console.log(record)
 
         const repository = record.repository
 
@@ -17,7 +15,13 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
             acc.set(repository, [])
         }
 
-        acc.get(repository)?.push(record)
+        let records = acc.get(repository);
+        
+        if(records) {
+            records.push(record)
+            // @ts-ignore
+            records.sort((l, r) => l.merged_at.getTime() - r.merged_at.getTime())
+        }
     
         return acc
     }, new Map<string, Record[]>())

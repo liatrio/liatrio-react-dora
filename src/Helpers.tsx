@@ -11,23 +11,20 @@ export interface Props {
 export interface Record {
   repository: string
   team: string
-  title: string
-  user: string
+  title?: string
+  user?: string
   sha: string
   status: boolean
-  merged_at: Date
+  failed_at?: Date
+  merged_at?: Date
   created_at: Date
-  fixed_at: Date
+  fixed_at?: Date
   totalCycle: number
   start: number
   recoverTime: number
 }
 
-export interface SummurizedRecord {
-
-}
-
-const date_keys = ['merged_at', 'created_at', 'fixed_at']
+const date_keys = ['merged_at', 'created_at', 'fixed_at', 'failed_at']
 
 export const recordReviver = (key: string, value: any) => {
   if (date_keys.includes(key)) {
@@ -70,25 +67,21 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
-const isDefaultDate = (date: Date) : boolean => {
-  if(date.getTime() === new Date("1970-01-01T00:00:00Z").getTime()) {
-    return true
-  }
-  return false
-}
-
 export const expandData = (data: Record[]) => {
   data.forEach((record) => {
-    if(record.merged_at && record.created_at && !isDefaultDate(record.merged_at)) {
+    if(record.merged_at) {
       const mergedAt = record.merged_at.getTime()
-      const deployedAt = record.created_at.getTime()
+      const deployedAt = record.fixed_at ? record.fixed_at.getTime() : record.created_at.getTime()
 
       record.totalCycle = parseFloat(((deployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
-    if(record.fixed_at && record.created_at && !isDefaultDate(record.fixed_at)) {
-      record.recoverTime = parseFloat(((record.fixed_at.getTime() - record.created_at.getTime()) / (1000 * 60 * 60)).toFixed(2))
+    if(record.fixed_at && record.failed_at) {
+      const failedAt = record.failed_at.getTime()
+      const fixedAt = record.fixed_at.getTime()
+
+      record.recoverTime = parseFloat(((fixedAt - failedAt) / (1000 * 60 * 60)).toFixed(2))
     }
   })
 }
@@ -97,6 +90,7 @@ export const filterData = (props: Props, data: Record[]) : Record[] => {
   return data.filter(record => {
     const repositoryMatch = props.repositories === undefined || props.repositories.length === 0 || props.repositories.includes(record.repository)
     const teamMatch = !props.team || record.team === props.team
+
     return repositoryMatch && teamMatch
   });
 }
