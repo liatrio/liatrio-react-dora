@@ -19,6 +19,7 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
         
         if(records) {
             records.push(record)
+            // @ts-ignore
             records.sort((l, r) => l.merged_at.getTime() - r.merged_at.getTime())
         }
     
