@@ -4,6 +4,10 @@ import { fetchData, generateDistinctColors, Record, Props, extractUniqueReposito
 
 export const extractDeploymentsPerDay = (data: Record[]) => {
     const reduced = data.reduce((acc: Map<string, any>, record: Record) => {
+        if(!record.status) {
+            return acc
+        }
+
         const date = record.created_at.toISOString().split('T')[0]
         let entry = acc.get(date)
 
@@ -24,7 +28,11 @@ export const extractDeploymentsPerDay = (data: Record[]) => {
         return acc
     }, new Map<string, Record[]>())
 
-    return Array.from(reduced.values())
+    let result = Array.from(reduced.values())
+    
+    result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
+
+    return result
 }
 
 const DeploymentFrequency : React.FC<Props> = (props: Props) => {

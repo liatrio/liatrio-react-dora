@@ -4,7 +4,7 @@ import { extractUniqueRepositories, fetchData, generateDistinctColors, Props, Re
 
 export const extractAvgRecoverTimePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
-        if(record.status) {
+        if(record.recoverTime === undefined) {
             return acc;
         }
 
@@ -34,7 +34,11 @@ export const extractAvgRecoverTimePerDay = (data: Record[]) => {
         return acc
     }, new Map<string, Record[]>())
 
-    return Array.from(reduced.values())
+    let result = Array.from(reduced.values())
+    
+    result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
+
+    return result
 }
 
 const RecoverTime : React.FC<Props> = (props: Props) => {

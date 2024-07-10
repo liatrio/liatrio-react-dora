@@ -25,8 +25,8 @@ interface ScoreBoardState {
 }
 
 const calculateCFRRate = (data: Record[]) : number => {
-  const totalSuccessfulRecords = data.filter(f => f.status === true).length
-  const totalFailedRecords = data.filter(f => f.status === false).length
+  const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
+  const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
 
   return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
 }
@@ -48,7 +48,7 @@ const calculateCLTRate = (data: Record[]) : number => {
   let totalLeadTime = 0
 
   data.forEach(record => {
-    if(record.status === false || record.totalCycle === undefined) {
+    if(record.totalCycle === undefined) {
       return
     }
 
@@ -75,7 +75,6 @@ const MaxDF = 1000000
 
 const calculateDFRate = (props: Props, data: Record[]) : number => {
   let sorted = data
-    .filter(f => f.status === true)
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
   
   if(sorted.length === 0) {
@@ -111,7 +110,7 @@ const calculateRTRate = (data: Record[]) : number => {
   let totalRecoveryTime = 0
 
   data.forEach(record => {
-    if(record.status === true || record.recoverTime === undefined) {
+    if((record.status === true && !record.failed_at) || record.recoverTime === undefined) {
       return
     }
 
