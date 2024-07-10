@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v0.2.18 (2024-07-10)
+
+### Fix
+
+* fix: force version bump ([`9159de2`](https://github.com/liatrio/liatrio-react-dora/commit/9159de2689fdcdf6247caa12d514e31aeae0abbc))
+
+### Unknown
+
+* Adjust failures (#16)
+
+* fix: failures go into DF also
+
+* fix: exclude true success deploys from cfr
+
+* fix: resolve bugs introduced and update story data
+
+* fix: make ts ignore false warning ([`9cc4462`](https://github.com/liatrio/liatrio-react-dora/commit/9cc44629b1780bbc96de9e40433a5cbb0f48ab44))
+
 ## v0.2.17 (2024-07-03)
 
 ### Fix
