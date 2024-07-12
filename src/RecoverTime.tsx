@@ -66,9 +66,24 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
         fetchData(props, organizeData)
     }, [props])
 
+    if(loading) {
+        return (
+            <div data-testid="RecoverTime" style={{width: "100%", height: "100%"}}>
+                <Loading enabled={loading} />
+            </div>
+        )
+    }
+
+    if(graphData.length === 0) {
+        return ( 
+            <div data-testid="RecoverTime" style={{color: "white", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <span>No data was available.</span>
+            </div>
+        )
+    }
+
     return (
         <div data-testid="RecoverTime" style={{width: "100%", height: "100%"}}>
-            <Loading enabled={loading} />
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                     width={500}

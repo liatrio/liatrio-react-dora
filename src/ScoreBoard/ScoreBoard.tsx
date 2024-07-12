@@ -146,6 +146,8 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     RTRate: 0,
   })
 
+  const [data, setData] = useState<Record[]>([])
+
   const [loading, setLoading] = useState<boolean>(true)
   
   const [showDFPO, setShowDFPO] = useState(false)
@@ -154,6 +156,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   const [showCLTPO, setShowCLTPO] = useState(false)
 
   const organizeData = (data: Record[]) => {
+    setData(data)
 
     const dfRate = calculateDFRate(props, data)
     const cltRate = calculateCLTRate(data)
@@ -179,9 +182,24 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     fetchData(props, organizeData)
   }, [props])
 
+  if(loading) {
+      return (
+          <div data-testid="ScoreBoard" style={{width: "100%", height: "100%"}}>
+              <Loading enabled={loading} />
+          </div>
+      )
+  }
+
+  if(data.length === 0) {
+      return ( 
+          <div data-testid="ScoreBoard" style={{color: "white", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <span>No data was available.</span>
+          </div>
+      )
+  }
+
   return (
     <div data-testid="ScoreBoard" className="board">
-      <Loading enabled={loading} />
       <Popover
         isOpen={showDFPO}
         positions={["top", "bottom", "left", "right"]}

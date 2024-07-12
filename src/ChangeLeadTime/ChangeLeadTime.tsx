@@ -37,7 +37,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
 
     const organizeData = useCallback((data: Record[]) => {
         const extractedData = extractChangeLeadTimePerRepository(data)
-        setGraphData(extractedData)
+        setGraphData(extractedData)        
 
         setColors(generateDistinctColors(extractedData.size))
         setLoading(false)
@@ -48,9 +48,24 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         fetchData(props, organizeData)
     }, [props])
 
+    if(loading) {
+        return (
+            <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
+                <Loading enabled={loading} />
+            </div>
+        )
+    }
+
+    if(graphData.size === 0) {
+        return ( 
+            <div data-testid="ChangeLeadTime" style={{color: "white", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <span>No data was available.</span>
+            </div>
+        )
+    }
+
     return (
         <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
-            <Loading enabled={loading} />
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
                     margin={{
