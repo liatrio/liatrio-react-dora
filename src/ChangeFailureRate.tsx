@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts'
 import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories } from './Helpers'
+import Loading from './Loading/Loading'
 
 export const extractChangeFailureRatePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {        
@@ -42,6 +43,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
 
     const organizeData = (data: Record[]) => {
         const extractedData = extractChangeFailureRatePerDay(data)
@@ -53,14 +55,17 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
         setRepositories(repositories)
 
         setColors(generateDistinctColors(repositories.length))
+        setLoading(false)
     }
 
     useEffect(() => {
+        setLoading(true)
         fetchData(props, organizeData)
     }, [props])
 
     return (
         <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>
+            <Loading enabled={loading} />
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     width={500}
