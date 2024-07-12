@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LineChart, Line } from 'recharts'
 import { extractUniqueRepositories, fetchData, generateDistinctColors, Props, Record } from './Helpers'
+import Loading from './Loading/Loading'
 
 export const extractAvgRecoverTimePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
@@ -45,6 +46,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
 
     const organizeData = (data: Record[]) => {
         const extractedData = extractAvgRecoverTimePerDay(data)
@@ -56,14 +58,17 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
         setRepositories(repositories)
 
         setColors(generateDistinctColors(repositories.length))
+        setLoading(false)
     }
 
     useEffect(() => {
+        setLoading(true)
         fetchData(props, organizeData)
     }, [props])
 
     return (
         <div data-testid="RecoverTime" style={{width: "100%", height: "100%"}}>
+            <Loading enabled={loading} />
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                     width={500}

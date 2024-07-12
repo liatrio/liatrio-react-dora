@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Popover, ArrowContainer } from "react-tiny-popover";
+import { Popover, ArrowContainer } from "react-tiny-popover"
 import { Record, Props, fetchData } from '../Helpers'
+import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
 import dfIcon from '../assets/deploy_dark.svg'
@@ -144,11 +145,13 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     CFRRate: 0,
     RTRate: 0,
   })
+
+  const [loading, setLoading] = useState<boolean>(true)
   
-  const [showDFPO, setShowDFPO] = useState(false);
-  const [showRTPO, setShowRTPO] = useState(false);
-  const [showCFRPO, setShowCFRPO] = useState(false);
-  const [showCLTPO, setShowCLTPO] = useState(false);
+  const [showDFPO, setShowDFPO] = useState(false)
+  const [showRTPO, setShowRTPO] = useState(false)
+  const [showCFRPO, setShowCFRPO] = useState(false)
+  const [showCLTPO, setShowCLTPO] = useState(false)
 
   const organizeData = (data: Record[]) => {
 
@@ -167,14 +170,18 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
       CFRColor: calculatCFRColor(cfrRate),
       RTColor: calculateRTColor(rtRate)
     })
+
+    setLoading(false)
   }
 
   useEffect(() => {
+    setLoading(true)
     fetchData(props, organizeData)
   }, [props])
 
   return (
     <div data-testid="ScoreBoard" className="board">
+      <Loading enabled={loading} />
       <Popover
         isOpen={showDFPO}
         positions={["top", "bottom", "left", "right"]}
