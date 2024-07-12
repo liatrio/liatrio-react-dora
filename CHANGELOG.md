@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.19 (2024-07-12)
+
+### Fix
+
+* fix: add in loading indicator (#17) ([`14d54c9`](https://github.com/liatrio/liatrio-react-dora/commit/14d54c91ed6732aca6b57f537bbff1466f4409ae))
+
 ## v0.2.18 (2024-07-10)
 
 ### Fix
