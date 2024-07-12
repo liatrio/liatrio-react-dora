@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.20 (2024-07-12)
+
+### Fix
+
+* fix: change loading to now be an overlay, show message when no data is available ([`ed809e8`](https://github.com/liatrio/liatrio-react-dora/commit/ed809e88d2258a5c06d41d15d31dd31d85cbe667))
+
 ## v0.2.19 (2024-07-12)
 
 ### Fix
