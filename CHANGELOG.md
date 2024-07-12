@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.21 (2024-07-12)
+
+### Fix
+
+* fix: update no data message ([`5d27106`](https://github.com/liatrio/liatrio-react-dora/commit/5d27106e254e5bf68336915d6de1d192411dbbef))
+
 ## v0.2.20 (2024-07-12)
 
 ### Fix
