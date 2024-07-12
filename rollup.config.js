@@ -34,7 +34,7 @@ export default [
       postcss(),
       url({
         include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.gif'],
-        limit: 16384,
+        limit: 0,
         emitFiles: true,
         fileName: '[name][hash][extname]',
         sourceDir: path.join(__dirname, 'src'),

@@ -8,6 +8,7 @@ import dfIcon from '../assets/deploy_dark.svg'
 import cltIcon from '../assets/lead_time_dark.svg'
 import cfrIcon from '../assets/failure_dark.svg'
 import rtIcon from '../assets/recover_dark.svg'
+import noData from '../assets/no_data.png'
 
 const redFilter = "brightness(0) saturate(100%) invert(36%) sepia(86%) saturate(7496%) hue-rotate(356deg) brightness(101%) contrast(102%)"
 const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
@@ -156,7 +157,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   const [showCLTPO, setShowCLTPO] = useState(false)
 
   const organizeData = (data: Record[]) => {
-    setData(data)
+    //setData(data)
 
     const dfRate = calculateDFRate(props, data)
     const cltRate = calculateCLTRate(data)
@@ -192,9 +193,9 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
 
   if(data.length === 0) {
       return ( 
-          <div data-testid="ScoreBoard" style={{color: "white", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <span>No data was available.</span>
-          </div>
+        <div data-testid="ScoreBoard" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <img alt="No Data" title="No Data" src={noData} style={{width: "150px"}}/>
+        </div>
       )
   }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts'
 import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories } from './Helpers'
 import Loading from './Loading/Loading'
+import noData from './assets/no_data.png'
 
 export const extractChangeFailureRatePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {        
@@ -73,8 +74,8 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
 
     if(graphData.length === 0) {
         return ( 
-            <div data-testid="ChangeFailureRate" style={{color: "white", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <span>No data was available.</span>
+            <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <img alt="No Data" title="No Data" src={noData} style={{width: "150px"}}/>
             </div>
         )
     }
