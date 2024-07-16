@@ -72,7 +72,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     if(loading || props.loading) {
         return (
             <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>
-                <Loading enabled={loading} />
+              <Loading enabled={loading || (props.loading ?? false)} />
             </div>
         )
     }
@@ -80,7 +80,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     if(noData) {
         return ( 
             <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
+                <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
         )
     }

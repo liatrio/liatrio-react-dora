@@ -57,7 +57,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     if(loading || props.loading) {
         return (
             <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
-                <Loading enabled={loading} />
+                <Loading enabled={loading || (props.loading ?? false)} />
             </div>
         )
     }

@@ -190,7 +190,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   if(loading || props.loading) {
       return (
           <div data-testid="ScoreBoard" style={{width: "100%", height: "100%"}}>
-              <Loading enabled={loading} />
+              <Loading enabled={loading || (props.loading ?? false)} />
           </div>
       )
   }
