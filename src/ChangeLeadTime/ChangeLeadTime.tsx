@@ -3,7 +3,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Re
 import { fetchData, generateDistinctColors, Record, Props } from '../Helpers'
 import ChangeLeadTimeTooltip from './ChangeLeadTimeTooltip'
 import Loading from '../Loading/Loading'
-import noData from '../assets/no_data.png'
+import noDataImg from '../assets/no_data.png'
 
 export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     let reduced = data.reduce((acc, record) => {
@@ -35,8 +35,13 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<Map<string, Record[]>>(new Map<string, Record[]>())
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [noData, setNoData] = useState<boolean>(false)
 
     const organizeData = useCallback((data: Record[]) => {
+        if(data.length === 0) {
+            setNoData(true)
+        }
+
         const extractedData = extractChangeLeadTimePerRepository(data)
         setGraphData(extractedData)        
 
@@ -57,10 +62,10 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         )
     }
 
-    if(graphData.size === 0) {
+    if(noData) {
         return ( 
             <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img alt="No Data" title="No Data" src={noData} style={{width: "150px"}}/>
+              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
         )
     }

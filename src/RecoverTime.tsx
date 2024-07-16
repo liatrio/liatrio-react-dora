@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LineChart, Line } from 'recharts'
 import { extractUniqueRepositories, fetchData, generateDistinctColors, Props, Record } from './Helpers'
 import Loading from './Loading/Loading'
-import noData from './assets/no_data.png'
+import noDataImg from './assets/no_data.png'
 
 export const extractAvgRecoverTimePerDay = (data: Record[]) => {
     let reduced = data.reduce((acc: Map<string, any>, record: Record) => {
@@ -48,8 +48,13 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [noData, setNoData] = useState<boolean>(false)
 
     const organizeData = (data: Record[]) => {
+        if(data.length === 0) {
+            setNoData(true)
+        }
+
         const extractedData = extractAvgRecoverTimePerDay(data)
         
         setGraphData(extractedData)
@@ -75,10 +80,10 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
         )
     }
 
-    if(graphData.length === 0) {
+    if(noData) {
         return ( 
             <div data-testid="RecoverTime" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img alt="No Data" title="No Data" src={noData} style={{width: "150px"}}/>
+              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
         )
     }
