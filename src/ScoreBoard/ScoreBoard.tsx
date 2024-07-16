@@ -157,7 +157,7 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
   const [showCLTPO, setShowCLTPO] = useState(false)
 
   const organizeData = (data: Record[]) => {
-    //setData(data)
+    setData(data)
 
     const dfRate = calculateDFRate(props, data)
     const cltRate = calculateCLTRate(data)
