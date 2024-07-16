@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.23 (2024-07-16)
+
+### Fix
+
+* fix: null dates defaulting to min date ([`84adab6`](https://github.com/liatrio/liatrio-react-dora/commit/84adab6d4180e1289977169bc119670de151c23d))
+
 ## v0.2.22 (2024-07-16)
 
 ### Fix
