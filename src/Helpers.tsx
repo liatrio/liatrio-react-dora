@@ -6,6 +6,7 @@ export interface Props {
   data?: any
   end?: Date
   start?: Date
+  loading?: boolean
 }
 
 export interface Record {

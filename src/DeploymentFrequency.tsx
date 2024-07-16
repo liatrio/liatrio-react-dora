@@ -60,7 +60,7 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
         fetchData(props, organizeData)
     }, [props])
 
-    if(loading) {
+    if(loading || props.loading) {
         return (
             <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>
                 <Loading enabled={loading} />
