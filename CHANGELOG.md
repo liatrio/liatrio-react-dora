@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.26 (2024-07-16)
+
+### Fix
+
+* fix: make sure loading icon shows up correctly ([`bc940d4`](https://github.com/liatrio/liatrio-react-dora/commit/bc940d41ad0b311f381a5751a5223418458eb343))
+
 ## v0.2.25 (2024-07-16)
 
 ### Fix
