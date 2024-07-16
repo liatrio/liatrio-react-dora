@@ -6,6 +6,7 @@ import terser from "@rollup/plugin-terser";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import url from '@rollup/plugin-url';
+import rebase from "rollup-plugin-rebase";
 import path from 'path';
 
 const packageJson = require("./package.json");
@@ -25,6 +26,7 @@ export default [
         sourcemap: true,
       },
     ],
+    makeAbsoluteExternalsRelative: true,
     plugins: [
       peerDepsExternal(),
       resolve(),
@@ -34,11 +36,14 @@ export default [
       postcss(),
       url({
         include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.gif'],
-        limit: 0,
-        emitFiles: true,
-        fileName: '[name][hash][extname]',
-        sourceDir: path.join(__dirname, 'src'),
+        limit: 64000,
+        fileName: '[name][hash][extname]'
       }),
+      rebase({
+        include: ['**/*.png'],
+        assetFolder: 'assets',
+        keepName: true,
+      })
     ],
     external: ["react", "react-dom"],
   },
