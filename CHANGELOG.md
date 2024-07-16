@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.25 (2024-07-16)
+
+### Fix
+
+* fix: change how no data is determined ([`7e423f8`](https://github.com/liatrio/liatrio-react-dora/commit/7e423f857e7edfc2b5d0db4f563a4005b067ec97))
+
 ## v0.2.24 (2024-07-16)
 
 ### Fix
