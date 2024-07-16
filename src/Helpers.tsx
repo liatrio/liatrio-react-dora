@@ -27,7 +27,7 @@ export interface Record {
 const date_keys = ['merged_at', 'created_at', 'fixed_at',  'failed_at']
 
 export const recordReviver = (key: string, value: any) => {
-  if (date_keys.includes(key)) {
+  if (date_keys.includes(key) && value) {
       return new Date(value)
   }
 
