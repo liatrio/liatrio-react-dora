@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.22 (2024-07-16)
+
+### Fix
+
+* fix: uncommit setData... ([`f3c95b5`](https://github.com/liatrio/liatrio-react-dora/commit/f3c95b538511c3029206e679bc10202a604a4b82))
+
 ## v0.2.21 (2024-07-12)
 
 ### Fix
