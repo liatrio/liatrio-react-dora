@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.24 (2024-07-16)
+
+### Fix
+
+* fix: allow parent to define loading ([`8e9bf2d`](https://github.com/liatrio/liatrio-react-dora/commit/8e9bf2d1d8a78eecd232055ae99f9402cac1ffe3))
+
 ## v0.2.23 (2024-07-16)
 
 ### Fix
