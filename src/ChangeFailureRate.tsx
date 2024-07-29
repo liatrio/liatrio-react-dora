@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDate, formatTicks, generateTicks } from './Helpers'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, formatTicks, generateTicks } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import ToolTip from './ToolTip/ToolTip'
@@ -45,12 +45,12 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
         }
 
         count.total = entry[key].failed / (entry[key].successful < 1 ? 1 : entry[key].successful)
-    
+
         return acc
     }, new Map<number, Record[]>())
 
     let result = Array.from(reduced.values())
-    
+
     result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
 
     return result
@@ -62,8 +62,8 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDate(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDate(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -73,7 +73,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
         }
 
         const extractedData = extractChangeFailureRatePerDay(props, data)
-        
+
         setGraphData(extractedData)
 
         const repositories = extractUniqueRepositories(data)
@@ -85,8 +85,8 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     }
 
     useEffect(() => {
-        setStartDate(props.start ?? getDate(31))
-        setEndDate(props.end ?? getDate(1))
+        setStartDate(props.start ?? getDateDaysInPast(31))
+        setEndDate(props.end ?? getDateDaysInPast(1))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])
@@ -100,7 +100,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     }
 
     if(noData) {
-        return ( 
+        return (
             <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
@@ -120,7 +120,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding="gap" dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
                     <Tooltip content={<ToolTip />} />
                     {repositories.map((repo, idx) => (

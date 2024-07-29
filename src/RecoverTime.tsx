@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LineChart, Line } from 'recharts'
-import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDate, Props, Record } from './Helpers'
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts'
+import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, Props, Record } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import ToolTip from './ToolTip/ToolTip'
@@ -34,12 +34,12 @@ export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
             entry[record.repository].totalTime += record.recoverTime
             entry[record.repository].avgTime += entry[record.repository].totalTime / entry[record.repository].count
         }
-    
+
         return acc
     }, new Map<number, Record[]>())
 
     let result = Array.from(reduced.values())
-    
+
     result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
 
     return result
@@ -51,8 +51,8 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDate(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDate(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -62,7 +62,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
         }
 
         const extractedData = extractAvgRecoverTimePerDay(props, data)
-        
+
         setGraphData(extractedData)
 
         const repositories = extractUniqueRepositories(data)
@@ -74,8 +74,8 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     }
 
     useEffect(() => {
-        setStartDate(props.start ?? getDate(31))
-        setEndDate(props.end ?? getDate(1))
+        setStartDate(props.start ?? getDateDaysInPast(31))
+        setEndDate(props.end ?? getDateDaysInPast(1))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])
@@ -89,7 +89,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     }
 
     if(noData) {
-        return ( 
+        return (
             <div data-testid="RecoverTime" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
               <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
@@ -109,7 +109,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding="gap" dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
                     <Tooltip content={<ToolTip />} />
                     {repositories.map((repo, idx) => (

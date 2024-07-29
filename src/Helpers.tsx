@@ -100,6 +100,11 @@ export const expandData = (data: Record[]) => {
 
       record.recoverTime = parseFloat(((fixedAt - failedAt) / (1000 * 60 * 60)).toFixed(2))
     }
+
+    record.created_at = record.created_at ? utcDateToLocal(record.created_at, false) : record.created_at
+    record.merged_at = record.merged_at ? utcDateToLocal(record.merged_at, false) : record.merged_at
+    record.fixed_at = record.fixed_at ? utcDateToLocal(record.fixed_at, false) : record.fixed_at
+    record.failed_at = record.failed_at ? utcDateToLocal(record.failed_at, false) : record.failed_at
   })
 }
 
@@ -112,12 +117,40 @@ export const filterData = (props: Props, data: Record[]) : Record[] => {
   });
 }
 
-export const getDate = (daysInPast: number) : Date => {
+export const getDateDaysInPast = (daysInPast: number, dateOnly: boolean = true) : Date => {
+  let date = new Date();
+
+  date.setDate(date.getDate() - daysInPast)
+
+  if(dateOnly) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  } else {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds())
+  }
+}
+
+export const getDateDaysInPastUtc = (daysInPast: number, dateOnly: boolean = true) : Date => {
   let date = new Date()
 
   date.setDate(date.getDate() - daysInPast)
 
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+  return dateToUtc(date, dateOnly)
+}
+
+export const utcDateToLocal = (date: Date, dateOnly: boolean = true) => {
+  if(dateOnly) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  } else {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds())
+  }
+}
+
+export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
+  if(dateOnly) {
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+  } else {
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()))
+  }
 }
 
 export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
@@ -146,19 +179,14 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
     return
   }
 
+  const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(31)
+  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(31)
+
   const body = {
       repositories: props.repositories,
       team: props.team,
-      start: props.start,
-      end: props.end
-  }
-
-  if(!body.end) {
-    body.end = getDate(1)
-  }
-
-  if(!body.start) {
-    body.start = getDate(31)
+      start: start,
+      end: end
   }
 
   let headers = {}

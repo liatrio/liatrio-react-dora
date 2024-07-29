@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, getDate, generateTicks, formatTicks } from '../Helpers'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { fetchData, generateDistinctColors, Record, Props, getDateDaysInPast, generateTicks, formatTicks } from '../Helpers'
 import Loading from '../Loading/Loading'
 import noDataImg from '../assets/no_data.png'
 import ToolTip from '../ToolTip/ToolTip'
@@ -18,13 +18,13 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
         }
 
         let records = acc.get(repository);
-        
+
         if(records) {
             records.push(record)
             // @ts-ignore
             records.sort((l, r) => l.merged_at.getTime() - r.merged_at.getTime())
         }
-    
+
         return acc
     }, new Map<string, Record[]>())
 
@@ -33,7 +33,7 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
 
 const renderCustomShape = (props: any) => {
     const { cx, cy, fill } = props;
-    
+
     return (
       <circle cx={cx} cy={cy} r={8} fill={fill} />
     );
@@ -44,8 +44,8 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDate(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDate(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -55,15 +55,15 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         }
 
         const extractedData = extractChangeLeadTimePerRepository(data)
-        setGraphData(extractedData)        
+        setGraphData(extractedData)
 
         setColors(generateDistinctColors(extractedData.size))
         setLoading(false)
     }, [])
 
     useEffect(() => {
-        setStartDate(props.start ?? getDate(31))
-        setEndDate(props.end ?? getDate(1))
+        setStartDate(props.start ?? getDateDaysInPast(31))
+        setEndDate(props.end ?? getDateDaysInPast(1))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])
@@ -77,7 +77,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     }
 
     if(noData) {
-        return ( 
+        return (
             <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
               <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
@@ -87,14 +87,14 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     return (
         <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
             <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart 
+                <ScatterChart
                     margin={{
                         right: 40,
                         top: 10
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
                     <Tooltip content={<ToolTip />} />
                     {Array.from(graphData.keys()).map((key, idx) => (
