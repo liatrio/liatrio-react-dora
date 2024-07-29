@@ -60,7 +60,7 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
 
     const ticks = generateTicks(startDate, endDate, 5)
-    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 100 + "%"
+    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
     const organizeData = (data: Record[]) => {
         if(data.length === 0) {
@@ -109,6 +109,7 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     width={500}
                     height={300}
                     data={graphData}
+                    barGap={20}
                     margin={{
                         right: 40,
                         top: 10
