@@ -7,11 +7,11 @@ This component library contains charts for the standard DORA metrics.
 You can install these components using the following command:
 
 ```
-npm install https://github.com/liatrio/liatrio-react-dora/releases/download/v0.0.6/liatrio-react-dora-0.0.7.tgz
+npm install https://github.com/liatrio/liatrio-react-dora/releases/download/v1.0.0/liatrio-react-dora-1.0.0.tgz
 ```
 Or
 ```
-yarn add https://github.com/liatrio/liatrio-react-dora/releases/download/v0.0.6/liatrio-react-dora-0.0.7.tgz
+yarn add https://github.com/liatrio/liatrio-react-dora/releases/download/v1.0.0/liatrio-react-dora-1.0.0.tgz
 ```
 
 # Usage
@@ -32,34 +32,35 @@ It is important that the chart component be wrapped in an element of some size s
 
 # Chart Properties
 
-Each chart has a set of common properties and unique properties.
+* **start** (*optional*):
+  * If not supplied this will default to 31 days in the past.
+  * This value is used to determine the starting date for the charts.
+  * If `api` is supplied, this date is sent to the API for data gathering.
 
-## Comomon Properties
+* **end** (*optional*):
+  * If not supplied, this will default to 1 day in the past.
+  * This value is used to determine the ending date for the charts.
+  * If `api` is supplied, this date is sent to the API for data gathering.
 
-* **start** (*optional*): This is the start date to be supplied to the `api`.  If not supplied this will default to 30 days in the past.
-* **end** (*optional*): This is the end date to be supplied to the `api`.  If not supplied, this will default to the current date.
-* **api** (*optional*): This is the url to the API for gathering data.  This must be filled in if `data` is omitted
-* **getAuthHeaderValue** (*optional*): This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
-* **data** (*optional*): A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
-* **team** (*optional*): The name of the team to show information about in the chart.  This works with `data` and `api`.
-* **repositories** (*optional*): A list of repository names to show in the chart.  This works with `data` and `api`.
+* **team** (*optional*): 
+  * The name of the team to show information about in the chart.
+  * If `data` is supplied, this acts as a filter on that data.
+  * If `api` is supplied, this is sent to the API for data gathering.
 
-## Deployement Frequency Properties
+* **repositories** (*optional*):
+  * A list of repository names to show in the chart.
+  * If `data` is supplied, this acts as a filter on that data.
+  * If `api` is supplied, this is sent to the API for data gathering.
 
-* **includeFailures** (*optional*): This will include failures in the chart if set to true.  If not supplied, this will default to false.
-* **environment** (*optional*): This will filter the charts to only show data for the specified environment.  If not supplied, all environments will be shown.
+* **api** (*optional*):
+  * This is the url to the API for gathering data.
+  * This must be filled in if `data` is omitted
 
-## Change Lead Time Properties
+* **getAuthHeaderValue** (*optional*):
+  * This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
 
-* This chart does not have any unique properties at this time
-
-## Change Failure Rate Properties
-
-* This chart does not have any unique properties at this time
-
-## Recover Time Properties
-
-* This chart does not have any unique properties at this time
+* **data** (*optional*):
+  * A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
 
 # Dependencies
 
@@ -74,43 +75,20 @@ These charts need to be supplied data for display.  This data can be provided in
 
 The data schema for each chart is as follows:
 
-## Deployment Frequency
-
-```
-enum {
-    success,
-    failure
-}
-
-{
-    created_at: Date,
-    environment: string,
-    state: DeploymentState,
-    repository: string,
-    team: string
-}
-```
-
-## Change Lead Time
-
 ```
 {
-  openedAt: Date
-  mergedAt: Date
-  devDeployedAt: Date
-  testDeployedAt: Date
-  prodDeployedAt: Date
   repository: string
   team: string
-  title: string
-  user: string
+  title?: string
+  user?: string
+  sha: string
+  status: boolean
+  failed_at?: Date
+  merged_at?: Date
+  created_at: Date
+  fixed_at?: Date
+  totalCycle: number
+  start: number
+  recoverTime: number
 }
 ```
-
-## Change Failure Rate
-
-* Not yet defined
-
-## Recover Time
-
-* Not yet defined
