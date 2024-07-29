@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDate, generateTicks, formatTicks} from './Helpers'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, generateTicks, formatTicks} from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import ToolTip from './ToolTip/ToolTip'
@@ -38,12 +38,12 @@ export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[],
         }
 
         entry[record.repository] = value
-    
+
         return acc
     }, new Map<number, Record[]>())
 
     let result = Array.from(reduced.values())
-    
+
     result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
 
     return [result, max]
@@ -55,8 +55,8 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDate(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDate(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
 
     const ticks = generateTicks(startDate, endDate, 5)
@@ -80,8 +80,8 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     }
 
     useEffect(() => {
-        setStartDate(props.start ?? getDate(31))
-        setEndDate(props.end ?? getDate(1))
+        setStartDate(props.start ?? getDateDaysInPast(31))
+        setEndDate(props.end ?? getDateDaysInPast(1))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])
@@ -95,13 +95,13 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     }
 
     if(noData) {
-        return ( 
+        return (
             <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
               <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
             </div>
         )
     }
-    
+
     return (
         <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>
             <ResponsiveContainer width="100%" height="100%">
