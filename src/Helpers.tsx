@@ -6,10 +6,11 @@ export interface Props {
   data?: any
   end?: Date
   start?: Date
-  loading?: boolean,
-  showWeekends?: boolean,
-  includeWeekends?: boolean,
+  loading?: boolean
+  showWeekends?: boolean
+  includeWeekends?: boolean
   showDetails?: boolean
+  colors?: string[]
 }
 
 export interface Record {
@@ -59,7 +60,7 @@ export const extractUniqueRepositories = (data: Record[]) => {
 export const generateDistinctColors = (count: number) => {
   const colors = []
   const goldenRatioConjugate = 0.618033988749895
-  let hue = Math.random() // Start at a random hue
+  let hue = 1 // Start at a random hue
 
   for (let i = 0; i < count; i++) {
       hue += goldenRatioConjugate
