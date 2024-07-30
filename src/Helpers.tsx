@@ -29,10 +29,6 @@ export interface Record {
   recoverTime: number
 }
 
-export const standard_colors = [
-
-]
-
 const date_keys = ['merged_at', 'created_at', 'fixed_at',  'failed_at']
 
 export const recordReviver = (key: string, value: any) => {
