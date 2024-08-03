@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.3 (2024-08-03)
+
+### Fix
+
+* fix: make default end date 1 day in the past (#37) ([`779674d`](https://github.com/liatrio/liatrio-react-dora/commit/779674d3bdbf52cf9369e33d47932ec2a87bb467))
+
 ## v1.0.2 (2024-07-30)
 
 ### Fix
