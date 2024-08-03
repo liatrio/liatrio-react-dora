@@ -181,7 +181,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
   }
 
   const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(31)
-  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(31)
+  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(1)
 
   const body = {
       repositories: props.repositories,
