@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.0.5 (2024-08-07)
+
+### Fix
+
+* fix: remove dead color ([`61f957e`](https://github.com/liatrio/liatrio-react-dora/commit/61f957eff6d622db7fc2b2ed36a5580d75ec14fa))
+
+### Unknown
+
+* Enhanced tool tip (#40)
+
+* fix: click node for more info
+
+* fix: allow clicking a node for more info ([`429aedd`](https://github.com/liatrio/liatrio-react-dora/commit/429aedd81fcd7689e25b7c3dd37c253d04159618))
+
 ## v1.0.4 (2024-08-07)
 
 ### Fix
