@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.6 (2024-08-07)
+
+### Fix
+
+* fix: change how base tooltip is displayed (#42) ([`fb59db4`](https://github.com/liatrio/liatrio-react-dora/commit/fb59db457ef90a9248f84d7d653cf256f269c390))
+
 ## v1.0.5 (2024-08-07)
 
 ### Fix
