@@ -131,7 +131,9 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
-                    <Tooltip active={showBaseToolTip} content={<ToolTip type="df" />} />
+                    {showBaseToolTip && 
+                        <Tooltip content={<ToolTip type="df" />} />
+                    }
                     {repositories.map((repo, idx) => (
                         <Bar animationDuration={0} key={idx} dataKey={repo} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} onClick={handleClickNode} />}/>
                     ))}
