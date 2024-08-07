@@ -14,6 +14,14 @@ const redFilter = "brightness(0) saturate(100%) invert(36%) sepia(86%) saturate(
 const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
 const yellowFilter = "brightness(0) saturate(100%) invert(93%) sepia(74%) saturate(3024%) hue-rotate(1deg) brightness(102%) contrast(102%)"
 const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) saturate(500%) hue-rotate(-15deg) brightness(100%) contrast(120%)"
+const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
+const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+
+const eliteFilter = greenFilter
+const highFilter = blueFilter
+const mediumFilter = yellowFilter
+const lowFilter = orangeFilter
+const unknownFilter = greyFilter
 
 interface ScoreBoardState {
   DFColor: string,
@@ -35,13 +43,13 @@ const calculateCFRRate = (data: Record[]) : number => {
 
 const calculatCFRColor = (rate: number) : string => {
   if(rate < 15) {
-    return greenFilter
+    return eliteFilter
   } else if(rate <= 30) {
-    return yellowFilter
+    return highFilter
   } else if(rate <= 45) {
-    return orangeFilter
+    return mediumFilter
   } else {
-    return redFilter
+    return lowFilter
   }
 }
 
@@ -63,13 +71,13 @@ const calculateCLTRate = (data: Record[]) : number => {
 
 const calculateCLTColor = (rate: number) : string => {
   if(rate < 24) {
-    return greenFilter
+    return eliteFilter
   } else if(rate < 24 * 7) {
-    return yellowFilter
+    return highFilter
   } else if(rate < 24 * 7 * 4.33) {
-    return orangeFilter
+    return mediumFilter
   } else {
-    return redFilter
+    return lowFilter
   }
 }
 
@@ -120,14 +128,14 @@ const calculateDFRate = (props: Props, data: Record[]) : number => {
 }
 
 const calculateDFColor = (rate: number) : string => {
-  if(rate < 12) {
-    return greenFilter
+  if(rate < 24) {
+    return eliteFilter
   } else if(rate < 24 * 7) {
-    return yellowFilter
+    return highFilter
   } else if(rate < 24 * 7 * 4.33) {
-    return yellowFilter
+    return highFilter
   } else {
-    return redFilter
+    return lowFilter
   }
 }
 
@@ -149,22 +157,22 @@ const calculateRTRate = (data: Record[]) : number => {
 
 const calculateRTColor = (rate: number) : string => {
   if(rate < 1 ) {
-    return greenFilter
+    return eliteFilter
   } else if(rate < 24) {
-    return yellowFilter
+    return highFilter
   } else if(rate < 24 * 7) {
-    return orangeFilter
+    return mediumFilter
   } else {
-    return redFilter
+    return lowFilter
   }
 }
 
 const ScoreBoard : React.FC<Props> = (props: Props) => {
   const [state, setState] = useState<ScoreBoardState>({
-    DFColor: redFilter,
-    CLTColor: redFilter,
-    CFRColor: redFilter,
-    RTColor: redFilter,
+    DFColor: unknownFilter,
+    CLTColor: unknownFilter,
+    CFRColor: unknownFilter,
+    RTColor: unknownFilter,
     DFRate: 0,
     CLTRate: 0,
     CFRRate: 0,
