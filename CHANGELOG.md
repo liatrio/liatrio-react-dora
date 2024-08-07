@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.0.4 (2024-08-07)
+
+### Fix
+
+* fix: click node for more info (#39) ([`0cbada5`](https://github.com/liatrio/liatrio-react-dora/commit/0cbada5a079f478d22b8a464c3ebdf5d6a2fee8a))
+
+* fix: shift yellow and orange to medium/low, use blue as high (#38) ([`689d7e8`](https://github.com/liatrio/liatrio-react-dora/commit/689d7e8df9a82f3c9cc47e110f92f35a65552a34))
+
 ## v1.0.3 (2024-08-03)
 
 ### Fix
