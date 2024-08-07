@@ -4,6 +4,7 @@ import { fetchData, generateDistinctColors, Record, Props, getDateDaysInPast, ge
 import Loading from '../Loading/Loading'
 import noDataImg from '../assets/no_data.png'
 import ToolTip from '../ToolTip/ToolTip'
+import CustomDot from '../CustomDot'
 
 export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     let reduced = data.reduce((acc, record) => {
@@ -31,14 +32,6 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     return reduced
 }
 
-const renderCustomShape = (props: any) => {
-    const { cx, cy, fill } = props;
-
-    return (
-      <circle cx={cx} cy={cy} r={8} fill={fill} />
-    );
-  };
-
 const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [graphData, setGraphData] = useState<Map<string, Record[]>>(new Map<string, Record[]>())
     const [colors, setColors] = useState<string[]>([])
@@ -46,6 +39,8 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [noData, setNoData] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
+    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
+    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -84,8 +79,18 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         )
     }
 
+    const handleClickNode = (payload: any) => {
+        setToolTipPayload([{payload: payload}])
+        setShowBaseToolTip(false)
+    };
+
+    const handleCloseExtendedToolTip = () => {
+        setToolTipPayload(null)
+        setShowBaseToolTip(true)
+    }
+
     return (
-        <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
+        <div data-testid="ChangeLeadTime" className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
                     margin={{
@@ -96,12 +101,18 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
-                    <Tooltip content={<ToolTip />} />
+                    <Tooltip active={showBaseToolTip} content={<ToolTip type="clt" />} />
                     {Array.from(graphData.keys()).map((key, idx) => (
-                        <Scatter key={key} name={key} data={graphData.get(key)} fill={colors[idx]} shape={renderCustomShape} />
+                        <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]}                        
+                        shape={(props: any) => <CustomDot {...props}  onClick={handleClickNode} />}
+                        activeShape={(props: any) => <CustomDot {...props} onClick={handleClickNode} />} />
                     ))}
                 </ScatterChart>
             </ResponsiveContainer>
+            
+            {toolTipPayload &&
+                <ToolTip type="clt" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
+            }
         </div>
     )
 }
