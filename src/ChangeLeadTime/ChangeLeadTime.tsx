@@ -101,7 +101,9 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
-                    <Tooltip active={showBaseToolTip} content={<ToolTip type="clt" />} />
+                    {showBaseToolTip && 
+                        <Tooltip content={<ToolTip type="clt" />} />
+                    }
                     {Array.from(graphData.keys()).map((key, idx) => (
                         <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]}                        
                         shape={(props: any) => <CustomDot {...props}  onClick={handleClickNode} />}
