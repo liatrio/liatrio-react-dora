@@ -4,6 +4,7 @@ import { fetchData, generateDistinctColors, Record, Props, extractUniqueReposito
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import ToolTip from './ToolTip/ToolTip'
+import CustomDot from './CustomDot'
 
 export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => {
     let reduced = data.reduce((acc: Map<number, any>, record: Record) => {
@@ -64,6 +65,8 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const [noData, setNoData] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
+    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
+    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -107,8 +110,18 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
         )
     }
 
+    const handleClickNode = (payload: any) => {
+        setToolTipPayload([{payload: payload}])
+        setShowBaseToolTip(false)
+    }
+
+    const handleCloseExtendedToolTip = () => {
+        setToolTipPayload(null)
+        setShowBaseToolTip(true)
+    }
+
     return (
-        <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>
+        <div data-testid="ChangeFailureRate" className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
             <LineChart
                     width={500}
@@ -122,12 +135,19 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
-                    <Tooltip content={<ToolTip />} />
+                    <Tooltip active={showBaseToolTip} content={<ToolTip type="cfr" />} />
                     {repositories.map((repo, idx) => (
-                        <Line key={repo} dataKey={`${repo}.total`} fill={colors[idx]} dot={{r: 8}} />
+                        <Line animationDuration={0} key={repo} dataKey={`${repo}.total`} fill={colors[idx]} 
+                        dot={(props: any) => <CustomDot {...props} onClick={handleClickNode} />}
+                        activeDot={(props: any) => <CustomDot {...props} onClick={handleClickNode} />}
+                        />
                     ))}
                 </LineChart>
             </ResponsiveContainer>
+            
+            {toolTipPayload &&
+                <ToolTip type="cfr" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
+            }
         </div>
     )
 }

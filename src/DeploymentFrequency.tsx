@@ -4,6 +4,7 @@ import { fetchData, generateDistinctColors, Record, Props, extractUniqueReposito
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import ToolTip from './ToolTip/ToolTip'
+import CustomBar from './CustomBar'
 
 export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[], number] => {
     let max = 0
@@ -58,6 +59,8 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
+    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
+    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
 
     const ticks = generateTicks(startDate, endDate, 5)
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
@@ -102,8 +105,18 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
         )
     }
 
+    const handleClickNode = (payload: any) => {
+        setToolTipPayload([{payload: payload}])
+        setShowBaseToolTip(false)
+    }
+
+    const handleCloseExtendedToolTip = () => {
+        setToolTipPayload(null)
+        setShowBaseToolTip(true)
+    }
+
     return (
-        <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>
+        <div data-testid="DeploymentFrequency" className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     width={500}
@@ -118,12 +131,16 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
-                    <Tooltip content={<ToolTip />} />
+                    <Tooltip active={showBaseToolTip} content={<ToolTip type="df" />} />
                     {repositories.map((repo, idx) => (
-                        <Bar key={idx} dataKey={repo} stackId="a" fill={colors[idx]} barSize={maxBarWidth}/>
+                        <Bar animationDuration={0} key={idx} dataKey={repo} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} onClick={handleClickNode} />}/>
                     ))}
                 </BarChart>
             </ResponsiveContainer>
+            
+            {toolTipPayload &&
+                <ToolTip type="df" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
+            }
         </div>
     )
 }
