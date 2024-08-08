@@ -62,7 +62,7 @@ const getBody = (type: string, payloads: Payload[]) => {
                     const entry = payload[key]
 
                     return (<>
-                        <p>{key}: {payload[key].total * 100}%</p>
+                        <p>{key}: {(payload[key].total * 100).toFixed(2)}%</p>
                         {entry.successes.length > 0 &&
                             <span className="toolTipSpan">Successes: 
                                 {entry.successes.map((record: any, index: number) => {
