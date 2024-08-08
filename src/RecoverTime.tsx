@@ -18,23 +18,26 @@ export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
 
         if (!entry) {
             entry = {
-                type: "rt",
                 date: date
             }
 
             acc.set(date, entry)
         }
 
-        if(!entry[record.repository]) {
+        let payload = entry[record.repository]
+
+        if(!payload) {
             entry[record.repository] = {
                 count: 1,
                 totalTime: record.recoverTime,
-                avgTime: record.recoverTime
+                avgTime: record.recoverTime,
+                records: [record]
             }
         } else {
-            entry[record.repository].count++
-            entry[record.repository].totalTime += record.recoverTime
-            entry[record.repository].avgTime += entry[record.repository].totalTime / entry[record.repository].count
+            payload.count++
+            payload.totalTime += record.recoverTime
+            payload.avgTime += payload.totalTime / payload.count
+            payload.records.push(record)
         }
 
         return acc
@@ -101,13 +104,13 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     }
 
     const handleClickNode = (payload: any) => {
-        setToolTipPayload([{payload: payload}])
-        setShowBaseToolTip(false)
+        // setToolTipPayload([{payload: payload}])
+        // setShowBaseToolTip(false)
     };
 
     const handleCloseExtendedToolTip = () => {
-        setToolTipPayload(null)
-        setShowBaseToolTip(true)
+        // setToolTipPayload(null)
+        // setShowBaseToolTip(true)
     }
 
     return (

@@ -17,12 +17,11 @@ export interface Props {
 }
 
 const getTitle = (type: string, payloads: Payload[]) => {
-    console.log(payloads)
     const payload0 = payloads[0]
     const payload = payload0.payload
 
     if(type === "clt") {
-        return (<h3>{payload.title}</h3>)
+        return (<h3><a className="toolTipLink" href={payload.deploy_url} target="_blank">{payload.title}</a></h3>)
     } else {
         const date = new Date(payload.date).toISOString().split("T")[0]
         return (<h3>{date}</h3>)
@@ -41,30 +40,63 @@ const getBody = (type: string, payloads: Payload[]) => {
     } else if(type === "df") {
         return (<>
             {Object.keys(payload).map((key: any) => {
-                if(key !== "date" && key !== "type") {
-                    return <p>{key}: {payload[key]}</p>
+                if(key !== "date") {
+                    const entry = payload[key]
+
+                    return (<>
+                        <p>{key}: 
+                            {entry.urls.map((url: string, index: number) => {
+                                return <a className="toolTipLink" href={url} target="_blank">{index + 1}</a>
+                            })}
+                        </p>
+                    </>)
                 } else {
-                    return <></>
+                    return 
                 }
             })}
         </>)
     } else if(type === "cfr") {
         return (<>
             {Object.keys(payload).map((key: any) => {
-                if(key !== "date" && key !== "type") {
-                    return <p>{key}: {payload[key].total * 100}% </p>
+                if(key !== "date") {
+                    const entry = payload[key]
+
+                    return (<>
+                        <p>{key}: {payload[key].total * 100}%</p>
+                        {entry.successes.length > 0 &&
+                            <span className="toolTipSpan">Successes: 
+                                {entry.successes.map((record: any, index: number) => {
+                                    return <a className="toolTipLink" target='_blank' href={record.deploy_url}>{index + 1}</a>
+                                })}
+                            </span>
+                        }
+                        {entry.failures.length > 0 && entry.successes.length > 0 &&
+                            <br/>
+                        }
+                        {entry.failures.length > 0 &&
+                            <span className="toolTipSpan">Issues: 
+                                {entry.failures.map((record: any, index: number) => {
+                                    return <a className="toolTipLink" target='_blank' href={record.issue_url ?? record.deploy_url}>{index + 1}</a>
+                                })}
+                            </span>
+                        }
+                    </>)
                 } else {
-                    return <></>
+                    return (<></>)
                 }
             })}
         </>)
     } else if(type === "rt") {
         return (<>
             {Object.keys(payload).map((key: any) => {
-                if(key !== "date" && key !== "type") {
-                    return <p>{key}: {payload[key].avgTime} hrs</p>
+                if(key !== "date") {
+                    const entry = payload[key]
+
+                    return (<>
+                        <p>{key}: {entry.avgTime} hrs</p>
+                    </>)
                 } else {
-                    return <></>
+                    return (<></>)
                 }
             })}
         </>)
@@ -108,15 +140,10 @@ const ToolTip : React.FC<Props> = ({type, active, payload, showExtendedDetail, o
                     {body}
                 </div>
                 {footer}
-                {showExtendedDetail ?
+                {!showExtendedDetail && type !== "rt" &&
                     <>
                         <br/>
-                        <p style={{margin: "0px"}}>Coming in a future change</p>
-                    </>
-                :
-                    <>
-                        <br/>
-                        <p style={{margin: "0px"}}>Click node for more info</p>
+                        <p style={{margin: "0px"}}>Click node/bar to access links</p>
                     </>
                 }
             </div>

@@ -13,7 +13,6 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
 
         if (!entry) {
             entry = {
-                type: "cfr",
                 date: date
             }
 
@@ -27,21 +26,27 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
             count = {
                 successful: 0,
                 failed: 0,
-                total: 0
+                total: 0,
+                failures: [],
+                successes: [],
             }
 
             if(record.status === true && !record.failed_at) {
                 count.successful = 1
+                count.successes.push(record)
             } else {
                 count.failed = 1
+                count.failures.push(record)
             }
 
             entry[key] = count
         } else {
             if(record.status === true && !record.failed_at) {
                 count.successful++
+                count.successes.push(record)
             } else {
                 count.failed++
+                count.failures.push(record)
             }
         }
 

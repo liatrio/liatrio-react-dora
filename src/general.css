@@ -3,3 +3,23 @@
   width: 100%;
   position: relative;
 }
+
+.toolTipLink {
+  padding-left: 2px;
+  padding-right: 2px;
+  text-decoration-color: greenyellow;
+  color: greenyellow
+}
+
+.toolTipList {
+  padding-left: 20px;
+  margin: 2px;
+}
+
+.toolTipList li {
+  text-indent: -5px;
+}
+
+.toolTipSpan {
+  margin-left: 10px;
+}
