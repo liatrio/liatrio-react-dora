@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.7 (2024-08-08)
+
+### Fix
+
+* fix: provide links in the tooltip (#43) ([`3fe6b82`](https://github.com/liatrio/liatrio-react-dora/commit/3fe6b82bb6e9dbdf60bf8331d2c97b44b5428cb7))
+
 ## v1.0.6 (2024-08-07)
 
 ### Fix
