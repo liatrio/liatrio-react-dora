@@ -27,6 +27,9 @@ export interface Record {
   totalCycle: number
   start: number
   recoverTime: number
+  deploy_url: string
+  fixed_url: string
+  change_url: string
 }
 
 const date_keys = ['merged_at', 'created_at', 'fixed_at', 'failed_at']

@@ -16,7 +16,7 @@ export const Example = Template.bind({})
 
 Example.args = {
     api: "",
-    repositories: ['dora-high-repo'],
+    repositories: ['dora-elite-repo'],
     data: data,
     includeWeekends: false,
     showDetails: true,

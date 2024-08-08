@@ -19,26 +19,29 @@ export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[],
 
         if (!entry) {
             entry = {
-                type: "df",
                 date: date
             }
 
             acc.set(date, entry)
         }
 
-        let value = entry[record.repository]
+        let repo = entry[record.repository]
 
-        if(!value) {
-            value = 1
+        if(!repo) {
+            repo = {
+                count: 1,
+                urls: [record.deploy_url]
+            }
+
+            entry[record.repository] = repo
         } else {
-            value++
+            repo.count++
+            repo.urls.push(record.deploy_url)
         }
-
-        if(max < value) {
-            max = value
+        
+        if(max < repo.count) {
+            max = repo.count
         }
-
-        entry[record.repository] = value
 
         return acc
     }, new Map<number, Record[]>())
@@ -134,9 +137,12 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     {showBaseToolTip && 
                         <Tooltip content={<ToolTip type="df" />} />
                     }
-                    {repositories.map((repo, idx) => (
-                        <Bar animationDuration={0} key={idx} dataKey={repo} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} onClick={handleClickNode} />}/>
-                    ))}
+                    {repositories.map((repo, idx) => { 
+                        const key = `${repo}.count`
+                        return (
+                            <Bar animationDuration={0} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} onClick={handleClickNode} />}/>
+                        )
+                    })}
                 </BarChart>
             </ResponsiveContainer>
             
