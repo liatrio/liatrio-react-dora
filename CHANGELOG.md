@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.8 (2024-08-08)
+
+### Fix
+
+* fix: correct formula for cfr per day (#44) ([`6a7cc98`](https://github.com/liatrio/liatrio-react-dora/commit/6a7cc9882e5c48df6a2ec07595fdd30aaf609f12))
+
 ## v1.0.7 (2024-08-08)
 
 ### Fix
