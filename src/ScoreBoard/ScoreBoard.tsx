@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Popover, ArrowContainer } from "react-tiny-popover"
-import { Record, Props, fetchData } from '../Helpers'
+import { Record, Props, fetchData, subtractWeekends } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
@@ -82,25 +82,6 @@ const calculateCLTColor = (rate: number) : string => {
 
 const MaxDF = 1000000
 
-const subtractWeekends = (props: Props, start: Date, end: Date, diff: number) : number => {
-  const milliToDays = 24 * 60 * 60 * 1000
-  const gapDays = Math.floor(diff / milliToDays)
-
-  if(!props.includeWeekends && gapDays > 1) {
-    while(start.getTime() <= end.getTime()) {
-      let current_day = start.getDay()
-
-      if(current_day === 0 || current_day === 6) {
-        diff -= milliToDays
-      }
-
-      start.setDate(start.getDate() + 1)
-    }
-  }
-
-  return diff
-}
-
 const calculateDFRate = (props: Props, data: Record[]) : number => {
   let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
@@ -114,9 +95,8 @@ const calculateDFRate = (props: Props, data: Record[]) : number => {
   for(let index = 1; index < sorted.length; index++) {
     let start = sorted[index - 1].created_at
     let end = sorted[index].created_at
-    let diff = end.getTime() - start.getTime()
 
-    diff = subtractWeekends(props, start, end, diff)
+    let diff = subtractWeekends(props, start, end)
 
     totalDeployTime += diff
   }

@@ -75,6 +75,26 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
+export const subtractWeekends = (props: Props, start: Date, end: Date) : number => {
+  const milliToDays = 24 * 60 * 60 * 1000
+  let diff = end.getTime() - start.getTime()
+  const gapDays = Math.floor(diff / milliToDays)
+
+  if(!props.includeWeekends && gapDays > 1) {
+    while(start.getTime() <= end.getTime()) {
+      let current_day = start.getDay()
+
+      if(current_day === 0 || current_day === 6) {
+        diff -= milliToDays
+      }
+
+      start.setDate(start.getDate() + 1)
+    }
+  }
+
+  return diff
+}
+
 export const generateTicks = (start: Date, end: Date, numIntervals: number) => {
   const ticks = [];
   const interval = (end.getTime() - start.getTime()) / numIntervals;
@@ -88,13 +108,15 @@ export const formatTicks = (tick: any) : string => {
   return new Date(tick).toLocaleDateString();
 }
 
-export const expandData = (data: Record[]) => {
+export const expandData = (props: Props, data: Record[]) => {
   data.forEach((record) => {
     if(record.merged_at) {
-      const mergedAt = record.merged_at.getTime()
-      const deployedAt = record.fixed_at ? record.fixed_at.getTime() : record.created_at.getTime()
+      const mergedAt = record.merged_at
+      const deployedAt = record.fixed_at ? record.fixed_at : record.created_at
 
-      record.totalCycle = parseFloat(((deployedAt - mergedAt) / (1000 * 60 * 60)).toFixed(2))
+      let diff = subtractWeekends(props, mergedAt, deployedAt)
+
+      record.totalCycle = (diff / (60 * 60 * 1000))
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
@@ -169,7 +191,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
     if(parsedData.records) {
       parsedData = filterData(props, parsedData.records)
 
-      expandData(parsedData)
+      expandData(props, parsedData)
 
       onSuccess(parsedData)
     } else {
@@ -220,7 +242,7 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
 
       parsedData = filterData(props, parsedData.records)
 
-      expandData(parsedData)
+      expandData(props, parsedData)
 
       onSuccess(parsedData)
   } catch (error) {
