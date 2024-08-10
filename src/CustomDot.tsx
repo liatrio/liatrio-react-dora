@@ -3,10 +3,17 @@ import { DotProps } from 'recharts';
 
 interface CustomDotProps extends DotProps {
   payload: any
-  onClick: (payload: any) => void
+  tooltipId: string
+  mouseOver: (event: any, payload: any) => void
 }
 
-const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, onClick }) => {
+const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, mouseOver, tooltipId }) => {
+  const mOver = (e: any) => {
+    if(mouseOver) {
+      mouseOver(e, payload)
+    }
+  }
+
   return (
     <circle
       cx={cx}
@@ -14,8 +21,9 @@ const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, onClick })
       r={8}
       fill={fill}
       stroke="none"
-      onClick={() => onClick(payload)}
+      onMouseOver={mOver}
       style={{ cursor: 'pointer' }}
+      data-tooltip-id={tooltipId}
     />
   );
 };

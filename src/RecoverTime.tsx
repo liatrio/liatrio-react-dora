@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts'
+import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, Props, Record } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
-import ToolTip from './ToolTip/ToolTip'
 import CustomDot from './CustomDot'
 import './general.css'
+import TooltipContent from './ToolTip/TooltipContent'
+import { Tooltip } from 'react-tooltip'
 
 export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
     let reduced = data.reduce((acc: Map<number, any>, record: Record) => {
@@ -58,8 +59,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
     const [noData, setNoData] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
-    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
-    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
+    const [tooltipContent, setTooltipContent] = useState<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -103,14 +103,8 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
         )
     }
 
-    const handleClickNode = (payload: any) => {
-        // setToolTipPayload([{payload: payload}])
-        // setShowBaseToolTip(false)
-    };
-
-    const handleCloseExtendedToolTip = () => {
-        // setToolTipPayload(null)
-        // setShowBaseToolTip(true)
+    const handleMouseOverDot = (event: any, payload: any) => {
+        setTooltipContent(<TooltipContent type="rt" payload={[payload]} />)
     }
 
     return (
@@ -128,20 +122,14 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
-                    {showBaseToolTip && 
-                        <Tooltip content={<ToolTip type="rt" />} />
-                    }
                     {repositories.map((repo, idx) => (
                         <Line animationDuration={0} key={repo} dataKey={`${repo}.avgTime`} fill={colors[idx]} 
-                        dot={(props: any) => <CustomDot {...props} onClick={handleClickNode} />}
-                        activeDot={(props: any) => <CustomDot {...props} onClick={handleClickNode} />} />
+                        dot={(props: any) => <CustomDot {...props} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}
+                        activeDot={(props: any) => <CustomDot {...props} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />} />
                     ))}
                 </LineChart>
             </ResponsiveContainer>
-            
-            {toolTipPayload &&
-                <ToolTip type="rt" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
-            }
+            <Tooltip className='chartTooltip' delayHide={2000} clickable={true} classNameArrow='chartTooltipArrow' id="rtTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
         </div>
     )
 }
