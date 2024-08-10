@@ -3,7 +3,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.1.0",
             "user": "adrielp",
             "sha": "5bd251873aaa0ecf63ab376045a67700534e7039",
             "status": true,
@@ -19,7 +19,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.2.0",
             "user": "adrielp",
             "sha": "bdca94f46916523b99c4716b3c25dec53032db8c",
             "status": true,
@@ -51,7 +51,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.4.0",
             "user": "adrielp",
             "sha": "31831ad0920abe6b70ff4cfafb504eb08d59788b",
             "status": true,
@@ -67,7 +67,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.5.0",
             "user": "adrielp",
             "sha": "a0f9312bd16771248a361727b7299f1ed6ff47cf",
             "status": true,
@@ -83,7 +83,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.6.0",
             "user": "adrielp",
             "sha": "a86a0d404b4c0260730fec0a8ca7fbe8b16b61b7",
             "status": true,
@@ -99,7 +99,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.7.0",
             "user": "adrielp",
             "sha": "92a6eadeb405bf17d85b4b03c9a5659eea221db1",
             "status": true,
@@ -115,7 +115,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.8.0",
             "user": "adrielp",
             "sha": "bdeecbfa277bde710830d3b9f0e3a1666517b187",
             "status": true,
@@ -131,7 +131,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.9.0",
             "user": "adrielp",
             "sha": "78c5eb3b4181bce8aee49adcee3b188360b7bfe2",
             "status": true,
@@ -147,7 +147,7 @@ export default `{
         {
             "repository": "dora-elite-repo",
             "team": "dora-elite-repo",
-            "title": "feat: set version v0.3.0",
+            "title": "feat: set version v0.10.0",
             "user": "adrielp",
             "sha": "039b4ac22baa0aac8a2674829b52563abe2739dd",
             "status": true,

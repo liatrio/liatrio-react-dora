@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, getDateDaysInPast, generateTicks, formatTicks } from '../Helpers'
-import Loading from '../Loading/Loading'
-import noDataImg from '../assets/no_data.png'
-import ToolTip from '../ToolTip/ToolTip'
-import CustomDot from '../CustomDot'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { fetchData, generateDistinctColors, Record, Props, getDateDaysInPast, generateTicks, formatTicks } from './Helpers'
+import Loading from './Loading/Loading'
+import noDataImg from './assets/no_data.png'
+import TooltipContent from './ToolTip/TooltipContent'
+import { Tooltip } from 'react-tooltip'
+import CustomShape from './CustomShape'
 
 export const extractChangeLeadTimePerRepository = (data: Record[]) => {
     let reduced = data.reduce((acc, record) => {
@@ -39,8 +40,11 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
     const [noData, setNoData] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
-    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
-    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
+    const [tooltipContent, setTooltipContent] = useState<any>(null)
+    const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
+    const [node, setNode] = useState<any>(null)
+    const [position, setPosition] = useState<any>(null)
+    const timeoutRef = useRef<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -79,42 +83,68 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         )
     }
 
-    const handleClickNode = (payload: any) => {
-        setToolTipPayload([{payload: payload}])
-        setShowBaseToolTip(false)
-    };
+    function getElementCenter(element: any) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        return { x: centerX, y: centerY };
+    }
 
-    const handleCloseExtendedToolTip = () => {
-        setToolTipPayload(null)
-        setShowBaseToolTip(true)
+    const handleMouseOverDot = (payload: any, id: any, event: any) => {
+        if(id !== node) {
+            setNode(id)
+            setTooltipContent(<TooltipContent type="clt" payload={[payload]} />)
+            setTooltipOpen(true)
+        }
+        const center = getElementCenter(event.target)
+
+        setPosition(center)
+    }
+
+    const handleMouseMoveContainer = (event: any) => {
+        if(!tooltipOpen) {
+            return
+        }
+
+        if(event.target.tagName === "svg" || event.target.tagName === "line") {
+            if(!timeoutRef.current) {
+                setNode(null)
+                timeoutRef.current = setTimeout(() => {setTooltipOpen(false)}, 2000)
+            }
+        } else if(timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+            timeoutRef.current = null
+        }
+    }
+
+    const handleMouseMoveChart = (coords: any, event: any) => {
+        handleMouseMoveContainer(event)
     }
 
     return (
-        <div data-testid="ChangeLeadTime" className="chart-wrapper">
+        <div data-testid="ChangeLeadTime" className="chart-wrapper" onMouseMove={handleMouseMoveContainer}>
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
+                    width={500}
+                    height={300}
                     margin={{
                         right: 40,
                         top: 10
                     }}
+                    onMouseMove={handleMouseMoveChart}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
-                    {showBaseToolTip && 
-                        <Tooltip content={<ToolTip type="clt" />} />
-                    }
                     {Array.from(graphData.keys()).map((key, idx) => (
-                        <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]}                        
-                        shape={(props: any) => <CustomDot {...props}  onClick={handleClickNode} />}
-                        activeShape={(props: any) => <CustomDot {...props} onClick={handleClickNode} />} />
+                        <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
+                            shape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
+                            activeShape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
+                        />
                     ))}
                 </ScatterChart>
             </ResponsiveContainer>
-            
-            {toolTipPayload &&
-                <ToolTip type="clt" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
-            }
+            <Tooltip className='chartTooltip' isOpen={tooltipOpen} position={position} clickable={true} classNameArrow='chartTooltipArrow' id="cltTooltip" border="1px solid white" opacity="1" content={tooltipContent}/>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import ChangeLeadTime from '../src/ChangeLeadTime/ChangeLeadTime'
+import ChangeLeadTime from '../src/ChangeLeadTime'
 import { Props } from '../src/Helpers'
 
 import data from './data'

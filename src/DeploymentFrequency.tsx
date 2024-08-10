@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, generateTicks, formatTicks} from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
-import ToolTip from './ToolTip/ToolTip'
 import CustomBar from './CustomBar'
+import { Tooltip } from 'react-tooltip'
+import TooltipContent from './ToolTip/TooltipContent'
 
 export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[], number] => {
     let max = 0
@@ -62,8 +63,7 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
-    const [toolTipPayload, setToolTipPayload] = useState<any>(null)
-    const [showBaseToolTip, setShowBaseToolTip] = useState<boolean>(true)
+    const [tooltipContent, setTooltipContent] = useState<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
@@ -108,14 +108,8 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
         )
     }
 
-    const handleClickNode = (payload: any) => {
-        setToolTipPayload([{payload: payload}])
-        setShowBaseToolTip(false)
-    }
-
-    const handleCloseExtendedToolTip = () => {
-        setToolTipPayload(null)
-        setShowBaseToolTip(true)
+    const handleMouseOverBar = (event: any, payload: any) => {
+        setTooltipContent(<TooltipContent type="df" payload={[payload]} />)
     }
 
     return (
@@ -134,21 +128,15 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
-                    {showBaseToolTip && 
-                        <Tooltip content={<ToolTip type="df" />} />
-                    }
                     {repositories.map((repo, idx) => { 
                         const key = `${repo}.count`
                         return (
-                            <Bar animationDuration={0} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} onClick={handleClickNode} />}/>
+                            <Bar animationDuration={0} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
                         )
                     })}
                 </BarChart>
             </ResponsiveContainer>
-            
-            {toolTipPayload &&
-                <ToolTip type="df" active={true} payload={toolTipPayload} showExtendedDetail={true} onClose={handleCloseExtendedToolTip} />
-            }
+            <Tooltip className='chartTooltip' delayHide={2000} clickable={true} classNameArrow='chartTooltipArrow' id="dfTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
         </div>
     )
 }
