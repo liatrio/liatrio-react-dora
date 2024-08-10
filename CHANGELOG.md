@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.0.9 (2024-08-10)
+
+### Fix
+
+* fix: skip weekends for ctl too (#46) ([`11268d6`](https://github.com/liatrio/liatrio-react-dora/commit/11268d619afa2e200775f95056cd9e09865438b0))
+
+* fix: disable ReCharts tooltip and replace with react-tooltip (#45) ([`a989acb`](https://github.com/liatrio/liatrio-react-dora/commit/a989acbf6aa7e4bcb507510bbd26ed9e3d6d654f))
+
 ## v1.0.8 (2024-08-08)
 
 ### Fix
