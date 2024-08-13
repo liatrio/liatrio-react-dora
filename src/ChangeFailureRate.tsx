@@ -48,11 +48,11 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
             } else {
                 count.failed++
             }
-        }
+        }        
 
-        const total = entry[key].failed + (entry[key].successful < 1 ? 1 : entry[key].successful)
+        const total = entry[key].failed + entry[key].successful
 
-        count.total = entry[key].failed / total
+        count.total = entry[key].failed / (total < 1 ? 1 : total)
 
         return acc
     }, new Map<number, Record[]>())
