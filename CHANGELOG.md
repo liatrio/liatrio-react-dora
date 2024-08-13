@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v1.0.10 (2024-08-13)
+
+### Fix
+
+* fix: various bug fixes (#51)
+
+* fix: calc falsly infalted builds by 1 in CFR
+
+* fix: only show 2 decimal places in clt tooltip
+
+* fix: try to handle persistent tooltip issue better
+
+* fix: offset tooltip in clt to mirror others
+
+* chore: update test data
+
+* fix: make x-axis padding uniform across charts
+
+* fix: change clt to bar graph ([`d54ba72`](https://github.com/liatrio/liatrio-react-dora/commit/d54ba72928d0882dd9256a6b1f80c2a80dc3e76b))
+
 ## v1.0.9 (2024-08-10)
 
 ### Fix
