@@ -121,8 +121,15 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
         handleMouseMoveContainer(event)
     }
 
+    const handleMouseOut = (event: any) => {
+        if(!timeoutRef.current) {
+            setNode(null)
+            timeoutRef.current = setTimeout(() => {setTooltipOpen(false)}, 2000)
+        }
+    }
+
     return (
-        <div data-testid="ChangeLeadTime" className="chart-wrapper" onMouseMove={handleMouseMoveContainer}>
+        <div data-testid="ChangeLeadTime" className="chart-wrapper" onMouseMove={handleMouseMoveContainer} onMouseOut={handleMouseOut}>
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
                     width={500}
@@ -132,6 +139,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                         top: 10
                     }}
                     onMouseMove={handleMouseMoveChart}
+                    onMouseLeave={handleMouseOut}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
