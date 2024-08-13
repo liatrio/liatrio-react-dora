@@ -142,7 +142,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     onMouseLeave={handleMouseOut}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis padding="gap" dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
                     {Array.from(graphData.keys()).map((key, idx) => (
                         <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
