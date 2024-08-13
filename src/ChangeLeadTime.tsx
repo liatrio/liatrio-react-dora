@@ -152,7 +152,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
                     ))}
                 </ScatterChart>
             </ResponsiveContainer>
-            <Tooltip className='chartTooltip' isOpen={tooltipOpen} position={position} clickable={true} classNameArrow='chartTooltipArrow' id="cltTooltip" border="1px solid white" opacity="1" content={tooltipContent}/>
+            <Tooltip className='chartTooltip' offset={20}  isOpen={tooltipOpen} position={position} clickable={true} classNameArrow='chartTooltipArrow' id="cltTooltip" border="1px solid white" opacity="1" content={tooltipContent}/>
         </div>
     )
 }
