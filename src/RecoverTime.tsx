@@ -120,7 +120,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis padding="gap" dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
                     {repositories.map((repo, idx) => (
                         <Line animationDuration={0} key={repo} dataKey={`${repo}.avgTime`} fill={colors[idx]} 

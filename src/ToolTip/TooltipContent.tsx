@@ -27,7 +27,7 @@ const getBody = (type: string, payloads: any[]) => {
     if(type === "clt") {
         return (<>
             <p>Repository: {payload.repository}</p>
-            <p>Total Cycle Time: {payload.totalCycle} hrs</p>
+            <p>Total Cycle Time: {payload.totalCycle.toFixed(2)} hrs</p>
         </>)
     } else if(type === "df") {
         return (<>

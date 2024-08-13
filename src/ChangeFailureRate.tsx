@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid,  ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid,  ResponsiveContainer } from 'recharts'
 import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, formatTicks, generateTicks } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
-import CustomDot from './CustomDot'
+import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
 
@@ -48,11 +48,11 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
             } else {
                 count.failed++
             }
-        }
+        }        
 
-        const total = entry[key].failed + (entry[key].successful < 1 ? 1 : entry[key].successful)
+        const total = entry[key].failed + entry[key].successful
 
-        count.total = entry[key].failed / total
+        count.total = entry[key].failed / (total < 1 ? 1 : total)
 
         return acc
     }, new Map<number, Record[]>())
@@ -75,6 +75,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const [tooltipContent, setTooltipContent] = useState<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
+    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
     const organizeData = (data: Record[]) => {
         if(data.length === 0) {
@@ -116,14 +117,14 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
         )
     }
 
-    const handleMouseOverDot = (event: any, payload: any) => {
+    const handleMouseOverBar = (event: any, payload: any) => {
         setTooltipContent(<TooltipContent type="cfr" payload={[payload]} />)
     }
 
     return (
         <div data-testid="ChangeFailureRate" className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <BarChart
                     width={500}
                     height={300}
                     data={graphData}
@@ -133,15 +134,12 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis padding="gap" dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+                    <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
                     {repositories.map((repo, idx) => (
-                        <Line animationDuration={0} key={repo} dataKey={`${repo}.total`} fill={colors[idx]} 
-                            dot={(props: any) => <CustomDot {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverDot} />}
-                            activeDot={(props: any) => <CustomDot {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverDot} />}
-                        />
+                        <Bar animationDuration={0} key={repo} dataKey={`${repo}.total`} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>
                     ))}
-                </LineChart>
+                </BarChart>
             </ResponsiveContainer>
             <Tooltip className='chartTooltip' delayHide={2000} clickable={true} classNameArrow='chartTooltipArrow' id="cfrTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
         </div>

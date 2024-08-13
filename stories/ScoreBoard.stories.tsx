@@ -20,6 +20,6 @@ Example.args = {
     data: data,
     includeWeekends: false,
     showDetails: true,
-    start: new Date(2024, 5, 1),
-    end: new Date(2024, 6, 2)
+    start: new Date(2024, 6, 12),
+    end: new Date(2024, 7, 11)
 }
