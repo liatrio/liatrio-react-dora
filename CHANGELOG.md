@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.18 (2024-08-14)
+
+### Fix
+
+* fix: make measure optional all the way down, use correct measure for clt (#59) ([`e129019`](https://github.com/liatrio/liatrio-react-dora/commit/e129019d749fe5ee201637a3b72baeaae6d6fdcc))
+
 ## v1.0.17 (2024-08-14)
 
 ### Fix
