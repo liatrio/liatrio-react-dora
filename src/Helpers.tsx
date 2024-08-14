@@ -22,10 +22,10 @@ export interface RankThreshold {
 }
 
 export interface RankThresholds {
-  df: RankThreshold,
-  clt: RankThreshold,
-  cfr: RankThreshold,
-  rt: RankThreshold,
+  deployment_frequency: RankThreshold,
+  change_lead_time: RankThreshold,
+  change_failure_rate: RankThreshold,
+  recover_time: RankThreshold,
 }
 
 export interface DoraRecord {
@@ -350,11 +350,11 @@ export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores 
 }
 
 const calculatCFRRank = (props: ChartProps, rate: number) : number => {
-  if(rate < (props.measures?.cfr.elite ? props.measures?.cfr.elite : 5)) {
+  if(rate < (props.measures?.change_failure_rate.elite ? props.measures?.change_failure_rate.elite : 5)) {
     return 0
-  } else if(rate <= (props.measures?.cfr.high ? props.measures?.cfr.high : 10)) {
+  } else if(rate <= (props.measures?.change_failure_rate.high ? props.measures?.change_failure_rate.high : 10)) {
     return 1
-  } else if(rate <= (props.measures?.cfr.medium ? props.measures?.cfr.medium : 45)) {
+  } else if(rate <= (props.measures?.change_failure_rate.medium ? props.measures?.change_failure_rate.medium : 45)) {
     return 2
   } else {
     return 3
@@ -362,11 +362,11 @@ const calculatCFRRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateCLTRank = (props: ChartProps, rate: number) : number => {
-  if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24)) {
+  if(rate < (props.measures?.change_lead_time.elite ? props.measures?.change_failure_rate.elite : 24)) {
     return 0
-  } else if(rate < (props.measures?.clt.high ? props.measures?.cfr.high : 24 * 7)) {
+  } else if(rate < (props.measures?.change_lead_time.high ? props.measures?.change_failure_rate.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.clt.medium ? props.measures?.cfr.medium : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.change_lead_time.medium ? props.measures?.change_failure_rate.medium : 24 * 7 * 4.33)) {
     return 2
   } else {
     return 3
@@ -374,11 +374,11 @@ const calculateCLTRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateDFRank = (props: ChartProps, rate: number) : number => {
-  if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24)) {
+  if(rate < (props.measures?.deployment_frequency.elite ? props.measures?.deployment_frequency.elite : 24)) {
     return 0
-  } else if(rate < (props.measures?.df.high ? props.measures?.df.high : 24 * 7)) {
+  } else if(rate < (props.measures?.deployment_frequency.high ? props.measures?.deployment_frequency.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.df.medium ? props.measures?.df.medium : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.deployment_frequency.medium ? props.measures?.deployment_frequency.medium : 24 * 7 * 4.33)) {
     return 2
   } else {
     return 3
@@ -386,11 +386,11 @@ const calculateDFRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateRTRank = (props: ChartProps, rate: number) : number => {
-  if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 1)) {
+  if(rate < (props.measures?.recover_time.elite ? props.measures?.recover_time.elite : 1)) {
     return 0
-  } else if(rate < (props.measures?.rt.high ? props.measures?.rt.high : 24)) {
+  } else if(rate < (props.measures?.recover_time.high ? props.measures?.recover_time.high : 24)) {
     return 1
-  } else if(rate < (props.measures?.rt.medium ? props.measures?.rt.medium : 24 * 7)) {
+  } else if(rate < (props.measures?.recover_time.medium ? props.measures?.recover_time.medium : 24 * 7)) {
     return 2
   } else {
     return 3
