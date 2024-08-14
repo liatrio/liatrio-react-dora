@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.0.13 (2024-08-14)
+
+### Fix
+
+* fix: streamline score board (#54)
+
+* fix: align scoreboard tooltip with other charts
+
+* fix: cleanup colors
+
+* fix: account for fixedAt not being available
+
+* fix: make sure failed at gets set properly ([`0784e41`](https://github.com/liatrio/liatrio-react-dora/commit/0784e41330c485cc7178533515b5d6b9e486edf8))
+
 ## v1.0.12 (2024-08-14)
 
 ### Fix
