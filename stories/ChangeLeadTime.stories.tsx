@@ -1,7 +1,7 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import ChangeLeadTime from '../src/ChangeLeadTime'
-import { Props } from '../src/Helpers'
+import { ChartProps } from '../src/Helpers'
 
 import data from './data'
 
@@ -10,7 +10,7 @@ export default {
     component: ChangeLeadTime,
 } as Meta
 
-const Template: StoryFn<Props> = (args: any) => <div style={{height: "200px", width: "600px"}}><ChangeLeadTime {...args} /></div>
+const Template: StoryFn<ChartProps> = (args: any) => <div style={{height: "200px", width: "600px"}}><ChangeLeadTime {...args} /></div>
 
 export const Example = Template.bind({})
 
