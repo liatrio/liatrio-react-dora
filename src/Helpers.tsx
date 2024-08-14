@@ -135,9 +135,9 @@ export const expandData = (props: ChartProps, data: DoraRecord[]) => {
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
-    if(record.fixed_at && record.failed_at) {
+    if(record.failed_at) {
       const failedAt = record.failed_at.getTime()
-      const fixedAt = record.fixed_at.getTime()
+      const fixedAt = record.fixed_at ? record.fixed_at.getTime() : props.end ? props.end.getTime() : getDateDaysInPastUtc(1).getTime()
 
       record.recoverTime = parseFloat(((fixedAt - failedAt) / (1000 * 60 * 60)).toFixed(2))
     }
