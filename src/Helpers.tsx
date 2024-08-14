@@ -406,11 +406,11 @@ export const calculateDoraRanks = (props: ChartProps, scores: Scores) : {df: num
   }
 }
 
-const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
-const yellowFilter = "brightness(0) saturate(100%) invert(93%) sepia(74%) saturate(3024%) hue-rotate(1deg) brightness(102%) contrast(102%)"
-const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) saturate(500%) hue-rotate(-15deg) brightness(100%) contrast(120%)"
-const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
-const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+export const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
+export const yellowFilter = "brightness(0) saturate(100%) invert(93%) sepia(74%) saturate(3024%) hue-rotate(1deg) brightness(102%) contrast(102%)"
+export const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) saturate(500%) hue-rotate(-15deg) brightness(100%) contrast(120%)"
+export const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
+export const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
 
 export const convertRankToColor = (rank: number) => {
   if(rank === 0) {

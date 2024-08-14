@@ -12,11 +12,11 @@ export {
   calculateScores,
   calculateDoraRanks,
   convertRankToColor,
-  unknownFilter,
-  lowFilter,
-  highFilter,
-  mediumFilter,
-  eliteFilter
+  greyFilter,
+  greenFilter,
+  blueFilter,
+  yellowFilter,
+  orangeFilter
 } from './Helpers'
 
 export type {
