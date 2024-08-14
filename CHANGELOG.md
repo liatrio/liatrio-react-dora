@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.19 (2024-08-14)
+
+### Fix
+
+* fix: 100xrate for cfr color check (#60) ([`4c99639`](https://github.com/liatrio/liatrio-react-dora/commit/4c996397015641793a7ad81ec71d7aa06e2dc3b8))
+
 ## v1.0.18 (2024-08-14)
 
 ### Fix
