@@ -350,6 +350,7 @@ export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores 
 }
 
 const calculatCFRRank = (props: ChartProps, rate: number) : number => {
+  rate = rate * 100
   if(rate < (props.measures?.change_failure_rate?.elite ? props.measures?.change_failure_rate?.elite : 5)) {
     return 0
   } else if(rate <= (props.measures?.change_failure_rate?.high ? props.measures?.change_failure_rate?.high : 10)) {
