@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.0.12 (2024-08-14)
+
+### Fix
+
+* fix: expose unknown filter (#53)
+
+* fix: expose scores and colors
+
+* chore: cleanup import
+
+* fix: expose the unknown filter ([`f38ab61`](https://github.com/liatrio/liatrio-react-dora/commit/f38ab614d22e32931a4ec5aefa1e73154d861fd4))
+
 ## v1.0.11 (2024-08-14)
 
 ### Fix
