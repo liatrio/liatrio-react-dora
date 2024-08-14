@@ -352,9 +352,9 @@ export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores 
 const calculatCFRRank = (props: ChartProps, rate: number) : number => {
   if(rate < (props.measures?.cfr.elite ? props.measures?.cfr.elite : 5)) {
     return 0
-  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 10)) {
+  } else if(rate <= (props.measures?.cfr.high ? props.measures?.cfr.high : 10)) {
     return 1
-  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 45)) {
+  } else if(rate <= (props.measures?.cfr.medium ? props.measures?.cfr.medium : 45)) {
     return 2
   } else {
     return 3
@@ -364,9 +364,9 @@ const calculatCFRRank = (props: ChartProps, rate: number) : number => {
 const calculateCLTRank = (props: ChartProps, rate: number) : number => {
   if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24)) {
     return 0
-  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7)) {
+  } else if(rate < (props.measures?.clt.high ? props.measures?.cfr.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.clt.medium ? props.measures?.cfr.medium : 24 * 7 * 4.33)) {
     return 2
   } else {
     return 3
@@ -376,9 +376,9 @@ const calculateCLTRank = (props: ChartProps, rate: number) : number => {
 const calculateDFRank = (props: ChartProps, rate: number) : number => {
   if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24)) {
     return 0
-  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7)) {
+  } else if(rate < (props.measures?.df.high ? props.measures?.df.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.df.medium ? props.measures?.df.medium : 24 * 7 * 4.33)) {
     return 2
   } else {
     return 3
@@ -388,9 +388,9 @@ const calculateDFRank = (props: ChartProps, rate: number) : number => {
 const calculateRTRank = (props: ChartProps, rate: number) : number => {
   if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 1)) {
     return 0
-  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24)) {
+  } else if(rate < (props.measures?.rt.high ? props.measures?.rt.high : 24)) {
     return 1
-  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24 * 7)) {
+  } else if(rate < (props.measures?.rt.medium ? props.measures?.rt.medium : 24 * 7)) {
     return 2
   } else {
     return 3
