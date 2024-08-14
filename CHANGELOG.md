@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.16 (2024-08-14)
+
+### Fix
+
+* fix: use correct measures, adjust measure names (#57) ([`f21f23f`](https://github.com/liatrio/liatrio-react-dora/commit/f21f23f1fef3d99b7a429e40434cd0c06743696d))
+
 ## v1.0.15 (2024-08-14)
 
 ### Fix
