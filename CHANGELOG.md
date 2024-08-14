@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.14 (2024-08-14)
+
+### Fix
+
+* fix: fix exports (#55) ([`b4c67bf`](https://github.com/liatrio/liatrio-react-dora/commit/b4c67bfe62590434e0eec961b542ceed4b193ca0))
+
 ## v1.0.13 (2024-08-14)
 
 ### Fix
