@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid,  ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, formatTicks, generateTicks } from './Helpers'
+import { fetchData, generateDistinctColors, DoraRecord, ChartProps, extractUniqueRepositories, getDateDaysInPast, formatTicks, generateTicks } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
 
-export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => {
-    let reduced = data.reduce((acc: Map<number, any>, record: Record) => {
+export const extractChangeFailureRatePerDay = (props: ChartProps, data: DoraRecord[]) => {
+    let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
         const date = (new Date(Date.UTC(record.created_at.getUTCFullYear(), record.created_at.getUTCMonth(), record.created_at.getUTCDate()))).getTime()
         let entry = acc.get(date)
 
@@ -55,7 +55,7 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
         count.total = entry[key].failed / (total < 1 ? 1 : total)
 
         return acc
-    }, new Map<number, Record[]>())
+    }, new Map<number, DoraRecord[]>())
 
     let result = Array.from(reduced.values())
 
@@ -64,7 +64,7 @@ export const extractChangeFailureRatePerDay = (props: Props, data: Record[]) => 
     return result
 }
 
-const ChangeFailureRate : React.FC<Props> = (props: Props) => {
+const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
@@ -77,7 +77,7 @@ const ChangeFailureRate : React.FC<Props> = (props: Props) => {
     const ticks = generateTicks(startDate, endDate, 5)
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
-    const organizeData = (data: Record[]) => {
+    const organizeData = (data: DoraRecord[]) => {
         if(data.length === 0) {
             setNoData(true)
         }

@@ -64,7 +64,6 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "react-tiny-popover": "^8.0.4",
     "react-tooltip": "^5.28.0",
     "recharts": "^2.12.7"
   }

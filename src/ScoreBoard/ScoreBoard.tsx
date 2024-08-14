@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Popover, ArrowContainer } from "react-tiny-popover"
-import { Record, Props, fetchData, calculateScores, unknownFilter, MaxDF, calculateScoreColors } from '../Helpers'
+import { DoraRecord, ChartProps, fetchData, calculateScores, unknownFilter, MaxDF, calculateDoraRanks, convertRankToColor } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
@@ -9,40 +8,37 @@ import cltIcon from '../assets/lead_time_dark.svg'
 import cfrIcon from '../assets/failure_dark.svg'
 import rtIcon from '../assets/recover_dark.svg'
 import noDataImg from '../assets/no_data.png'
+import { Tooltip } from 'react-tooltip'
 
 interface ScoreBoardState {
   DFColor: string,
   CFRColor: string,
   CLTColor: string,
   RTColor: string,
-  RTRate: number,
-  DFRate: number,
-  CFRRate: number,
-  CLTRate: number,
+  RTScore: number,
+  DFScore: number,
+  CFRScore: number,
+  CLTScore: number,
 }
 
-const ScoreBoard : React.FC<Props> = (props: Props) => {
+const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
   const [state, setState] = useState<ScoreBoardState>({
     DFColor: unknownFilter,
     CLTColor: unknownFilter,
     CFRColor: unknownFilter,
     RTColor: unknownFilter,
-    DFRate: 0,
-    CLTRate: 0,
-    CFRRate: 0,
-    RTRate: 0,
+    DFScore: 0,
+    CLTScore: 0,
+    CFRScore: 0,
+    RTScore: 0,
   })
 
-  const [data, setData] = useState<Record[]>([])
+  const [data, setData] = useState<DoraRecord[]>([])
   const [noData, setNoData] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
-  
-  const [showDFPO, setShowDFPO] = useState(false)
-  const [showRTPO, setShowRTPO] = useState(false)
-  const [showCFRPO, setShowCFRPO] = useState(false)
-  const [showCLTPO, setShowCLTPO] = useState(false)
+  const [tooltipContent, setTooltipContent] = useState<any>(true)
 
-  const organizeData = (data: Record[]) => {
+  const organizeData = (data: DoraRecord[]) => {
     if(data.length === 0) {
         setNoData(true)
     }
@@ -50,17 +46,17 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
     setData(data)
 
     const scores = calculateScores(props, data)
-    const colors = calculateScoreColors(props, scores)
+    const ranks = calculateDoraRanks(props, scores)
 
     setState({
-      DFRate: scores.df,
-      CFRRate: scores.cfr,
-      CLTRate: scores.clt,
-      RTRate: scores.rt,
-      DFColor: colors.df,
-      CLTColor: colors.clt,
-      CFRColor: colors.cfr,
-      RTColor: colors.rt
+      DFScore: scores.df === MaxDF ? NaN : scores.df,
+      CFRScore: scores.cfr * 100,
+      CLTScore: scores.clt,
+      RTScore: scores.rt,
+      DFColor: convertRankToColor(ranks.df),
+      CLTColor: convertRankToColor(ranks.clt),
+      CFRColor: convertRankToColor(ranks.cfr),
+      RTColor: convertRankToColor(ranks.rt)
     })
 
     setLoading(false)
@@ -87,143 +83,45 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
       )
   }
 
-  if(!props.showDetails) {
-    return (
-      <div data-testid="ScoreBoard" className="board">
-        <Popover
-          isOpen={showDFPO}
-          positions={["top", "bottom", "left", "right"]}
-          align="start"
-          padding={8}
-          onClickOutside={() => setShowDFPO(false)}
-          content={({ position, childRect, popoverRect }) => (
-            <ArrowContainer
-              position={position}
-              childRect={childRect}
-              popoverRect={popoverRect}
-              arrowColor={"#494949"}
-              arrowSize={8}
-            >
-              <div>
-                <div className="popover-content"><span >Average Deployment Frequency: {state.DFRate === MaxDF ? "Unknown" : state.DFRate.toFixed(2)} hrs</span></div>
-              </div>
-            </ArrowContainer>
-          )}
-        >
-          <div className="icon_container" onClick={() => setShowDFPO(!showDFPO)}>
-            <img className="surround" alt="Deployment Frequency" title="Deployment Frequency" src={surroundIcon} style={{filter: state.DFColor}} />
-            <img className="icon" alt="Deployment Frequency" title="Deployment Frequency" src={dfIcon} style={{width: "30%", left: "33px", top: "33px"}}/>
-          </div>
-        </Popover>
-        <Popover
-          isOpen={showCLTPO}
-          positions={["top", "bottom", "left", "right"]}
-          align="start"
-          padding={8}
-          onClickOutside={() => setShowCLTPO(false)}
-          content={({ position, childRect, popoverRect }) => (
-            <ArrowContainer
-              position={position}
-              childRect={childRect}
-              popoverRect={popoverRect}
-              arrowColor={"#494949"}
-              arrowSize={8}
-            >
-              <div>
-                <div className="popover-content"><span >Average Change Lead Time: {state.CLTRate.toFixed(2)} hrs</span></div>
-              </div>
-            </ArrowContainer>
-          )}
-        >
-          <div className="icon_container" onClick={() => setShowCLTPO(!showCLTPO)}>
-            <img className="surround" alt="Change Lead Time" title="Change Lead Time" src={surroundIcon} style={{filter: state.CLTColor}} />
-            <img className="icon" alt="Change Lead Time" title="Change Lead Time" src={cltIcon} style={{left: "31px", top: "32px"}}/>
-          </div>
-        </Popover>
-        <Popover
-          isOpen={showCFRPO}
-          positions={["top", "bottom", "left", "right"]}
-          align="start"
-          padding={8}
-          onClickOutside={() => setShowCFRPO(false)}
-          content={({ position, childRect, popoverRect }) => (
-            <ArrowContainer
-              position={position}
-              childRect={childRect}
-              popoverRect={popoverRect}
-              arrowColor={"#494949"}
-              arrowSize={8}
-            >
-              <div>
-                <div className="popover-content"><span >Average Change Failure Rate: {(state.CFRRate * 100).toFixed(2)}%</span></div>
-              </div>
-            </ArrowContainer>
-          )}
-        >
-          <div className="icon_container" onClick={() => setShowCFRPO(!showCFRPO)}>
-            <img className="surround" alt="Change Failure Rate" title="Change Failure Rate" src={surroundIcon} style={{filter: state.CFRColor}} />
-            <img className="icon" alt="Change Failure Rate" title="Change Failure Rate" src={cfrIcon} style={{left: "34px", top: "32px"}}/>
-          </div>
-        </Popover>
-        <Popover
-          isOpen={showRTPO}
-          positions={["top", "bottom", "left", "right"]}
-          align="start"
-          padding={8}
-          onClickOutside={() => setShowRTPO(false)}
-          content={({ position, childRect, popoverRect }) => (
-            <ArrowContainer
-              position={position}
-              childRect={childRect}
-              popoverRect={popoverRect}
-              arrowColor={"#494949"}
-              arrowSize={8}
-            >
-              <div>
-                <div className="popover-content"><span >Average Recovery Time: {state.RTRate.toFixed(2)} hrs</span></div>
-              </div>
-            </ArrowContainer>
-          )}
-        >
-          <div className="icon_container" onClick={() => setShowRTPO(!showRTPO)}>
-            <img className="surround" alt="Recovery Rate" title="Recovery Rate" src={surroundIcon} style={{filter: state.RTColor}} />
-            <img className="icon" alt="Recovery Rate" title="Recovery Rate" src={rtIcon} style={{left: "33px", top: "34px"}}/>
-          </div>
-        </Popover>
-      </div>
-    )
-  }
-
   return (
     <div data-testid="ScoreBoard" className="board">
         <div className="score_container">
-          <div className="icon_container" onClick={() => setShowDFPO(!showDFPO)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Deployment Frequency: ${Number.isNaN(state.DFScore) ? '?' : state.DFScore.toFixed(2)} hrs`)}>
             <img className="surround" alt="Deployment Frequency" title="Deployment Frequency" src={surroundIcon} style={{filter: state.DFColor}} />
             <img className="icon" alt="Deployment Frequency" title="Deployment Frequency" src={dfIcon} style={{width: "30%", left: "33px", top: "33px"}}/>
           </div>
-          <div className="detail-content"><span>Deployment Frequency:<br/>{state.DFRate === MaxDF ? "Unknown" : state.DFRate.toFixed(2)} hrs</span></div>
+          {props.showDetails &&
+            <div className="detail-content"><span>Deployment Frequency:<br/>{Number.isNaN(state.DFScore) ? '?' : state.DFScore.toFixed(2)} hrs</span></div>
+          }
         </div>
         <div className="score_container">
-          <div className="icon_container" onClick={() => setShowCLTPO(!showCLTPO)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Lead Time: ${state.CLTScore.toFixed(2)} hrs`)}>
             <img className="surround" alt="Change Lead Time" title="Change Lead Time" src={surroundIcon} style={{filter: state.CLTColor}} />
             <img className="icon" alt="Change Lead Time" title="Change Lead Time" src={cltIcon} style={{left: "31px", top: "32px"}}/>
           </div>
-          <div className="detail-content"><span >Change Lead Time:<br/>{state.CLTRate.toFixed(2)} hrs</span></div>
+          {props.showDetails &&
+            <div className="detail-content"><span>Change Lead Time:<br/>{state.CLTScore.toFixed(2)} hrs</span></div>
+          }
         </div>
         <div className="score_container">
-          <div className="icon_container" onClick={() => setShowCFRPO(!showCFRPO)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Failure Rate: ${state.CFRScore.toFixed(2)}%`)}>
             <img className="surround" alt="Change Failure Rate" title="Change Failure Rate" src={surroundIcon} style={{filter: state.CFRColor}} />
             <img className="icon" alt="Change Failure Rate" title="Change Failure Rate" src={cfrIcon} style={{left: "34px", top: "32px"}}/>
           </div>
-          <div className="detail-content"><span >Change Failure Rate:<br/>{(state.CFRRate * 100).toFixed(2)}%</span></div>
+          {props.showDetails &&
+            <div className="detail-content"><span>Change Failure Rate:<br/>{state.CFRScore.toFixed(2)}%</span></div>
+          }
         </div>
         <div className="score_container">
-          <div className="icon_container" onClick={() => setShowRTPO(!showRTPO)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Recovery Time: ${state.RTScore.toFixed(2)} hrs`)}>
             <img className="surround" alt="Recovery Rate" title="Recovery Rate" src={surroundIcon} style={{filter: state.RTColor}} />
             <img className="icon" alt="Recovery Rate" title="Recovery Rate" src={rtIcon} style={{left: "33px", top: "34px"}}/>
           </div>
-          <div className="detail-content"><span >Recovery Time:<br/>{state.RTRate.toFixed(2)} hrs</span></div>
+          {props.showDetails &&
+            <div className="detail-content"><span>Recovery Time:<br/>{state.RTScore.toFixed(2)} hrs</span></div>
+          }
         </div>
+        <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
     </div>
   )
 }

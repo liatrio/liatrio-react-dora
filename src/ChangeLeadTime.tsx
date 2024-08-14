@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, getDateDaysInPast, generateTicks, formatTicks } from './Helpers'
+import { fetchData, generateDistinctColors, DoraRecord, ChartProps, getDateDaysInPast, generateTicks, formatTicks } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import TooltipContent from './ToolTip/TooltipContent'
 import { Tooltip } from 'react-tooltip'
 import CustomShape from './CustomShape'
 
-export const extractChangeLeadTimePerRepository = (data: Record[]) => {
+export const extractChangeLeadTimePerRepository = (data: DoraRecord[]) => {
     let reduced = data.reduce((acc, record) => {
         if(!record.merged_at) {
             return acc;
@@ -28,13 +28,13 @@ export const extractChangeLeadTimePerRepository = (data: Record[]) => {
         }
 
         return acc
-    }, new Map<string, Record[]>())
+    }, new Map<string, DoraRecord[]>())
 
     return reduced
 }
 
-const ChangeLeadTime : React.FC<Props> = (props: Props) => {
-    const [graphData, setGraphData] = useState<Map<string, Record[]>>(new Map<string, Record[]>())
+const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
+    const [graphData, setGraphData] = useState<Map<string, DoraRecord[]>>(new Map<string, DoraRecord[]>())
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
@@ -48,7 +48,7 @@ const ChangeLeadTime : React.FC<Props> = (props: Props) => {
 
     const ticks = generateTicks(startDate, endDate, 5)
 
-    const organizeData = useCallback((data: Record[]) => {
+    const organizeData = useCallback((data: DoraRecord[]) => {
         if(data.length === 0) {
             setNoData(true)
         }
