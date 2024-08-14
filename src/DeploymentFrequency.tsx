@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, Record, Props, extractUniqueRepositories, getDateDaysInPast, generateTicks, formatTicks} from './Helpers'
+import { fetchData, generateDistinctColors, DoraRecord, ChartProps, extractUniqueRepositories, getDateDaysInPast, generateTicks, formatTicks} from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
 
-export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[], number] => {
+export const extractDeploymentsPerDay = (props: ChartProps, data: DoraRecord[]) : [any[], number] => {
     let max = 0
 
-    const reduced = data.reduce((acc: Map<number, any>, record: Record) => {
+    const reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
         if(!record.status) {
             return acc
         }
@@ -45,7 +45,7 @@ export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[],
         }
 
         return acc
-    }, new Map<number, Record[]>())
+    }, new Map<number, DoraRecord[]>())
 
     let result = Array.from(reduced.values())
 
@@ -54,7 +54,7 @@ export const extractDeploymentsPerDay = (props: Props, data: Record[]) : [any[],
     return [result, max]
 }
 
-const DeploymentFrequency : React.FC<Props> = (props: Props) => {
+const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
@@ -68,7 +68,7 @@ const DeploymentFrequency : React.FC<Props> = (props: Props) => {
     const ticks = generateTicks(startDate, endDate, 5)
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
-    const organizeData = (data: Record[]) => {
+    const organizeData = (data: DoraRecord[]) => {
         if(data.length === 0) {
             setNoData(true)
         }

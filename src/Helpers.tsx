@@ -1,4 +1,4 @@
-export interface Props {
+export interface ChartProps {
   api?: string
   getAuthHeaderValue?: () => Promise<string | undefined>
   team?: string
@@ -11,24 +11,24 @@ export interface Props {
   includeWeekends?: boolean
   showDetails?: boolean
   colors?: string[]
-  measures?: DORAMeasures
+  measures?: RankThresholds
 }
 
-export interface DORAMeasure {
+export interface RankThreshold {
   elite: number,
   high: number,
   medium: number,
   low: number,
 }
 
-export interface DORAMeasures {
-  df: DORAMeasure,
-  clt: DORAMeasure,
-  cfr: DORAMeasure,
-  rt: DORAMeasure,
+export interface RankThresholds {
+  df: RankThreshold,
+  clt: RankThreshold,
+  cfr: RankThreshold,
+  rt: RankThreshold,
 }
 
-export interface Record {
+export interface DoraRecord {
   repository: string
   team: string
   title?: string
@@ -65,7 +65,7 @@ const hslToHex = (h: number, s: number, l: number) => {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
 
-export const extractUniqueRepositories = (data: Record[]) => {
+export const extractUniqueRepositories = (data: DoraRecord[]) => {
   const repositorySet = new Set<string>()
 
   data.forEach(record => {
@@ -90,7 +90,7 @@ export const generateDistinctColors = (count: number) => {
   return colors
 }
 
-export const subtractWeekends = (props: Props, start: Date, end: Date) : number => {
+export const subtractWeekends = (props: ChartProps, start: Date, end: Date) : number => {
   const milliToDays = 24 * 60 * 60 * 1000
   let diff = end.getTime() - start.getTime()
   const gapDays = Math.floor(diff / milliToDays)
@@ -123,7 +123,7 @@ export const formatTicks = (tick: any) : string => {
   return new Date(tick).toLocaleDateString();
 }
 
-export const expandData = (props: Props, data: Record[]) => {
+export const expandData = (props: ChartProps, data: DoraRecord[]) => {
   data.forEach((record) => {
     if(record.merged_at) {
       const mergedAt = record.merged_at
@@ -135,21 +135,22 @@ export const expandData = (props: Props, data: Record[]) => {
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
-    if(record.fixed_at && record.failed_at) {
-      const failedAt = record.failed_at.getTime()
-      const fixedAt = record.fixed_at.getTime()
+    const fixedAt = record.fixed_at ? record.fixed_at : props.end ? props.end : getDateDaysInPastUtc(1)
 
-      record.recoverTime = parseFloat(((fixedAt - failedAt) / (1000 * 60 * 60)).toFixed(2))
+    if(record.failed_at) {
+      const failedAt = record.failed_at.getTime()
+
+      record.recoverTime = parseFloat(((fixedAt.getTime() - failedAt) / (1000 * 60 * 60)).toFixed(2))
     }
 
     record.created_at = record.created_at ? utcDateToLocal(record.created_at, false) : record.created_at
     record.merged_at = record.merged_at ? utcDateToLocal(record.merged_at, false) : record.merged_at
-    record.fixed_at = record.fixed_at ? utcDateToLocal(record.fixed_at, false) : record.fixed_at
+    record.fixed_at = record.failed_at ? utcDateToLocal(fixedAt, false) : fixedAt
     record.failed_at = record.failed_at ? utcDateToLocal(record.failed_at, false) : record.failed_at
   })
 }
 
-export const filterData = (props: Props, data: Record[]) : Record[] => {
+export const filterData = (props: ChartProps, data: DoraRecord[]) : DoraRecord[] => {
   return data.filter(record => {
     const repositoryMatch = props.repositories === undefined || props.repositories.length === 0 || props.repositories.includes(record.repository)
     const teamMatch = !props.team || record.team === props.team
@@ -194,7 +195,7 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
   }
 }
 
-export const fetchData = async (props: Props, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
+export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
   if(props.data) {
     let data = props.data
     let parsedData: any = {}
@@ -267,14 +268,14 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
   }
 }
 
-const calculateCFRRate = (data: Record[]) : number => {
+const calculateCFRRate = (data: DoraRecord[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
   const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
 
   return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
 }
 
-const calculateCLTRate = (data: Record[]) : number => {
+const calculateCLTRate = (data: DoraRecord[]) : number => {
   let totalSuccessfulRecords = 0
   let totalLeadTime = 0
 
@@ -292,7 +293,7 @@ const calculateCLTRate = (data: Record[]) : number => {
 
 export const MaxDF = 1000000
 
-const calculateDFRate = (props: Props, data: Record[]) : number => {
+const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
   let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
   
@@ -316,7 +317,7 @@ const calculateDFRate = (props: Props, data: Record[]) : number => {
   return avgDeployTime
 }
 
-const calculateRTRate = (data: Record[]) : number => {
+const calculateRTRate = (data: DoraRecord[]) : number => {
   let totalFailedRecords = 0
   let totalRecoveryTime = 0
 
@@ -339,12 +340,69 @@ interface Scores {
   df: number
 }
 
-export const calculateScores = (props: Props, data: Record[]) : Scores => {
+export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores => {
   return {
     rt: calculateRTRate(data),
     clt: calculateCLTRate(data),
     cfr: calculateCFRRate(data),
     df: calculateDFRate(props, data)
+  }
+}
+
+const calculatCFRRank = (props: ChartProps, rate: number) : number => {
+  if(rate < (props.measures?.cfr.elite ? props.measures?.cfr.elite : 5)) {
+    return 0
+  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 10)) {
+    return 1
+  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 45)) {
+    return 2
+  } else {
+    return 3
+  }
+}
+
+const calculateCLTRank = (props: ChartProps, rate: number) : number => {
+  if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24)) {
+    return 0
+  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7)) {
+    return 1
+  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7 * 4.33)) {
+    return 2
+  } else {
+    return 3
+  }
+}
+
+const calculateDFRank = (props: ChartProps, rate: number) : number => {
+  if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24)) {
+    return 0
+  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7)) {
+    return 1
+  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7 * 4.33)) {
+    return 2
+  } else {
+    return 3
+  }
+}
+
+const calculateRTRank = (props: ChartProps, rate: number) : number => {
+  if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 1)) {
+    return 0
+  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24)) {
+    return 1
+  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24 * 7)) {
+    return 2
+  } else {
+    return 3
+  }
+}
+
+export const calculateDoraRanks = (props: ChartProps, scores: Scores) : {df: number, rt: number, clt: number, cfr: number} => {
+  return {
+    df: calculateDFRank(props, scores.df),
+    rt: calculateRTRank(props, scores.rt),
+    cfr: calculatCFRRank(props, scores.cfr),
+    clt: calculateCLTRank(props, scores.clt),
   }
 }
 
@@ -354,65 +412,16 @@ const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) satur
 const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
 const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
 
-export const eliteFilter = greenFilter
-export const highFilter = blueFilter
-export const mediumFilter = yellowFilter
-export const lowFilter = orangeFilter
-export const unknownFilter = greyFilter
-
-const calculatCFRColor = (props: Props, rate: number) : string => {
-  if(rate < (props.measures?.cfr.elite ? props.measures?.cfr.elite : 5)) {
-    return eliteFilter
-  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 10)) {
-    return highFilter
-  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 45)) {
-    return mediumFilter
+export const convertRankToColor = (rank: number) => {
+  if(rank === 0) {
+    return greenFilter
+  } else if(rank === 1) {
+    return blueFilter
+  } else if(rank === 2) {
+    return yellowFilter
+  } else if(rank === 3) {
+    return orangeFilter
   } else {
-    return lowFilter
-  }
-}
-
-const calculateCLTColor = (props: Props, rate: number) : string => {
-  if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24)) {
-    return eliteFilter
-  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7)) {
-    return highFilter
-  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7 * 4.33)) {
-    return mediumFilter
-  } else {
-    return lowFilter
-  }
-}
-
-const calculateDFColor = (props: Props, rate: number) : string => {
-  if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24)) {
-    return eliteFilter
-  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7)) {
-    return highFilter
-  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7 * 4.33)) {
-    return highFilter
-  } else {
-    return lowFilter
-  }
-}
-
-const calculateRTColor = (props: Props, rate: number) : string => {
-  if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 1)) {
-    return eliteFilter
-  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24)) {
-    return highFilter
-  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24 * 7)) {
-    return mediumFilter
-  } else {
-    return lowFilter
-  }
-}
-
-export const calculateScoreColors = (props: Props, scores: Scores) : {df: string, rt: string, clt: string, cfr: string} => {
-  return {
-    df: calculateDFColor(props, scores.df),
-    rt: calculateDFColor(props, scores.rt),
-    cfr: calculateDFColor(props, scores.cfr),
-    clt: calculateDFColor(props, scores.clt),
+    return greyFilter
   }
 }

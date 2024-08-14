@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts'
-import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, Props, Record } from './Helpers'
+import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, ChartProps, DoraRecord } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import CustomDot from './CustomDot'
@@ -8,8 +8,8 @@ import './general.css'
 import TooltipContent from './ToolTip/TooltipContent'
 import { Tooltip } from 'react-tooltip'
 
-export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
-    let reduced = data.reduce((acc: Map<number, any>, record: Record) => {
+export const extractAvgRecoverTimePerDay = (props: ChartProps, data: DoraRecord[]) => {
+    let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
         if(record.recoverTime === undefined) {
             return acc;
         }
@@ -42,7 +42,7 @@ export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
         }
 
         return acc
-    }, new Map<number, Record[]>())
+    }, new Map<number, DoraRecord[]>())
 
     let result = Array.from(reduced.values())
 
@@ -51,7 +51,7 @@ export const extractAvgRecoverTimePerDay = (props: Props, data: Record[]) => {
     return result
 }
 
-const RecoverTime : React.FC<Props> = (props: Props) => {
+const RecoverTime : React.FC<ChartProps> = (props: ChartProps) => {
     const [graphData, setGraphData] = useState<any[]>([])
     const [repositories, setRepositories] = useState<string[]>([])
     const [colors, setColors] = useState<string[]>([])
@@ -63,7 +63,7 @@ const RecoverTime : React.FC<Props> = (props: Props) => {
 
     const ticks = generateTicks(startDate, endDate, 5)
 
-    const organizeData = (data: Record[]) => {
+    const organizeData = (data: DoraRecord[]) => {
         if(data.length === 0) {
             setNoData(true)
         }
