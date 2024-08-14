@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.0.11 (2024-08-14)
+
+### Fix
+
+* fix: expose scores and colors (#52)
+
+* fix: expose scores and colors
+
+* chore: cleanup import ([`bcdd59e`](https://github.com/liatrio/liatrio-react-dora/commit/bcdd59eca14d2b70ea4edf7d901375b3bcb64cd8))
+
 ## v1.0.10 (2024-08-13)
 
 ### Fix
