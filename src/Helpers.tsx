@@ -11,6 +11,21 @@ export interface Props {
   includeWeekends?: boolean
   showDetails?: boolean
   colors?: string[]
+  measures?: DORAMeasures
+}
+
+export interface DORAMeasure {
+  elite: number,
+  high: number,
+  medium: number,
+  low: number,
+}
+
+export interface DORAMeasures {
+  df: DORAMeasure,
+  clt: DORAMeasure,
+  cfr: DORAMeasure,
+  rt: DORAMeasure,
 }
 
 export interface Record {
@@ -249,5 +264,155 @@ export const fetchData = async (props: Props, onSuccess: (data: any) => void, on
       if(onFailure) {
         onFailure(error)
       }
+  }
+}
+
+const calculateCFRRate = (data: Record[]) : number => {
+  const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
+  const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
+
+  return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
+}
+
+const calculateCLTRate = (data: Record[]) : number => {
+  let totalSuccessfulRecords = 0
+  let totalLeadTime = 0
+
+  data.forEach(record => {
+    if(record.totalCycle === undefined) {
+      return
+    }
+
+    totalSuccessfulRecords++
+    totalLeadTime += record.totalCycle
+  })
+
+  return totalLeadTime / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
+}
+
+export const MaxDF = 1000000
+
+const calculateDFRate = (props: Props, data: Record[]) : number => {
+  let sorted = data
+    .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
+  
+  if(sorted.length === 0) {
+    return MaxDF
+  }
+
+  let totalDeployTime = 0
+
+  for(let index = 1; index < sorted.length; index++) {
+    let start = sorted[index - 1].created_at
+    let end = sorted[index].created_at
+
+    let diff = subtractWeekends(props, start, end)
+
+    totalDeployTime += diff
+  }
+  
+  let avgDeployTime = (totalDeployTime / sorted.length) / (1000 * 60 * 60)
+  
+  return avgDeployTime
+}
+
+const calculateRTRate = (data: Record[]) : number => {
+  let totalFailedRecords = 0
+  let totalRecoveryTime = 0
+
+  data.forEach(record => {
+    if((record.status === true && !record.failed_at) || record.recoverTime === undefined) {
+      return
+    }
+
+    totalFailedRecords++
+    totalRecoveryTime += record.recoverTime
+  })
+
+  return totalRecoveryTime / (totalFailedRecords === 0 ? 1 : totalFailedRecords)
+}
+
+interface Scores {
+  rt: number,
+  clt: number,
+  cfr: number,
+  df: number
+}
+
+export const calculateScores = (props: Props, data: Record[]) : Scores => {
+  return {
+    rt: calculateRTRate(data),
+    clt: calculateCLTRate(data),
+    cfr: calculateCFRRate(data),
+    df: calculateDFRate(props, data)
+  }
+}
+
+const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
+const yellowFilter = "brightness(0) saturate(100%) invert(93%) sepia(74%) saturate(3024%) hue-rotate(1deg) brightness(102%) contrast(102%)"
+const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) saturate(500%) hue-rotate(-15deg) brightness(100%) contrast(120%)"
+const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
+const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+
+export const eliteFilter = greenFilter
+export const highFilter = blueFilter
+export const mediumFilter = yellowFilter
+export const lowFilter = orangeFilter
+export const unknownFilter = greyFilter
+
+const calculatCFRColor = (props: Props, rate: number) : string => {
+  if(rate < (props.measures?.cfr.elite ? props.measures?.cfr.elite : 5)) {
+    return eliteFilter
+  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 10)) {
+    return highFilter
+  } else if(rate <= (props.measures?.cfr.elite ? props.measures?.cfr.elite : 45)) {
+    return mediumFilter
+  } else {
+    return lowFilter
+  }
+}
+
+const calculateCLTColor = (props: Props, rate: number) : string => {
+  if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24)) {
+    return eliteFilter
+  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7)) {
+    return highFilter
+  } else if(rate < (props.measures?.clt.elite ? props.measures?.cfr.elite : 24 * 7 * 4.33)) {
+    return mediumFilter
+  } else {
+    return lowFilter
+  }
+}
+
+const calculateDFColor = (props: Props, rate: number) : string => {
+  if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24)) {
+    return eliteFilter
+  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7)) {
+    return highFilter
+  } else if(rate < (props.measures?.df.elite ? props.measures?.df.elite : 24 * 7 * 4.33)) {
+    return highFilter
+  } else {
+    return lowFilter
+  }
+}
+
+const calculateRTColor = (props: Props, rate: number) : string => {
+  if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 1)) {
+    return eliteFilter
+  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24)) {
+    return highFilter
+  } else if(rate < (props.measures?.rt.elite ? props.measures?.rt.elite : 24 * 7)) {
+    return mediumFilter
+  } else {
+    return lowFilter
+  }
+}
+
+export const calculateScoreColors = (props: Props, scores: Scores) : {df: string, rt: string, clt: string, cfr: string} => {
+  return {
+    df: calculateDFColor(props, scores.df),
+    rt: calculateDFColor(props, scores.rt),
+    cfr: calculateDFColor(props, scores.cfr),
+    clt: calculateDFColor(props, scores.clt),
   }
 }

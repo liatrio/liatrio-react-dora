@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Popover, ArrowContainer } from "react-tiny-popover"
-import { Record, Props, fetchData, subtractWeekends } from '../Helpers'
+import { Record, Props, fetchData, calculateScores, unknownFilter, MaxDF, calculateScoreColors } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
@@ -9,18 +9,6 @@ import cltIcon from '../assets/lead_time_dark.svg'
 import cfrIcon from '../assets/failure_dark.svg'
 import rtIcon from '../assets/recover_dark.svg'
 import noDataImg from '../assets/no_data.png'
-
-const greenFilter = "brightness(0) saturate(100%) invert(60%) sepia(75%) saturate(4083%) hue-rotate(73deg) brightness(92%) contrast(92%)"
-const yellowFilter = "brightness(0) saturate(100%) invert(93%) sepia(74%) saturate(3024%) hue-rotate(1deg) brightness(102%) contrast(102%)"
-const orangeFilter = "brightness(0) saturate(100%) invert(45%) sepia(250%) saturate(500%) hue-rotate(-15deg) brightness(100%) contrast(120%)"
-const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%) saturate(747%) hue-rotate(179deg) brightness(97%) contrast(103%)"
-const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
-
-const eliteFilter = greenFilter
-const highFilter = blueFilter
-const mediumFilter = yellowFilter
-const lowFilter = orangeFilter
-const unknownFilter = greyFilter
 
 interface ScoreBoardState {
   DFColor: string,
@@ -31,119 +19,6 @@ interface ScoreBoardState {
   DFRate: number,
   CFRRate: number,
   CLTRate: number,
-}
-
-const calculateCFRRate = (data: Record[]) : number => {
-  const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
-  const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
-
-  return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
-}
-
-const calculatCFRColor = (rate: number) : string => {
-  if(rate < 15) {
-    return eliteFilter
-  } else if(rate <= 30) {
-    return highFilter
-  } else if(rate <= 45) {
-    return mediumFilter
-  } else {
-    return lowFilter
-  }
-}
-
-const calculateCLTRate = (data: Record[]) : number => {
-  let totalSuccessfulRecords = 0
-  let totalLeadTime = 0
-
-  data.forEach(record => {
-    if(record.totalCycle === undefined) {
-      return
-    }
-
-    totalSuccessfulRecords++
-    totalLeadTime += record.totalCycle
-  })
-
-  return totalLeadTime / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
-}
-
-const calculateCLTColor = (rate: number) : string => {
-  if(rate < 24) {
-    return eliteFilter
-  } else if(rate < 24 * 7) {
-    return highFilter
-  } else if(rate < 24 * 7 * 4.33) {
-    return mediumFilter
-  } else {
-    return lowFilter
-  }
-}
-
-const MaxDF = 1000000
-
-const calculateDFRate = (props: Props, data: Record[]) : number => {
-  let sorted = data
-    .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
-  
-  if(sorted.length === 0) {
-    return MaxDF
-  }
-
-  let totalDeployTime = 0
-
-  for(let index = 1; index < sorted.length; index++) {
-    let start = sorted[index - 1].created_at
-    let end = sorted[index].created_at
-
-    let diff = subtractWeekends(props, start, end)
-
-    totalDeployTime += diff
-  }
-  
-  let avgDeployTime = (totalDeployTime / sorted.length) / (1000 * 60 * 60)
-  
-  return avgDeployTime
-}
-
-const calculateDFColor = (rate: number) : string => {
-  if(rate < 24) {
-    return eliteFilter
-  } else if(rate < 24 * 7) {
-    return highFilter
-  } else if(rate < 24 * 7 * 4.33) {
-    return highFilter
-  } else {
-    return lowFilter
-  }
-}
-
-const calculateRTRate = (data: Record[]) : number => {
-  let totalFailedRecords = 0
-  let totalRecoveryTime = 0
-
-  data.forEach(record => {
-    if((record.status === true && !record.failed_at) || record.recoverTime === undefined) {
-      return
-    }
-
-    totalFailedRecords++
-    totalRecoveryTime += record.recoverTime
-  })
-
-  return totalRecoveryTime / (totalFailedRecords === 0 ? 1 : totalFailedRecords)
-}
-
-const calculateRTColor = (rate: number) : string => {
-  if(rate < 1 ) {
-    return eliteFilter
-  } else if(rate < 24) {
-    return highFilter
-  } else if(rate < 24 * 7) {
-    return mediumFilter
-  } else {
-    return lowFilter
-  }
 }
 
 const ScoreBoard : React.FC<Props> = (props: Props) => {
@@ -174,20 +49,18 @@ const ScoreBoard : React.FC<Props> = (props: Props) => {
 
     setData(data)
 
-    const dfRate = calculateDFRate(props, data)
-    const cltRate = calculateCLTRate(data)
-    const cfrRate = calculateCFRRate(data)
-    const rtRate = calculateRTRate(data)
+    const scores = calculateScores(props, data)
+    const colors = calculateScoreColors(props, scores)
 
     setState({
-      DFRate: dfRate,
-      CFRRate: cfrRate,
-      CLTRate: cltRate,
-      RTRate: rtRate,
-      DFColor: calculateDFColor(dfRate),
-      CLTColor: calculateCLTColor(cltRate),
-      CFRColor: calculatCFRColor(cfrRate),
-      RTColor: calculateRTColor(rtRate)
+      DFRate: scores.df,
+      CFRRate: scores.cfr,
+      CLTRate: scores.clt,
+      RTRate: scores.rt,
+      DFColor: colors.df,
+      CLTColor: colors.clt,
+      CFRColor: colors.cfr,
+      RTColor: colors.rt
     })
 
     setLoading(false)
