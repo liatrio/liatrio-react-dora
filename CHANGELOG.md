@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.15 (2024-08-14)
+
+### Fix
+
+* fix: account for filters not being directly exported (#56) ([`8771797`](https://github.com/liatrio/liatrio-react-dora/commit/87717978b75235ba5209afa5ccb7190c4b9af297))
+
 ## v1.0.14 (2024-08-14)
 
 ### Fix
