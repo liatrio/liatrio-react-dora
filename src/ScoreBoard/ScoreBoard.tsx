@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { DoraRecord, ChartProps, fetchData, calculateScores, unknownFilter, MaxDF, calculateDoraRanks, convertRankToColor } from '../Helpers'
+import { DoraRecord, ChartProps, fetchData, calculateScores, MaxDF, calculateDoraRanks, convertRankToColor } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
@@ -23,10 +23,10 @@ interface ScoreBoardState {
 
 const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
   const [state, setState] = useState<ScoreBoardState>({
-    DFColor: unknownFilter,
-    CLTColor: unknownFilter,
-    CFRColor: unknownFilter,
-    RTColor: unknownFilter,
+    DFColor: convertRankToColor(10),
+    CLTColor: convertRankToColor(10),
+    CFRColor: convertRankToColor(10),
+    RTColor: convertRankToColor(10),
     DFScore: 0,
     CLTScore: 0,
     CFRScore: 0,
