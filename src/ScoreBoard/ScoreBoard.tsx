@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Popover, ArrowContainer } from "react-tiny-popover"
-import { Record, Props, fetchData, subtractWeekends, calculateScores, unknownFilter, MaxDF, calculateScoreColors } from '../Helpers'
+import { Record, Props, fetchData, calculateScores, unknownFilter, MaxDF, calculateScoreColors } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
