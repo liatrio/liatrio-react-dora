@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.17 (2024-08-14)
+
+### Fix
+
+* fix: adjust measure names, fix stories (#58) ([`7d3ad06`](https://github.com/liatrio/liatrio-react-dora/commit/7d3ad06db8d6e0e325153f2c48ff2b6819723d27))
+
 ## v1.0.16 (2024-08-14)
 
 ### Fix
