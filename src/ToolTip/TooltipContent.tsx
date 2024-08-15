@@ -25,9 +25,23 @@ const getBody = (type: string, payloads: any[]) => {
     const payload = payloads[0]
 
     if(type === "clt") {
+        let displayValue = ""
+
+        switch(payload.cycleLabel) {
+            case 'hrs':
+                displayValue = payload.totalCycleHrs.toFixed(2)
+                break
+            case 'mins':
+                displayValue = payload.totalCycleMins.toFixed(2)
+                break
+            case 'days':
+                displayValue = payload.totalCycleDays.toFixed(2)
+                break
+        }
+
         return (<>
             <p>Repository: {payload.repository}</p>
-            <p>Total Cycle Time: {payload.totalCycle.toFixed(2)} hrs</p>
+            <p>Total Cycle Time: {displayValue} {payload.cycleLabel}</p>
         </>)
     } else if(type === "df") {
         return (<>
@@ -81,11 +95,25 @@ const getBody = (type: string, payloads: any[]) => {
     } else if(type === "rt") {
         return (<>
             {Object.keys(payload).map((key: any) => {
-                if(key !== "date") {
+                if(!['date', 'avgTimeHrs', 'avgTimeDays', 'avgTimeMins'].includes(key)) {
                     const entry = payload[key]
+                    let displayValue = ""
+
+                    switch(entry.avgLabel.trim()) {
+                        case 'hrs':
+                            displayValue = entry.avgTime.toFixed(2)
+                            break
+                        case 'mins':
+                            displayValue = entry.avgTimeMins.toFixed(2)
+                            break
+                        case 'days':
+                            displayValue = entry.avgTimeDays.toFixed(2)
+                            break
+
+                    }
 
                     return (<>
-                        <p>{key}: {entry.avgTime} hrs</p>
+                        <p>{key}: {displayValue} {entry.avgLabel}</p>
                     </>)
                 } else {
                     return (<></>)

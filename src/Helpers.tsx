@@ -40,6 +40,11 @@ export interface DoraRecord {
   created_at: Date
   fixed_at?: Date
   totalCycle: number
+  totalCycleHrs: number
+  totalCycleDays: number
+  totalCycleMins: number
+  cycleLabel: string
+  cycleType: string
   start: number
   recoverTime: number
   deploy_url: string
@@ -134,6 +139,17 @@ export const expandData = (props: ChartProps, data: DoraRecord[]) => {
       let diff = subtractWeekends(props, mergedAt, deployedAt)
 
       record.totalCycle = (diff / (60 * 60 * 1000))
+      record.totalCycleHrs = record.totalCycle
+      record.totalCycleDays = record.totalCycle / 24
+      record.totalCycleMins = record.totalCycle * 60
+      record.cycleLabel = 'hrs'
+
+      if(record.totalCycle > 48) {
+        record.cycleLabel = 'days'
+      } else if(record.totalCycle < 1) {
+        record.cycleLabel = 'mins'
+      }
+
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
@@ -365,8 +381,6 @@ const calculatCFRRank = (props: ChartProps, rate: number) : number => {
   if(Number.isNaN(rate)) {
     return 10
   }
-
-  rate = rate * 100
   
   if(rate < (props.measures?.change_failure_rate?.elite ? props.measures?.change_failure_rate?.elite : 5)) {
     return 0
@@ -383,6 +397,7 @@ const calculateCLTRank = (props: ChartProps, rate: number) : number => {
   if(Number.isNaN(rate)) {
     return 10
   }
+
   if(rate < (props.measures?.change_lead_time?.elite ? props.measures?.change_lead_time?.elite : 24)) {
     return 0
   } else if(rate < (props.measures?.change_lead_time?.high ? props.measures?.change_lead_time?.high : 24 * 7)) {
