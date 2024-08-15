@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.28 (2024-08-15)
+
+### Fix
+
+* fix: push failure record here too (#70) ([`d8e936f`](https://github.com/liatrio/liatrio-react-dora/commit/d8e936f1d86ef4174776157b8d83f2ea792a6792))
+
 ## v1.0.27 (2024-08-15)
 
 ### Fix
