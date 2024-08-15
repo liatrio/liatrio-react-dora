@@ -431,4 +431,4 @@ export const convertRankToColor = (rank: number) => {
   } else {
     return greyFilter
   }
-}
+} 
