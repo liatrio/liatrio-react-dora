@@ -296,11 +296,15 @@ const calculateCLTRate = (data: DoraRecord[]) : number => {
 export const MaxDF = 1000000
 
 const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
-  let sorted = [...data]
+  let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
   
   if(sorted.length === 0) {
     return MaxDF
+  }
+
+  if(sorted.length === 1) {
+    return ((props.end?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.start?.getTime() ?? getDateDaysInPast(31).getTime())) / (1000 * 60 * 60)
   }
 
   let totalDeployTime = 0
@@ -369,7 +373,7 @@ const calculateCLTRank = (props: ChartProps, rate: number) : number => {
     return 0
   } else if(rate < (props.measures?.change_lead_time?.high ? props.measures?.change_lead_time?.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.change_lead_time?.medium ? props.measures?.change_lead_time?.medium : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.change_lead_time?.medium ? props.measures?.change_lead_time?.medium : 24 * 30)) {
     return 2
   } else {
     return 3
@@ -381,7 +385,7 @@ const calculateDFRank = (props: ChartProps, rate: number) : number => {
     return 0
   } else if(rate < (props.measures?.deployment_frequency?.high ? props.measures?.deployment_frequency?.high : 24 * 7)) {
     return 1
-  } else if(rate < (props.measures?.deployment_frequency?.medium ? props.measures?.deployment_frequency?.medium : 24 * 7 * 4.33)) {
+  } else if(rate < (props.measures?.deployment_frequency?.medium ? props.measures?.deployment_frequency?.medium : 24 * 30)) {
     return 2
   } else {
     return 3
