@@ -274,7 +274,7 @@ const calculateCFRRate = (data: DoraRecord[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
   const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
 
-  return totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
+  return (totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)) * 100
 }
 
 const calculateCLTRate = (data: DoraRecord[]) : number => {
@@ -294,7 +294,7 @@ const calculateCLTRate = (data: DoraRecord[]) : number => {
     return NaN
   }
 
-  return (totalLeadTime / totalSuccessfulRecords) * 100
+  return totalLeadTime / totalSuccessfulRecords
 }
 
 const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
