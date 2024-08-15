@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.27 (2024-08-15)
+
+### Fix
+
+* fix: adjust tooltips and chart labels for rt/clt (#69) ([`cad8faf`](https://github.com/liatrio/liatrio-react-dora/commit/cad8faf7cb1e2d09044291c414a0d07295073684))
+
 ## v1.0.26 (2024-08-15)
 
 ### Fix
