@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.25 (2024-08-15)
+
+### Fix
+
+* fix: only show tooltip when not showing details (#67) ([`01a7212`](https://github.com/liatrio/liatrio-react-dora/commit/01a7212d8357c139bc91a2049e38557a78184b87))
+
 ## v1.0.24 (2024-08-15)
 
 ### Fix
