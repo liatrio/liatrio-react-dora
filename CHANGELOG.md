@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.26 (2024-08-15)
+
+### Fix
+
+* fix: multiply cfr score x 100 instead of clt score (#68) ([`35bd37f`](https://github.com/liatrio/liatrio-react-dora/commit/35bd37f0050325bf9867a112cf7a0026ed404581))
+
 ## v1.0.25 (2024-08-15)
 
 ### Fix
