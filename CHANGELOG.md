@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.20 (2024-08-15)
+
+### Fix
+
+* fix: deep copy date to prevent modifications (#61) ([`50b7192`](https://github.com/liatrio/liatrio-react-dora/commit/50b71921569aa4c10e5da8369aa6cec90cd1d3ba))
+
 ## v1.0.19 (2024-08-14)
 
 ### Fix
