@@ -92,18 +92,20 @@ export const generateDistinctColors = (count: number) => {
 
 export const subtractWeekends = (props: ChartProps, start: Date, end: Date) : number => {
   const milliToDays = 24 * 60 * 60 * 1000
-  let diff = end.getTime() - start.getTime()
+  let local_start = new Date(start)
+  let local_end = new Date(end)
+  let diff = local_end.getTime() - local_start.getTime()
   const gapDays = Math.floor(diff / milliToDays)
 
   if(!props.includeWeekends && gapDays > 1) {
-    while(start.getTime() <= end.getTime()) {
-      let current_day = start.getDay()
+    while(local_start.getTime() <= local_end.getTime()) {
+      let current_day = local_start.getDay()
 
       if(current_day === 0 || current_day === 6) {
         diff -= milliToDays
       }
 
-      start.setDate(start.getDate() + 1)
+      local_start.setDate(local_start.getDate() + 1)
     }
   }
 
@@ -294,7 +296,7 @@ const calculateCLTRate = (data: DoraRecord[]) : number => {
 export const MaxDF = 1000000
 
 const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
-  let sorted = data
+  let sorted = [...data]
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
   
   if(sorted.length === 0) {
@@ -341,11 +343,14 @@ interface Scores {
 }
 
 export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores => {
+  console.log("BS:", data[0].created_at, data[1].created_at)
+  const df = calculateDFRate(props, data)
+  console.log("AS:", data[0].created_at, data[1].created_at)
   return {
-    rt: calculateRTRate(data),
-    clt: calculateCLTRate(data),
-    cfr: calculateCFRRate(data),
-    df: calculateDFRate(props, data)
+    rt: 0,
+    clt: 0,
+    cfr: 0,
+    df: df
   }
 }
 
