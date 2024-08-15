@@ -133,7 +133,9 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
             <div className="detail-content"><span>Recovery Time:<br/>{state.RTDisplay}</span></div>
           }
         </div>
-        <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
+        {!props.showDetails &&
+          <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
+        }
     </div>
   )
 }
