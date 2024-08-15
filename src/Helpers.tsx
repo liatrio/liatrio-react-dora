@@ -343,14 +343,11 @@ interface Scores {
 }
 
 export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores => {
-  console.log("BS:", data[0].created_at, data[1].created_at)
-  const df = calculateDFRate(props, data)
-  console.log("AS:", data[0].created_at, data[1].created_at)
   return {
-    rt: 0,
-    clt: 0,
-    cfr: 0,
-    df: df
+    rt: calculateRTRate(data),
+    clt: calculateCLTRate(data),
+    cfr: calculateCFRRate(data),
+    df: calculateDFRate(props, data)
   }
 }
 
