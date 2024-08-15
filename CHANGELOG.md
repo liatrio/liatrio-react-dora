@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.24 (2024-08-15)
+
+### Fix
+
+* fix: forgot to export this function (#66) ([`0f2b9f6`](https://github.com/liatrio/liatrio-react-dora/commit/0f2b9f639c2a6ff15e3745488c3805724f85bbb0))
+
 ## v1.0.23 (2024-08-15)
 
 ### Fix
