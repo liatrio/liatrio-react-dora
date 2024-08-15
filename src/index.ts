@@ -16,7 +16,8 @@ export {
   greenFilter,
   blueFilter,
   yellowFilter,
-  orangeFilter
+  orangeFilter,
+  getScoreDisplay,
 } from './Helpers'
 
 export type {
