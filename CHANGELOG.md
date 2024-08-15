@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.0.22 (2024-08-15)
+
+### Fix
+
+* fix: force ver bump (#64) ([`398384b`](https://github.com/liatrio/liatrio-react-dora/commit/398384b78aaa1c81f364524925b55755913629ed))
+
+### Unknown
+
+* Bug fix (#63)
+
+* fix: forgot to undo this
+
+* fix: adjust month length to just be 30 days ([`9acb3e3`](https://github.com/liatrio/liatrio-react-dora/commit/9acb3e3dd3b5f193727cd6e12a5ec993edad4af0))
+
 ## v1.0.21 (2024-08-15)
 
 ### Fix
