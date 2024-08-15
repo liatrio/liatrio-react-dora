@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { DoraRecord, ChartProps, fetchData, calculateScores, MaxDF, calculateDoraRanks, convertRankToColor } from '../Helpers'
+import { DoraRecord, ChartProps, fetchData, calculateScores, calculateDoraRanks, convertRankToColor, getScoreDisplay } from '../Helpers'
 import Loading from '../Loading/Loading'
 import './ScoreBoard.css'
 import surroundIcon from '../assets/change_dark.svg'
@@ -19,6 +19,10 @@ interface ScoreBoardState {
   DFScore: number,
   CFRScore: number,
   CLTScore: number,
+  DFDisplay: string,
+  RTDisplay: string,
+  CFRDisplay: string,
+  CLTDisplay: string
 }
 
 const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
@@ -27,10 +31,14 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
     CLTColor: convertRankToColor(10),
     CFRColor: convertRankToColor(10),
     RTColor: convertRankToColor(10),
-    DFScore: 0,
-    CLTScore: 0,
-    CFRScore: 0,
-    RTScore: 0,
+    DFScore: NaN,
+    CLTScore: NaN,
+    CFRScore: NaN,
+    RTScore: NaN,
+    DFDisplay: '?',
+    RTDisplay: '?',
+    CFRDisplay: '?',
+    CLTDisplay: '?',
   })
 
   const [data, setData] = useState<DoraRecord[]>([])
@@ -49,14 +57,18 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
     const ranks = calculateDoraRanks(props, scores)
 
     setState({
-      DFScore: scores.df === MaxDF ? NaN : scores.df,
-      CFRScore: scores.cfr * 100,
+      DFScore: scores.df,
+      CFRScore: scores.cfr,
       CLTScore: scores.clt,
       RTScore: scores.rt,
       DFColor: convertRankToColor(ranks.df),
       CLTColor: convertRankToColor(ranks.clt),
       CFRColor: convertRankToColor(ranks.cfr),
-      RTColor: convertRankToColor(ranks.rt)
+      RTColor: convertRankToColor(ranks.rt),
+      DFDisplay: getScoreDisplay(scores.df),
+      RTDisplay: getScoreDisplay(scores.rt),
+      CFRDisplay: getScoreDisplay(scores.cfr, 'cfr'),
+      CLTDisplay: getScoreDisplay(scores.clt),
     })
 
     setLoading(false)
@@ -86,39 +98,39 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
   return (
     <div data-testid="ScoreBoard" className="board">
         <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Deployment Frequency: ${Number.isNaN(state.DFScore) ? '?' : state.DFScore.toFixed(2)} hrs`)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Deployment Frequency: ${state.DFDisplay}`)}>
             <img className="surround" alt="Deployment Frequency" title="Deployment Frequency" src={surroundIcon} style={{filter: state.DFColor}} />
             <img className="icon" alt="Deployment Frequency" title="Deployment Frequency" src={dfIcon} style={{width: "30%", left: "33px", top: "33px"}}/>
           </div>
           {props.showDetails &&
-            <div className="detail-content"><span>Deployment Frequency:<br/>{Number.isNaN(state.DFScore) ? '?' : state.DFScore.toFixed(2)} hrs</span></div>
+            <div className="detail-content"><span>Deployment Frequency:<br/>{state.DFDisplay}</span></div>
           }
         </div>
         <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Lead Time: ${state.CLTScore.toFixed(2)} hrs`)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Lead Time: ${state.CLTDisplay}`)}>
             <img className="surround" alt="Change Lead Time" title="Change Lead Time" src={surroundIcon} style={{filter: state.CLTColor}} />
             <img className="icon" alt="Change Lead Time" title="Change Lead Time" src={cltIcon} style={{left: "31px", top: "32px"}}/>
           </div>
           {props.showDetails &&
-            <div className="detail-content"><span>Change Lead Time:<br/>{state.CLTScore.toFixed(2)} hrs</span></div>
+            <div className="detail-content"><span>Change Lead Time:<br/>{state.CLTDisplay}</span></div>
           }
         </div>
         <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Failure Rate: ${state.CFRScore.toFixed(2)}%`)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Failure Rate: ${state.CFRDisplay}`)}>
             <img className="surround" alt="Change Failure Rate" title="Change Failure Rate" src={surroundIcon} style={{filter: state.CFRColor}} />
             <img className="icon" alt="Change Failure Rate" title="Change Failure Rate" src={cfrIcon} style={{left: "34px", top: "32px"}}/>
           </div>
           {props.showDetails &&
-            <div className="detail-content"><span>Change Failure Rate:<br/>{state.CFRScore.toFixed(2)}%</span></div>
+            <div className="detail-content"><span>Change Failure Rate:<br/>{state.CFRDisplay}</span></div>
           }
         </div>
         <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Recovery Time: ${state.RTScore.toFixed(2)} hrs`)}>
+          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Recovery Time: ${state.RTDisplay}`)}>
             <img className="surround" alt="Recovery Rate" title="Recovery Rate" src={surroundIcon} style={{filter: state.RTColor}} />
             <img className="icon" alt="Recovery Rate" title="Recovery Rate" src={rtIcon} style={{left: "33px", top: "34px"}}/>
           </div>
           {props.showDetails &&
-            <div className="detail-content"><span>Recovery Time:<br/>{state.RTScore.toFixed(2)} hrs</span></div>
+            <div className="detail-content"><span>Recovery Time:<br/>{state.RTDisplay}</span></div>
           }
         </div>
         <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>

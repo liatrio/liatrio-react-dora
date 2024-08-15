@@ -290,17 +290,19 @@ const calculateCLTRate = (data: DoraRecord[]) : number => {
     totalLeadTime += record.totalCycle
   })
 
-  return totalLeadTime / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)
-}
+  if(totalSuccessfulRecords === 0) {
+    return NaN
+  }
 
-export const MaxDF = 1000000
+  return (totalLeadTime / totalSuccessfulRecords) * 100
+}
 
 const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
   let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
   
   if(sorted.length === 0) {
-    return MaxDF
+    return NaN
   }
 
   if(sorted.length === 1) {
@@ -336,7 +338,11 @@ const calculateRTRate = (data: DoraRecord[]) : number => {
     totalRecoveryTime += record.recoverTime
   })
 
-  return totalRecoveryTime / (totalFailedRecords === 0 ? 1 : totalFailedRecords)
+  if(totalFailedRecords === 0) {
+    return NaN
+  }
+
+  return totalRecoveryTime / totalFailedRecords
 }
 
 interface Scores {
@@ -356,7 +362,12 @@ export const calculateScores = (props: ChartProps, data: DoraRecord[]) : Scores 
 }
 
 const calculatCFRRank = (props: ChartProps, rate: number) : number => {
+  if(Number.isNaN(rate)) {
+    return 10
+  }
+
   rate = rate * 100
+  
   if(rate < (props.measures?.change_failure_rate?.elite ? props.measures?.change_failure_rate?.elite : 5)) {
     return 0
   } else if(rate <= (props.measures?.change_failure_rate?.high ? props.measures?.change_failure_rate?.high : 10)) {
@@ -369,6 +380,9 @@ const calculatCFRRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateCLTRank = (props: ChartProps, rate: number) : number => {
+  if(Number.isNaN(rate)) {
+    return 10
+  }
   if(rate < (props.measures?.change_lead_time?.elite ? props.measures?.change_lead_time?.elite : 24)) {
     return 0
   } else if(rate < (props.measures?.change_lead_time?.high ? props.measures?.change_lead_time?.high : 24 * 7)) {
@@ -381,6 +395,9 @@ const calculateCLTRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateDFRank = (props: ChartProps, rate: number) : number => {
+  if(Number.isNaN(rate)) {
+    return 10
+  }
   if(rate < (props.measures?.deployment_frequency?.elite ? props.measures?.deployment_frequency?.elite : 24)) {
     return 0
   } else if(rate < (props.measures?.deployment_frequency?.high ? props.measures?.deployment_frequency?.high : 24 * 7)) {
@@ -393,6 +410,9 @@ const calculateDFRank = (props: ChartProps, rate: number) : number => {
 }
 
 const calculateRTRank = (props: ChartProps, rate: number) : number => {
+  if(Number.isNaN(rate)) {
+    return 10
+  }
   if(rate < (props.measures?.recover_time?.elite ? props.measures?.recover_time?.elite : 1)) {
     return 0
   } else if(rate < (props.measures?.recover_time?.high ? props.measures?.recover_time?.high : 24)) {
@@ -420,7 +440,9 @@ export const blueFilter = "brightness(0.5) saturate(100%) invert(21%) sepia(98%)
 export const greyFilter = "brightness(0) saturate(100%) invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
 
 export const convertRankToColor = (rank: number) => {
-  if(rank === 0) {
+  if(Number.isNaN(rank)) {
+    return greyFilter
+  } else if(rank === 0) {
     return greenFilter
   } else if(rank === 1) {
     return blueFilter
@@ -431,4 +453,18 @@ export const convertRankToColor = (rank: number) => {
   } else {
     return greyFilter
   }
-} 
+}
+
+export const getScoreDisplay = (score: number, scoreType?: string) : string => {
+  if(Number.isNaN(score)) {
+    return '?'
+  } else if(scoreType === "cfr") {
+    return `${score.toFixed(2)}%`
+  } else if(score < 1) {
+    return `${(score * 60).toFixed(2)} mins`
+  } else if(score < 48) {
+    return `${score.toFixed(2)} hrs`
+  } else {
+    return `${(score / 24).toFixed(2)} days`
+  }
+}
