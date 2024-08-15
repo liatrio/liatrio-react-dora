@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts'
-import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, ChartProps, DoraRecord } from './Helpers'
+import { extractUniqueRepositories, fetchData, formatTicks, generateDistinctColors, generateTicks, getDateDaysInPast, ChartProps, DoraRecord, calculateScores } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import CustomDot from './CustomDot'
@@ -32,7 +32,8 @@ export const extractAvgRecoverTimePerDay = (props: ChartProps, data: DoraRecord[
                 count: 1,
                 totalTime: record.recoverTime,
                 avgTime: record.recoverTime,
-                records: [record]
+                records: [record],
+                avgLabel: ' hrs'
             }
         } else {
             payload.count++
@@ -60,6 +61,7 @@ const RecoverTime : React.FC<ChartProps> = (props: ChartProps) => {
     const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
     const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
     const [tooltipContent, setTooltipContent] = useState<any>(null)
+    const [yLabel, setYLabel] = useState<any>(' hrs')
 
     const ticks = generateTicks(startDate, endDate, 5)
 
@@ -69,6 +71,42 @@ const RecoverTime : React.FC<ChartProps> = (props: ChartProps) => {
         }
 
         const extractedData = extractAvgRecoverTimePerDay(props, data)
+
+        const scores = calculateScores(props, data)
+
+        if(scores.rt > 48) {
+            extractedData.forEach((entry, key) => {
+                Object.keys(entry).map((key: any) => {
+                    if(key !== 'date') {
+                        let payload = entry[key]
+
+                        payload.avgTimeHrs = payload.avgTime
+                        payload.avgTimeDays = payload.avgTime / 24
+                        payload.avgTimeMins = payload.avgTime * 60
+                        payload.avgTime /= 24
+                        payload.avgLabel = ' days'
+                    }
+                })
+            })
+
+            setYLabel(" days")
+        } else if(scores.rt < 1) {
+            extractedData.forEach(entry => {
+                Object.keys(entry).map((key: any) => {
+                    if(key !== 'date') {
+                        let payload = entry[key]
+
+                        payload.avgTimeHrs = payload.avgTime
+                        payload.avgTimeDays = payload.avgTime / 24
+                        payload.avgTimeMins = payload.avgTime * 60
+                        payload.avgTime *= 60
+                        payload.avgLabel = ' mins'
+                    }
+                })
+            })
+
+            setYLabel(" mins")
+        }
 
         setGraphData(extractedData)
 
@@ -121,7 +159,7 @@ const RecoverTime : React.FC<ChartProps> = (props: ChartProps) => {
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
-                    <YAxis name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
+                    <YAxis name="Time" unit={yLabel} tick={{fill: "#FFFFFF"}} />
                     {repositories.map((repo, idx) => (
                         <Line animationDuration={0} key={repo} dataKey={`${repo}.avgTime`} fill={colors[idx]} 
                         dot={(props: any) => <CustomDot {...props} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}

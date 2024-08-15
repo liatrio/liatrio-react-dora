@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, DoraRecord, ChartProps, getDateDaysInPast, generateTicks, formatTicks } from './Helpers'
+import { fetchData, generateDistinctColors, DoraRecord, ChartProps, getDateDaysInPast, generateTicks, formatTicks, calculateScores } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import TooltipContent from './ToolTip/TooltipContent'
@@ -44,6 +44,8 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
     const [node, setNode] = useState<any>(null)
     const [position, setPosition] = useState<any>(null)
+    const [yLabel, setYLabel] = useState<any>(' hrs')
+
     const timeoutRef = useRef<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
@@ -54,8 +56,28 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
         }
 
         const extractedData = extractChangeLeadTimePerRepository(data)
-        setGraphData(extractedData)
 
+        const scores = calculateScores(props, data)
+
+        if(scores.clt > 48) {
+            extractedData.forEach((doraRecords, key) => {
+                doraRecords.forEach(record => {
+                    record.totalCycle /= 24
+                })
+            })
+
+            setYLabel(" days")
+        } else if(scores.clt < 1) {
+            extractedData.forEach((doraRecords, key) => {
+                doraRecords.forEach(record => {
+                    record.totalCycle *= 24
+                })
+            })
+
+            setYLabel(" mins")
+        }
+
+        setGraphData(extractedData)
         setColors(generateDistinctColors(extractedData.size))
         setLoading(false)
     }, [])
@@ -143,7 +165,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
-                    <YAxis type="number" dataKey="totalCycle" name="Time" unit=" hrs" tick={{fill: "#FFFFFF"}} />
+                    <YAxis type="number" dataKey="totalCycle" name="Time" unit={yLabel} tick={{fill: "#FFFFFF"}} />
                     {Array.from(graphData.keys()).map((key, idx) => (
                         <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
                             shape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
