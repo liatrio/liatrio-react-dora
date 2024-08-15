@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.23 (2024-08-15)
+
+### Fix
+
+* fix: simpley score titles and account for bad data (#65) ([`dc9eead`](https://github.com/liatrio/liatrio-react-dora/commit/dc9eead6e68e7e9d84e0725bd7f2bb661cdb316a))
+
 ## v1.0.22 (2024-08-15)
 
 ### Fix
