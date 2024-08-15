@@ -47,6 +47,7 @@ export const extractChangeFailureRatePerDay = (props: ChartProps, data: DoraReco
                 count.successes.push(record)
             } else {
                 count.failed++
+                count.failures.push(record)
             }
         }        
 
