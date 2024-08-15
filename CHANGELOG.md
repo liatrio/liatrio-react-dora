@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.21 (2024-08-15)
+
+### Fix
+
+* fix: forgot to undo this (#62) ([`689135e`](https://github.com/liatrio/liatrio-react-dora/commit/689135e2e738179671cca7b02be69ddba4c75685))
+
 ## v1.0.20 (2024-08-15)
 
 ### Fix
