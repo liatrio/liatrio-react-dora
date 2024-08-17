@@ -114,8 +114,9 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
 
     const handleMouseOverDot = (payload: any, id: any, event: any) => {
         if(id !== node) {
+            const repository = ""
             setNode(id)
-            setTooltipContent(<TooltipContent type="clt" payload={[payload]} />)
+            setTooltipContent(<TooltipContent repository={repository} type="clt" payload={[payload]} />)
             setTooltipOpen(true)
         }
         const center = getElementCenter(event.target)
@@ -167,7 +168,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
                     <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit={yLabel} tick={{fill: "#FFFFFF"}} />
                     {Array.from(graphData.keys()).map((key, idx) => (
-                        <Scatter animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
+                        <Scatter className={key} animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
                             shape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
                             activeShape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
                         />

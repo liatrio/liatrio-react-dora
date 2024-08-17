@@ -12,7 +12,7 @@ const CustomShape: React.FC<CustomShapeProps> = ({ cx, cy, fill, tooltipId }) =>
     <circle
       cx={cx}
       cy={cy}
-      r={8}
+      r={4}
       fill={fill}
       stroke="none"
       style={{ cursor: 'pointer' }}

@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './TooltipContent.css'
+import {v4 as uuidv4} from 'uuid'
 
 export interface Props {
     active?: boolean
     label?: string | number
     payload?: any[]
     showExtendedDetail?: boolean
-    type: string,
+    type: string
+    repository: string
     onClose?: () => void
 }
 
@@ -14,16 +16,17 @@ const getTitle = (type: string, payloads: any[]) => {
     const payload = payloads[0]
 
     if(type === "clt") {
-        return (<h3><a className="toolTipLink" href={payload.deploy_url} target="_blank">{payload.title}</a></h3>)
+        return (<h3 key={uuidv4()}><a key={uuidv4()} className="toolTipLink" href={payload.deploy_url} target="_blank">{payload.title}</a></h3>)
     } else {
         const date = new Date(payload.date).toISOString().split("T")[0]
-        return (<h3>{date}</h3>)
+        return (<h3 key={uuidv4()}>{date}</h3>)
     }
 }
 
-const getBody = (type: string, payloads: any[]) => {
+const getBody = (repository: string, type: string, payloads: any[]) => {
     const payload = payloads[0]
-
+    const repoData = payload[repository]
+    
     if(type === "clt") {
         let displayValue = ""
 
@@ -40,85 +43,56 @@ const getBody = (type: string, payloads: any[]) => {
         }
 
         return (<>
-            <p>Repository: {payload.repository}</p>
-            <p>Total Cycle Time: {displayValue} {payload.cycleLabel}</p>
+            <p key={uuidv4()}>Repository: {payload.repository}</p>
+            <p key={uuidv4()}>Total Cycle Time: {displayValue} {payload.cycleLabel}</p>
         </>)
     } else if(type === "df") {
         return (<>
-            {Object.keys(payload).map((key: any, tindex: number) => {
-                if(key !== "date") {
-                    const entry = payload[key]
-
-                    return (<>
-                        <p>{key}: 
-                            {entry.urls.map((url: string, index: number) => {
-                                return <a className="toolTipLink" href={url} target="_blank">{index + 1}</a>
-                            })}
-                        </p>
-                    </>)
-                } else {
-                    return 
-                }
-            })}
+            <p key={uuidv4()}>{repository}: 
+                {repoData.urls.map((url: string, index: number) => {
+                    return <a key={uuidv4()} className="toolTipLink" href={url} target="_blank">{index + 1}</a>
+                })}
+            </p>
         </>)
     } else if(type === "cfr") {
         return (<>
-            {Object.keys(payload).map((key: any, tindex: number) => {
-                if(key !== "date") {
-                    const entry = payload[key]
-
-                    return (<>
-                        <p>{key}: {(payload[key].total * 100).toFixed(2)}%</p>
-                        {entry.successes.length > 0 &&
-                            <span key={key} className="toolTipSpan">Successes: 
-                                {entry.successes.map((record: any, index: number) => {
-                                    return <a className="toolTipLink" target='_blank' href={record.deploy_url}>{index + 1}</a>
-                                })}
-                            </span>
-                        }
-                        {entry.failures.length > 0 && entry.successes.length > 0 &&
-                            <br/>
-                        }
-                        {entry.failures.length > 0 &&
-                            <span key={key} className="toolTipSpan">Issues: 
-                                {entry.failures.map((record: any, index: number) => {
-                                    return <a className="toolTipLink" target='_blank' href={record.issue_url ?? record.deploy_url}>{index + 1}</a>
-                                })}
-                            </span>
-                        }
-                    </>)
-                } else {
-                    return (<></>)
-                }
-            })}
+            <p key={uuidv4()}>{repository}: {(repoData.total * 100).toFixed(2)}%</p>
+            {repoData.successes.length > 0 &&
+                <span key={uuidv4()} className="toolTipSpan">Successes: 
+                    {repoData.successes.map((record: any, index: number) => {
+                        return <a key={uuidv4()} className="toolTipLink" target='_blank' href={record.deploy_url}>{index + 1}</a>
+                    })}
+                </span>
+            }
+            {repoData.failures.length > 0 && repoData.successes.length > 0 &&
+                <br key={uuidv4()}/>
+            }
+            {repoData.failures.length > 0 &&
+                <span key={uuidv4()} className="toolTipSpan">Issues: 
+                    {repoData.failures.map((record: any, index: number) => {
+                        return <a key={uuidv4()} className="toolTipLink" target='_blank' href={record.issue_url ?? record.deploy_url}>{index + 1}</a>
+                    })}
+                </span>
+            }
         </>)
     } else if(type === "rt") {
+        let displayValue = ""
+
+        switch(repoData.avgLabel.trim()) {
+            case 'hrs':
+                displayValue = repoData.avgTime.toFixed(2)
+                break
+            case 'mins':
+                displayValue = repoData.avgTimeMins.toFixed(2)
+                break
+            case 'days':
+                displayValue = repoData.avgTimeDays.toFixed(2)
+                break
+
+        }
+
         return (<>
-            {Object.keys(payload).map((key: any) => {
-                if(!['date', 'avgTimeHrs', 'avgTimeDays', 'avgTimeMins'].includes(key)) {
-                    const entry = payload[key]
-                    let displayValue = ""
-
-                    switch(entry.avgLabel.trim()) {
-                        case 'hrs':
-                            displayValue = entry.avgTime.toFixed(2)
-                            break
-                        case 'mins':
-                            displayValue = entry.avgTimeMins.toFixed(2)
-                            break
-                        case 'days':
-                            displayValue = entry.avgTimeDays.toFixed(2)
-                            break
-
-                    }
-
-                    return (<>
-                        <p>{key}: {displayValue} {entry.avgLabel}</p>
-                    </>)
-                } else {
-                    return (<></>)
-                }
-            })}
+            <p key={uuidv4()}>{repository}: {displayValue} {repoData.avgLabel}</p>
         </>)
     }
 }
@@ -128,8 +102,8 @@ const getFooter = (type: string, payloads: any[]) => {
 
     if(type === "clt") {
         return (
-            <div className="dora-tooltip-footer">
-                <span>Commit By: {payload.user}</span>
+            <div key={uuidv4()} className="dora-tooltip-footer">
+                <span key={uuidv4()}>Commit By: {payload.user}</span>
             </div>
         )
     } else {
@@ -137,14 +111,24 @@ const getFooter = (type: string, payloads: any[]) => {
     }
 }
 
-const TooltipContent : React.FC<Props> = ({type, payload}: Props) => {
+const TooltipContent : React.FC<Props> = ({repository, type, payload}: Props) => {
     if(!payload || !payload.length || payload.length === 0) {
         return (<></>)
     }
 
-    const title = getTitle(type, payload)
-    const body = getBody(type, payload)
-    const footer = getFooter(type, payload)
+    const [body, setBody] = useState<any>()
+    const [title, setTitle] = useState<any>()
+    const [footer, setFooter] = useState<any>()
+
+    useEffect(() => {
+        const titleContent = getTitle(type, payload)
+        const bodyContent = getBody(repository, type, payload)
+        const footerContent = getFooter(type, payload)
+
+        setBody(bodyContent)
+        setFooter(footerContent)
+        setTitle(titleContent)
+    }, [repository, type, payload])
 
     return (
         <>

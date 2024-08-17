@@ -5,9 +5,14 @@ interface CustomDotProps extends DotProps {
   payload: any
   tooltipId: string
   mouseOver: (event: any, payload: any) => void
+  className: string
 }
 
-const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, mouseOver, tooltipId }) => {
+const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, mouseOver, tooltipId, className}) => {
+  if(!Object.keys(payload).includes(className)) {
+    return (<></>)
+  }
+
   const mOver = (e: any) => {
     if(mouseOver) {
       mouseOver(e, payload)
@@ -16,9 +21,10 @@ const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, mouseOver,
 
   return (
     <circle
+      className={className}
       cx={cx}
       cy={cy}
-      r={8}
+      r={4}
       fill={fill}
       stroke="none"
       onMouseOver={mOver}
