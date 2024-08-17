@@ -119,7 +119,8 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
     }
 
     const handleMouseOverBar = (event: any, payload: any) => {
-        setTooltipContent(<TooltipContent type="cfr" payload={[payload]} />)
+        const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
+        setTooltipContent(<TooltipContent type="cfr" payload={[payload]} repository={repository}/>)
     }
 
     return (
@@ -138,7 +139,7 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
                     <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
                     {repositories.map((repo, idx) => (
-                        <Bar animationDuration={0} key={repo} dataKey={`${repo}.total`} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>
+                        <Bar animationDuration={0} key={repo} className={repo} dataKey={`${repo}.total`} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>
                     ))}
                 </BarChart>
             </ResponsiveContainer>

@@ -109,7 +109,8 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     }
 
     const handleMouseOverBar = (event: any, payload: any) => {
-        setTooltipContent(<TooltipContent type="df" payload={[payload]} />)
+        const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
+        setTooltipContent(<TooltipContent type="df" repository={repository} payload={[payload]} />)
     }
 
     return (
@@ -131,7 +132,7 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
                     {repositories.map((repo, idx) => { 
                         const key = `${repo}.count`
                         return (
-                            <Bar animationDuration={0} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
+                            <Bar animationDuration={0} className={repo} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
                         )
                     })}
                 </BarChart>

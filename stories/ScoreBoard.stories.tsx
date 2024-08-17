@@ -16,10 +16,9 @@ export const Example = Template.bind({})
 
 Example.args = {
     api: "",
-    repositories: ['test-repo'],
     data: data,
     includeWeekends: false,
     showDetails: false,
-    start: new Date(2024, 6, 14),
-    end: new Date(2024, 7, 13)
+    start: new Date(2024, 6, 16),
+    end: new Date(2024, 7, 15)
 }
