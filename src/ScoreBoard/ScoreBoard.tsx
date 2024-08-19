@@ -85,17 +85,13 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
         <span style={{color: "white"}}>{props.message}</span>
       </div>
     )
-  }
-
-  if(loading || props.loading) {
+  } else  if(loading || props.loading) {
       return (
           <div data-testid="ScoreBoard" style={{width: "100%", height: "100%", paddingTop: "10px", paddingBottom: "100px"}}>
               <Loading enabled={loading || (props.loading ?? false)} />
           </div>
       )
-  }
-
-  if(noData) {
+  } else if(noData) {
       return ( 
         <div data-testid="ScoreBoard" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
           <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px", padding: "10px"}}/>
