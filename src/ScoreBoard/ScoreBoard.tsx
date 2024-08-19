@@ -79,6 +79,14 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
     fetchData(props, organizeData)
   }, [props])
 
+  if (props.message) {
+    return (
+      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <span style={{color: "white"}}>{props.message}</span>
+      </div>
+    )
+  }
+
   if(loading || props.loading) {
       return (
           <div data-testid="ScoreBoard" style={{width: "100%", height: "100%", paddingTop: "10px", paddingBottom: "100px"}}>
