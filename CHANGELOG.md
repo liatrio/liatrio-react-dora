@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.33 (2024-08-19)
+
+### Fix
+
+* fix: make message box have static height (#76) ([`a7a406a`](https://github.com/liatrio/liatrio-react-dora/commit/a7a406af929a34f3cca4b4750398577ccbc4c169))
+
 ## v1.0.32 (2024-08-19)
 
 ### Fix
