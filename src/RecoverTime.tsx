@@ -34,7 +34,7 @@ export const extractAvgRecoverTimePerDay = (props: ChartProps, data: DoraRecord[
 
       acc.set(date, entry);
     }
-
+    
     let payload = entry[record.repository];
 
     if (!payload) {
@@ -130,19 +130,31 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
       });
 
       setYLabel(" mins");
+    } else {
+      extractedData.forEach((entry) => {
+        Object.keys(entry).map((key: any) => {
+          if (key !== "date") {
+            if(usedRepositories[key]) {
+                usedRepositories[key]++
+            } else {
+                usedRepositories[key] = 1
+            }
+          }
+        })
+      })
     }
 
     setGraphData(extractedData);
 
     const allRepositories = extractUniqueRepositories(data);
     const finalRepositories: any = []
-
+    
     allRepositories.forEach(repo => {
         if(usedRepositories[repo]) {
             finalRepositories.push(repo)
         }
     })
-
+    
     setRepositories(finalRepositories)
 
     setColors(generateDistinctColors(finalRepositories.length));
@@ -155,6 +167,14 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
     setLoading(true);
     fetchData(props, organizeData);
   }, [props]);
+
+  if (props.message) {
+    return (
+      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <span style={{color: "white"}}>{props.message}</span>
+      </div>
+    );
+  }
 
   if (loading || props.loading) {
     return (

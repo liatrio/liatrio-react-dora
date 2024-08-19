@@ -11,7 +11,8 @@ export interface ChartProps {
   includeWeekends?: boolean
   showDetails?: boolean
   colors?: string[]
-  measures?: RankThresholds
+  measures?: RankThresholds,
+  message?: string
 }
 
 export interface RankThreshold {
