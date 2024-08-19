@@ -81,7 +81,7 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
 
   if (props.message) {
     return (
-      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <div data-testid="ScoreBoard" style={{ width: "100%", height: "100px", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <span style={{color: "white"}}>{props.message}</span>
       </div>
     )
