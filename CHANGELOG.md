@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.31 (2024-08-19)
+
+### Fix
+
+* fix: forgot to add this to scoreboard (#74) ([`a9237da`](https://github.com/liatrio/liatrio-react-dora/commit/a9237da963d6c671fbd34c2d06d87d75c535cf06))
+
 ## v1.0.30 (2024-08-19)
 
 ### Fix
