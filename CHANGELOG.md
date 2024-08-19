@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.32 (2024-08-19)
+
+### Fix
+
+* fix: make these else ifs (#75) ([`39089ec`](https://github.com/liatrio/liatrio-react-dora/commit/39089ec6a52d0768afc4240d545e080ffa1de24d))
+
 ## v1.0.31 (2024-08-19)
 
 ### Fix
