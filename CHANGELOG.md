@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.29 (2024-08-17)
+
+### Fix
+
+* fix: fixing tooltips and charts for teams display (#71) ([`250cabd`](https://github.com/liatrio/liatrio-react-dora/commit/250cabd5d62189fa1d62ffbce9736a47642444e6))
+
 ## v1.0.28 (2024-08-15)
 
 ### Fix
