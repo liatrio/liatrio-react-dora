@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.0.30 (2024-08-19)
+
+### Fix
+
+* fix: force version (#73) ([`fa3c2a8`](https://github.com/liatrio/liatrio-react-dora/commit/fa3c2a87a1f41dc81d4f6430b889192b72cda9b4))
+
+### Unknown
+
+* Bug fix (#72)
+
+* fix: fixing tooltips and charts for teams display
+
+* fix: missing code for base recover time, add custom message option ([`be350be`](https://github.com/liatrio/liatrio-react-dora/commit/be350bee2bd5615dd0596121abc3148bdecaded3))
+
 ## v1.0.29 (2024-08-17)
 
 ### Fix
