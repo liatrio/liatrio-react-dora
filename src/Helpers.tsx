@@ -243,6 +243,9 @@ export const fetchData = async (props: ChartProps, onSuccess: (data: any) => voi
     }
 
     return
+  } else if(!props.api) {
+    onSuccess([])
+    return
   }
 
   const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(31)

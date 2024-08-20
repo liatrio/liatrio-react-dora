@@ -47,21 +47,29 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
             <p key={uuidv4()}>Total Cycle Time: {displayValue} {payload.cycleLabel}</p>
         </>)
     } else if(type === "df") {
+        const urls = repoData.urls.slice(0, 5)
+        const dots = repoData.urls.length > 5 ? '...' : ''
+
         return (<>
             <p key={uuidv4()}>{repository}: 
-                {repoData.urls.map((url: string, index: number) => {
+                {urls.map((url: string, index: number) => {
                     return <a key={uuidv4()} className="toolTipLink" href={url} target="_blank">{index + 1}</a>
-                })}
+                })}{dots}
             </p>
         </>)
     } else if(type === "cfr") {
+        const successUrls = repoData.successes.slice(0, 5)
+        const successDots = repoData.successes.length > 5 ? '...' : ''
+        const failureUrls = repoData.failures.slice(0, 5)
+        const failureDots = repoData.failures.length > 5 ? '...' : ''
+
         return (<>
             <p key={uuidv4()}>{repository}: {(repoData.total * 100).toFixed(2)}%</p>
             {repoData.successes.length > 0 &&
                 <span key={uuidv4()} className="toolTipSpan">Successes: 
-                    {repoData.successes.map((record: any, index: number) => {
+                    {successUrls.map((record: any, index: number) => {
                         return <a key={uuidv4()} className="toolTipLink" target='_blank' href={record.deploy_url}>{index + 1}</a>
-                    })}
+                    })}{successDots}
                 </span>
             }
             {repoData.failures.length > 0 && repoData.successes.length > 0 &&
@@ -69,9 +77,9 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
             }
             {repoData.failures.length > 0 &&
                 <span key={uuidv4()} className="toolTipSpan">Issues: 
-                    {repoData.failures.map((record: any, index: number) => {
+                    {failureUrls.map((record: any, index: number) => {
                         return <a key={uuidv4()} className="toolTipLink" target='_blank' href={record.issue_url ?? record.deploy_url}>{index + 1}</a>
-                    })}
+                    })}{failureDots}
                 </span>
             }
         </>)
