@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.0.35 (2024-08-20)
+
+### Fix
+
+* fix: adjust tooltip link limit (#78)
+
+* fix: limit links to 5 in tooltip
+
+* fix: handle no data and no api ([`9b5b113`](https://github.com/liatrio/liatrio-react-dora/commit/9b5b11322b0e27e0d73777cfc1004ac3a456f8f4))
+
 ## v1.0.34 (2024-08-20)
 
 ### Fix
