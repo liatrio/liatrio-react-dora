@@ -69,8 +69,14 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
     const organizeData = (data: DoraRecord[]) => {
-        if(data.length === 0) {
+        if(!data || data.length === 0) {
             setNoData(true)
+            setRepositories([])
+            setGraphData([])
+            setColors([])
+            setLoading(false)
+            setMaxDeploys(0)
+            return
         }
 
         const [extractedData, deploys] = extractDeploymentsPerDay(props, data)

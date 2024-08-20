@@ -79,8 +79,13 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
 
     const organizeData = (data: DoraRecord[]) => {
-        if(data.length === 0) {
+        if(!data || data.length === 0) {
             setNoData(true)
+            setRepositories([])
+            setGraphData([])
+            setColors([])
+            setLoading(false)
+            return
         }
 
         const extractedData = extractChangeFailureRatePerDay(props, data)
