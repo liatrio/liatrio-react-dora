@@ -76,8 +76,14 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
   const ticks = generateTicks(startDate, endDate, 5);
 
   const organizeData = (data: DoraRecord[]) => {
-    if (data.length === 0) {
-      setNoData(true);
+    if (!data || data.length === 0) {
+      setNoData(true)
+      setRepositories([])
+      setGraphData([])
+      setColors([])
+      setLoading(false)
+      setYLabel(" hrs")
+      return
     }
 
     const extractedData = extractAvgRecoverTimePerDay(props, data);

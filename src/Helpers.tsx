@@ -215,8 +215,17 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 }
 
 export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
-  if(props.data) {
+  if(!props.api && !props.data) {
+    onSuccess([])
+    return
+  } else if(props.data) {
     let data = props.data
+
+    if(data.records && data.records.length === 0) {
+      onSuccess([])
+      return
+    }
+    
     let parsedData: any = {}
 
     if(typeof data === "string") {
@@ -233,10 +242,6 @@ export const fetchData = async (props: ChartProps, onSuccess: (data: any) => voi
       onSuccess(props.data)
     }
 
-    return
-  }
-
-  if(!props.api) {
     return
   }
 

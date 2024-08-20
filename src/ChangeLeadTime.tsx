@@ -51,8 +51,12 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     const ticks = generateTicks(startDate, endDate, 5)
 
     const organizeData = useCallback((data: DoraRecord[]) => {
-        if(data.length === 0) {
+        if(!data || data.length === 0) {
             setNoData(true)
+            setGraphData(new Map<string, DoraRecord[]>())
+            setColors([])
+            setLoading(false)
+            return
         }
 
         const extractedData = extractChangeLeadTimePerRepository(data)
