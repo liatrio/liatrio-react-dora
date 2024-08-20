@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.34 (2024-08-20)
+
+### Fix
+
+* fix: correct issue of data being null/empty (#77) ([`db95192`](https://github.com/liatrio/liatrio-react-dora/commit/db95192d1f9c6766bf702dacfb24fbb2bbdeb61f))
+
 ## v1.0.33 (2024-08-19)
 
 ### Fix
