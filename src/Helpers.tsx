@@ -215,32 +215,20 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 }
 
 export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
-  if(!props.api && !props.data) {
-    onSuccess([])
-    return
-  } else if(props.data) {
+  if(props.data) {
     let data = props.data
 
-    if(data.records && data.records.length === 0) {
-      onSuccess([])
-      return
-    }
-    
-    let parsedData: any = {}
-
     if(typeof data === "string") {
-      parsedData = JSON.parse(data, recordReviver)
+      data = JSON.parse(data, recordReviver)
     }
 
-    if(parsedData.records) {
-      parsedData = filterData(props, parsedData.records)
+    if(data.records) {
+      data = filterData(props, data.records)
 
-      expandData(props, parsedData)
-
-      onSuccess(parsedData)
-    } else {
-      onSuccess(props.data)
+      expandData(props, data)
     }
+
+    onSuccess(data)
 
     return
   } else if(!props.api) {
