@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.0.37 (2024-08-21)
+
+### Fix
+
+* fix: address bug when nodata locks charts out (#80)
+
+* fix: rework this bit
+
+* fix: address bug when nodata locks charts out ([`96ce948`](https://github.com/liatrio/liatrio-react-dora/commit/96ce9489f146a7903668f2569b1815b9ccb35b44))
+
 ## v1.0.36 (2024-08-21)
 
 ### Fix
