@@ -1,16 +1,16 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import ScoreBoard from '../src/ScoreBoard/ScoreBoard'
-import { ChartProps } from '../src/Helpers'
+import Board from '../src/Boards/Board'
+import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import data from './data'
 
 export default {
-    title: 'ScoreBoard',
-    component: ScoreBoard,
+    title: 'Board',
+    component: Board,
 } as Meta
 
-const Template: StoryFn<ChartProps> = (args: any) => (<div style={{height: "200px"}}><ScoreBoard {...args} /></div>)
+const Template: StoryFn<ChartProps> = (args: any) => (<div style={{height: "200px"}}><Board {...args} /></div>)
 
 export const Example = Template.bind({})
 

@@ -2,27 +2,27 @@ export { default as RecoverTime } from './RecoverTime'
 export { default as ChangeFailureRate } from './ChangeFailureRate'
 export { default as ChangeLeadTime } from './ChangeLeadTime'
 export { default as DeploymentFrequency } from './DeploymentFrequency'
-export { default as ScoreBoard } from './ScoreBoard/ScoreBoard'
-export { 
-  fetchData,
-  getDateDaysInPast,
-  getDateDaysInPastUtc,
-  dateToUtc,
-  utcDateToLocal,
-  calculateScores,
-  calculateDoraRanks,
-  convertRankToColor,
-  greyFilter,
-  greenFilter,
-  blueFilter,
-  yellowFilter,
-  orangeFilter,
-  getScoreDisplay,
-} from './Helpers'
+export { default as Board } from './Boards/Board'
+export { fetchData } from './functions/fetchFunctions'
+export { getDateDaysInPast, dateToUtc, getDateDaysInPastUtc, utcDateToLocal } from "./functions/dateFunctions"
+export { buildDoraState } from "./functions/metricFunctions"
+
+export {
+  grey,
+  green,
+  blue,
+  yellow,
+  orange
+} from './constants'
 
 export type {
-  RankThreshold,
-  RankThresholds,
+  ThresholdColors,
+  MetricThresholdSet,
+  MetricThresholds,
   ChartProps,
-  DoraRecord as ChartRecord
-} from './Helpers'
+  BoardProps
+} from './interfaces/propInterfaces'
+
+export type {
+  DoraRecord
+} from './interfaces/apiInterfaces'

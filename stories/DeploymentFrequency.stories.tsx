@@ -1,7 +1,7 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import DeploymentFrequency from '../src/DeploymentFrequency'
-import { ChartProps } from '../src/Helpers'
+import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import data from './data'
 

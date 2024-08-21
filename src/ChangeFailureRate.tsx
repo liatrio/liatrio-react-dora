@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid,  ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, DoraRecord, ChartProps, extractUniqueRepositories, getDateDaysInPast, formatTicks, generateTicks } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
+import { ChartProps } from './interfaces/propInterfaces'
+import { DoraRecord } from './interfaces/apiInterfaces'
+import { getDateDaysInPast } from './functions/dateFunctions'
+import { extractUniqueRepositories, formatTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
+import { millisecondsToDays } from './constants'
+import { fetchData } from './functions/fetchFunctions'
 
 export const extractChangeFailureRatePerDay = (props: ChartProps, data: DoraRecord[]) => {
     let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
@@ -76,7 +81,7 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
     const [tooltipContent, setTooltipContent] = useState<any>(null)
 
     const ticks = generateTicks(startDate, endDate, 5)
-    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))) * 33 + "%"
+    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%"
 
     const organizeData = (data: DoraRecord[]) => {
         if(!data || data.length === 0) {
@@ -111,7 +116,7 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
 
     if (props.message) {
       return (
-        <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div data-testid="ChangeFailureRate" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <span style={{color: "white"}}>{props.message}</span>
         </div>
       );

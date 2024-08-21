@@ -1,10 +1,10 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import ChangeLeadTime from '../src/ChangeLeadTime/ChangeLeadTime'
 import '@testing-library/jest-dom'
+import ChangeLeadTime from '../src/ChangeLeadTime'
 
 test('renders component', () => {
-    render(<ChangeLeadTime api="" />)
+    render(<ChangeLeadTime />)
     const element = screen.getByTestId('ChangeLeadTime')
     expect(element).toBeInTheDocument()
 })

@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import { fetchData, generateDistinctColors, DoraRecord, ChartProps, getDateDaysInPast, generateTicks, formatTicks, calculateScores } from './Helpers'
 import Loading from './Loading/Loading'
 import noDataImg from './assets/no_data.png'
 import TooltipContent from './ToolTip/TooltipContent'
 import { Tooltip } from 'react-tooltip'
 import CustomShape from './CustomShape'
+import { DoraRecord } from './interfaces/apiInterfaces'
+import { ChartProps } from './interfaces/propInterfaces'
+import { formatTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
+import { fetchData } from './functions/fetchFunctions'
+import { buildDoraState } from './functions/metricFunctions'
+import { getDateDaysInPast } from './functions/dateFunctions'
 
 export const extractChangeLeadTimePerRepository = (data: DoraRecord[]) => {
     let reduced = data.reduce((acc, record) => {
@@ -63,9 +68,9 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
 
         const extractedData = extractChangeLeadTimePerRepository(data)
 
-        const scores = calculateScores(props, data)
+        const state = buildDoraState(props, data)
 
-        if(scores.clt > 48) {
+        if(state.changeLeadTime.average > 48) {
             extractedData.forEach((doraRecords, key) => {
                 doraRecords.forEach(record => {
                     record.totalCycle /= 24
@@ -73,7 +78,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
             })
 
             setYLabel(" days")
-        } else if(scores.clt < 1) {
+        } else if(state.changeLeadTime.average < 1) {
             extractedData.forEach((doraRecords, key) => {
                 doraRecords.forEach(record => {
                     record.totalCycle *= 24
@@ -81,6 +86,8 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
             })
 
             setYLabel(" mins")
+        } else {
+            setYLabel(" hrs")
         }
 
         setGraphData(extractedData)
@@ -97,7 +104,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
 
     if (props.message) {
       return (
-        <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div data-testid="ChangeLeadTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <span style={{color: "white"}}>{props.message}</span>
         </div>
       );

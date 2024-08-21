@@ -1,7 +1,7 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import ChangeFailureRate from '../src/ChangeFailureRate'
-import { ChartProps } from '../src/Helpers'
+import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import data from './data'
 
