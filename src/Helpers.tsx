@@ -217,6 +217,7 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
   if(props.data) {
     let data = props.data
+    
     if(typeof data === "string") {
       data = JSON.parse(data, recordReviver)
     }

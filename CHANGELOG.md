@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.36 (2024-08-21)
+
+### Fix
+
+* fix: rework this bit (#79) ([`9196858`](https://github.com/liatrio/liatrio-react-dora/commit/91968582b1a88817057a03ef180e915f361126aa))
+
 ## v1.0.35 (2024-08-20)
 
 ### Fix
