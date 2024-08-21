@@ -25,21 +25,23 @@ interface ScoreBoardState {
   CLTDisplay: string
 }
 
+const defaultScoreState = {
+  DFColor: convertRankToColor(10),
+  CLTColor: convertRankToColor(10),
+  CFRColor: convertRankToColor(10),
+  RTColor: convertRankToColor(10),
+  DFScore: NaN,
+  CLTScore: NaN,
+  CFRScore: NaN,
+  RTScore: NaN,
+  DFDisplay: '?',
+  RTDisplay: '?',
+  CFRDisplay: '?',
+  CLTDisplay: '?',
+}
+
 const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
-  const [state, setState] = useState<ScoreBoardState>({
-    DFColor: convertRankToColor(10),
-    CLTColor: convertRankToColor(10),
-    CFRColor: convertRankToColor(10),
-    RTColor: convertRankToColor(10),
-    DFScore: NaN,
-    CLTScore: NaN,
-    CFRScore: NaN,
-    RTScore: NaN,
-    DFDisplay: '?',
-    RTDisplay: '?',
-    CFRDisplay: '?',
-    CLTDisplay: '?',
-  })
+  const [state, setState] = useState<ScoreBoardState>({...defaultScoreState})
 
   const [data, setData] = useState<DoraRecord[]>([])
   const [noData, setNoData] = useState<boolean>(false)
@@ -49,7 +51,12 @@ const ScoreBoard : React.FC<ChartProps> = (props: ChartProps) => {
   const organizeData = (data: DoraRecord[]) => {
     if(data.length === 0) {
         setNoData(true)
+        setState({...defaultScoreState})
+        setLoading(false)
+        return
     }
+
+    setNoData(false)
 
     setData(data)
 

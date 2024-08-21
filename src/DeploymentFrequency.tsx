@@ -50,7 +50,7 @@ export const extractDeploymentsPerDay = (props: ChartProps, data: DoraRecord[]) 
     let result = Array.from(reduced.values())
 
     result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
-
+    
     return [result, max]
 }
 
@@ -60,8 +60,8 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0))
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
     const [tooltipContent, setTooltipContent] = useState<any>(null)
 
@@ -79,6 +79,8 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
             return
         }
 
+        setNoData(false)
+
         const [extractedData, deploys] = extractDeploymentsPerDay(props, data)
         setGraphData(extractedData)
         setMaxDeploys(deploys)
@@ -92,8 +94,8 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     }
 
     useEffect(() => {
-        setStartDate(props.start ?? getDateDaysInPast(31))
-        setEndDate(props.end ?? getDateDaysInPast(1))
+        setStartDate(props.start ?? getDateDaysInPast(30))
+        setEndDate(props.end ?? getDateDaysInPast(0))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])
