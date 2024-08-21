@@ -38,8 +38,8 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     const [colors, setColors] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1))
+    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30))
+    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0))
     const [tooltipContent, setTooltipContent] = useState<any>(null)
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
     const [node, setNode] = useState<any>(null)
@@ -58,6 +58,8 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
             setLoading(false)
             return
         }
+
+        setNoData(false)
 
         const extractedData = extractChangeLeadTimePerRepository(data)
 
@@ -87,8 +89,8 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     }, [])
 
     useEffect(() => {
-        setStartDate(props.start ?? getDateDaysInPast(31))
-        setEndDate(props.end ?? getDateDaysInPast(1))
+        setStartDate(props.start ?? getDateDaysInPast(30))
+        setEndDate(props.end ?? getDateDaysInPast(0))
         setLoading(true)
         fetchData(props, organizeData)
     }, [props])

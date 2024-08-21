@@ -217,7 +217,6 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
   if(props.data) {
     let data = props.data
-
     if(typeof data === "string") {
       data = JSON.parse(data, recordReviver)
     }
@@ -236,8 +235,8 @@ export const fetchData = async (props: ChartProps, onSuccess: (data: any) => voi
     return
   }
 
-  const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(31)
-  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(1)
+  const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(30)
+  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(0)
 
   const body = {
       repositories: props.repositories,
@@ -319,7 +318,7 @@ const calculateDFRate = (props: ChartProps, data: DoraRecord[]) : number => {
   }
 
   if(sorted.length === 1) {
-    return ((props.end?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.start?.getTime() ?? getDateDaysInPast(31).getTime())) / (1000 * 60 * 60)
+    return ((props.end?.getTime() ?? getDateDaysInPast(0).getTime()) - (props.start?.getTime() ?? getDateDaysInPast(30).getTime())) / (1000 * 60 * 60)
   }
 
   let totalDeployTime = 0

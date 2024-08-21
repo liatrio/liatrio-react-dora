@@ -68,8 +68,8 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
   const [colors, setColors] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [noData, setNoData] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(31));
-  const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(1));
+  const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30));
+  const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0));
   const [tooltipContent, setTooltipContent] = useState<any>(null);
   const [yLabel, setYLabel] = useState<any>(" hrs");
 
@@ -85,6 +85,8 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
       setYLabel(" hrs")
       return
     }
+
+    setNoData(false)
 
     const extractedData = extractAvgRecoverTimePerDay(props, data);
 
@@ -168,8 +170,8 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
   };
 
   useEffect(() => {
-    setStartDate(props.start ?? getDateDaysInPast(31));
-    setEndDate(props.end ?? getDateDaysInPast(1));
+    setStartDate(props.start ?? getDateDaysInPast(30));
+    setEndDate(props.end ?? getDateDaysInPast(0));
     setLoading(true);
     fetchData(props, organizeData);
   }, [props]);
