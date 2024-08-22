@@ -1,5 +1,5 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
-import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, orange, recoverTimeName, yellow } from "../constants"
+import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
 import { DoraMetric, DoraState } from "../interfaces/metricInterfaces"
@@ -144,11 +144,19 @@ export const generateMetricDisplay = (value: number, metricName?: string) : stri
 }
 
 export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraState => {
-  //this needs to fitler do the dates specified
   let state: any = {...defaultDoraState}
 
+  const start = (props.graphStart || getDateDaysInPast(defaultGraphStart)).getTime()
+  const end = (props.graphEnd || getDateDaysInPast(defaultGraphEnd)).getTime()
+
+  const filteredData = [...data].filter((record: DoraRecord) => {
+    const createdAt = record.created_at.getTime()
+    
+    return createdAt >= start && createdAt <= end
+  })
+
   Object.keys(state).forEach((metricName) => {
-    state[metricName] = calculateMetric(metricName, props, data)
+    state[metricName] = calculateMetric(metricName, props, filteredData)
   })
 
   return state
