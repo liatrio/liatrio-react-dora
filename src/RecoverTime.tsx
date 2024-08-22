@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts"
-import Loading from "./Loading/Loading"
-import noDataImg from "./assets/no_data.png"
 import CustomDot from "./CustomDot"
 import "./general.css"
 import TooltipContent from "./ToolTip/TooltipContent"
 import { Tooltip } from "react-tooltip"
 import { ChartProps } from "./interfaces/propInterfaces"
 import { DoraRecord } from "./interfaces/apiInterfaces"
-import { getDateDaysInPast } from "./functions/dateFunctions"
-import { extractUniqueRepositories, formatTicks, generateDistinctColors, generateTicks } from "./functions/chartFunctions"
+import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from "./functions/chartFunctions"
 import { buildDoraState } from "./functions/metricFunctions"
-import { fetchData } from "./functions/fetchFunctions"
+import { recoverTimeName } from "./constants"
 
-export const extractAvgRecoverTimePerDay = (props: ChartProps, data: DoraRecord[]) => {
+export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
   let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
     if (record.recoverTime === undefined) {
       return acc
@@ -58,46 +55,21 @@ export const extractAvgRecoverTimePerDay = (props: ChartProps, data: DoraRecord[
 }
 
 const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
-  const [graphData, setGraphData] = useState<any[]>([]);
-  const [repositories, setRepositories] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [noData, setNoData] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30));
-  const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0));
-  const [tooltipContent, setTooltipContent] = useState<any>(null);
-  const [yLabel, setYLabel] = useState<any>(" hrs");
+  const [graphData, setGraphData] = useState<any[]>([])
+  const [tooltipContent, setTooltipContent] = useState<any>(null)
+  const [usedRepositories, setUsedRepositories] = useState<string[]>([])
+  const [yLabel, setYLabel] = useState<any>(" hrs")
 
-  const ticks = generateTicks(startDate, endDate, 5);
+  const postCompose = (componentProps: ChartProps, data: DoraRecord[], composedData: any) => {
+    const state = buildDoraState(componentProps, data)
 
-  const organizeData = (data: DoraRecord[]) => {
-    if (!data || data.length === 0) {
-      setNoData(true)
-      setRepositories([])
-      setGraphData([])
-      setColors([])
-      setLoading(false)
-      setYLabel(" hrs")
-      return
-    }
-
-    setNoData(false)
-
-    const extractedData = extractAvgRecoverTimePerDay(props, data);
-
-    const state = buildDoraState(props, data)
-
-    const usedRepositories: any = {}
+    const repositories: string[] = []
 
     if (state.recoverTime.average > 48) {
-      extractedData.forEach((entry) => {
+      composedData.forEach((entry: any) => {
         Object.keys(entry).map((key: any) => {
           if (key !== "date") {
-            if(usedRepositories[key]) {
-                usedRepositories[key]++
-            } else {
-                usedRepositories[key] = 1
-            }
+            repositories.push(key)
 
             let payload = entry[key]
 
@@ -112,14 +84,10 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
 
       setYLabel(" days")
     } else if (state.recoverTime.average < 1) {
-      extractedData.forEach((entry) => {
+      composedData.forEach((entry: any) => {
         Object.keys(entry).map((key: any) => {
           if (key !== "date") {
-            if(usedRepositories[key]) {
-                usedRepositories[key]++
-            } else {
-                usedRepositories[key] = 1
-            }
+            repositories.push(key)
 
             let payload = entry[key]
 
@@ -135,70 +103,35 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
       setYLabel(" mins")
     } else {
       setYLabel(" hrs")
-      extractedData.forEach((entry) => {
+      composedData.forEach((entry: any) => {
         Object.keys(entry).map((key: any) => {
           if (key !== "date") {
-            if(usedRepositories[key]) {
-                usedRepositories[key]++
-            } else {
-                usedRepositories[key] = 1
-            }
+            repositories.push(key)
           }
         })
       })
     }
 
-    setGraphData(extractedData)
-
-    const allRepositories = extractUniqueRepositories(data)
-    const finalRepositories: any = []
-    
-    allRepositories.forEach(repo => {
-        if(usedRepositories[repo]) {
-            finalRepositories.push(repo)
-        }
-    })
-    
-    setRepositories(finalRepositories)
-
-    setColors(generateDistinctColors(finalRepositories.length))
-    setLoading(false)
+    setUsedRepositories(Array.from(new Set(repositories)))
   }
 
-  useEffect(() => {
-    setStartDate(props.start ?? getDateDaysInPast(30));
-    setEndDate(props.end ?? getDateDaysInPast(0));
-    setLoading(true);
-    fetchData(props, organizeData);
-  }, [props]);
+  const [startDate, endDate, colors, _, noData] = useSharedLogic(props, composeGraphData, setGraphData, postCompose)
 
-  if (props.message) {
-    return (
-      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <span style={{color: "white"}}>{props.message}</span>
-      </div>
-    )
-  } else if (loading || props.loading) {
-    return (
-      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%" }}>
-        <Loading enabled={loading || (props.loading ?? false)} />
-      </div>
-    )
-  } else if (noData) {
-    return (
-      <div data-testid="RecoverTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <img alt="No Data" title="No Data" src={noDataImg} style={{ width: "150px" }} />
-      </div>
-    )
+  const ticks = generateTicks(startDate, endDate, 5)
+
+  const nonGraphBody = buildNonGraphBody(props, noData, recoverTimeName)
+
+  if(nonGraphBody) {
+      return nonGraphBody
   }
 
   const handleMouseOverDot = (event: any, payload: any) => {
     const repository = event.target.className.baseVal
-    setTooltipContent(<TooltipContent repository={repository} type="rt" payload={[payload]} />)
+    setTooltipContent(<TooltipContent repository={repository} type={recoverTimeName} payload={[payload]} />)
   }
 
   return (
-    <div data-testid="RecoverTime" className="chart-wrapper">
+    <div data-testid={recoverTimeName} className="chart-wrapper">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           width={500}
@@ -221,7 +154,7 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
             tickFormatter={formatTicks}
           />
           <YAxis name="Time" unit={yLabel} tick={{ fill: "#FFFFFF" }} />
-          {repositories.map((repo, idx) => (
+          {usedRepositories.map((repo, idx) => (
             <Line
               connectNulls={true}
               type="monotone"

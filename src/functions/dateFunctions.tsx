@@ -37,7 +37,6 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 }
 
 export const subtractHolidays = (diff: number, start: Date, end: Date, holidays: Date[]) : number => {
-
   for(const holiday of holidays) {
     if(holiday >= start && holiday < end) {
       diff -= millisecondsToDays

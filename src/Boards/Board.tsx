@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Loading from '../Loading/Loading'
 import './Board.css'
-import noDataImg from '../assets/no_data.png'
 import { Tooltip } from 'react-tooltip'
 import DeployFrequencyIcon from '../icons/DeploymentFrequency'
 import IconRim from '../icons/Rim'
@@ -10,60 +8,36 @@ import ChangeFailureRateIcon from '../icons/ChangeFailureRate'
 import RecoverTimeIcon from '../icons/RecoverTime'
 import { BoardProps } from '../interfaces/propInterfaces'
 import { DoraState } from '../interfaces/metricInterfaces'
-import { defaultDoraState } from '../constants'
-import { DoraRecord } from '../interfaces/apiInterfaces'
+import { boardName, defaultDoraState } from '../constants'
 import { buildDoraState } from '../functions/metricFunctions'
-import { fetchData } from '../functions/fetchFunctions'
+import { buildNonGraphBody } from '../functions/chartFunctions'
 
 const Board : React.FC<BoardProps> = (props) => {
   const [state, setState] = useState<DoraState>({...defaultDoraState})
-
-  const [data, setData] = useState<DoraRecord[]>([])
   const [noData, setNoData] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
   const [tooltipContent, setTooltipContent] = useState<any>(true)
 
-  const organizeData = (data: DoraRecord[]) => {
-    if(data.length === 0) {
+  useEffect(() => {
+    if(!props.data || props.data.length === 0) {
         setNoData(true)
+        return
     }
 
-    setData(data)
+    setNoData(false)
 
-    const state = buildDoraState(props, data)
+    const state = buildDoraState(props, props.data)
 
     setState(state)
+  }, [props.data, props.graphEnd, props.graphStart, props.includeWeekendsInCalculations, props.holidays, props.metricThresholdSet])
 
-    setLoading(false)
-  }
+  const nonGraphBody = buildNonGraphBody(props, noData, boardName)
 
-  useEffect(() => {
-    setLoading(true)
-    fetchData(props, organizeData)
-  }, [props])
-
-  if (props.message) {
-    return (
-      <div data-testid="Board" style={{ width: "100%", height: "100px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <span style={{color: "white"}}>{props.message}</span>
-      </div>
-    )
-  } else  if(loading || props.loading) {
-      return (
-          <div data-testid="Board" style={{width: "100%", height: "100%", paddingTop: "10px", paddingBottom: "100px"}}>
-              <Loading enabled={loading || (props.loading ?? false)} />
-          </div>
-      )
-  } else if(noData) {
-      return ( 
-        <div data-testid="Board" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px", padding: "10px"}}/>
-        </div>
-      )
+  if(nonGraphBody) {
+      return nonGraphBody
   }
 
   return (
-    <div data-testid="Board" className="board">
+    <div data-testid={boardName} className="board">
         <div className="score_container">
           <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Deployment Frequency: ${state.deploymentFrequency.display}`)}>
             <IconRim hexColor={state.deploymentFrequency.color}>

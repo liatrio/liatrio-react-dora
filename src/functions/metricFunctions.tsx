@@ -1,5 +1,5 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
-import { blue, defaultDoraMetric, defaultDoraState, defaultMetricThresholdSet, green, grey, orange, yellow } from "../constants"
+import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
 import { DoraMetric, DoraState } from "../interfaces/metricInterfaces"
@@ -40,7 +40,7 @@ const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord
   }
 
   if(sorted.length === 1) {
-    return ((props.end?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.start?.getTime() ?? getDateDaysInPast(31).getTime())) / (1000 * 60 * 60)
+    return ((props.graphEnd?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.graphStart?.getTime() ?? getDateDaysInPast(31).getTime())) / (1000 * 60 * 60)
   }
 
   let totalDeployTime = 0
@@ -92,13 +92,13 @@ const calculateMetric = (metricName: string, props: ChartProps, data: DoraRecord
   const defaultThresholds: MetricThresholds = (defaultMetricThresholdSet as any)[metricName]
   const thresholds: MetricThresholds = props.metricThresholdSet ? (props.metricThresholdSet as any)[metricName] : null
 
-  if(metricName === "deploymentFrequency") {
+  if(metricName === deploymentFrequencyName) {
     calculator = calculateDeploymentFrequencyAverage
-  } else if (metricName === "changeFailureRate") {
+  } else if (metricName === changeFailureRateName) {
     calculator = calculateChangeFailureRateAverage
-  } else if (metricName === "changeLeadTime") {
+  } else if (metricName === changeLeadTimeName) {
     calculator = calculateChangeLeadTimeAverage
-  } else if (metricName === "recoverTime") {
+  } else if (metricName === recoverTimeName) {
     calculator = calculateRecoverTimeAverage
   } else {
     return {...defaultDoraMetric}
@@ -132,7 +132,7 @@ const determineMetricColor = (value: number, defaultThresholds?: MetricThreshold
 export const generateMetricDisplay = (value: number, metricName?: string) : string => {
   if(Number.isNaN(value)) {
     return '?'
-  } else if(metricName === "changeFailureRate") {
+  } else if(metricName === changeFailureRateName) {
     return `${value.toFixed(2)}%`
   } else if(value < 1) {
     return `${(value * 60).toFixed(2)} mins`
@@ -144,6 +144,7 @@ export const generateMetricDisplay = (value: number, metricName?: string) : stri
 }
 
 export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraState => {
+  //this needs to fitler do the dates specified
   let state: any = {...defaultDoraState}
 
   Object.keys(state).forEach((metricName) => {

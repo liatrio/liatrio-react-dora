@@ -1,11 +1,9 @@
+import { DoraRecord } from "./apiInterfaces"
+
 export interface ChartProps {
-  api?: string
-  getAuthHeaderValue?: () => Promise<string | undefined>
-  team?: string
-  repositories?: string[]
-  data?: any
-  end?: Date
-  start?: Date
+  data: DoraRecord[]
+  graphEnd?: Date
+  graphStart?: Date
   loading?: boolean
   includeWeekendsInCalculations?: boolean
   metricThresholdSet?: MetricThresholdSet

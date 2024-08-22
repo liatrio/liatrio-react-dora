@@ -19,6 +19,6 @@ Example.args = {
     data: data,
     includeWeekends: false,
     showDetails: false,
-    start: new Date(2024, 6, 16),
-    end: new Date(2024, 7, 15)
+    graphStart: new Date(2024, 6, 16),
+    graphEnd: new Date(2024, 7, 15)
 }

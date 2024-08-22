@@ -1,4 +1,11 @@
+
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { DoraRecord } from '../interfaces/apiInterfaces'
+import { ChartProps } from '../interfaces/propInterfaces'
+import Loading from '../Loading/Loading'
+import noDataImg from '../assets/no_data.png'
+import { getDateDaysInPast } from "./dateFunctions"
+import { defaultGraphEnd, defaultGraphStart } from "../constants"
 
 const hslToHex = (h: number, s: number, l: number) => {
   const hue = Math.round(360 * h)
@@ -46,3 +53,99 @@ export const formatTicks = (tick: any) : string => {
   return new Date(tick).toLocaleDateString();
 }
 
+
+export const buildNonGraphBody = (componentProps: ChartProps, noData: boolean, chartType: string) => {
+  if (componentProps.message) {
+    return (
+      <div data-testid={chartType} style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <span style={{color: "white"}}>{componentProps.message}</span>
+      </div>
+    )
+  } else if(componentProps.loading) {
+      return (
+          <div data-testid={chartType} style={{width: "100%", height: "100%"}}>
+            <Loading enabled={componentProps.loading} />
+          </div>
+      )
+  } else if(noData) {
+      return (
+          <div data-testid={chartType} style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
+          </div>
+      )
+  } else {
+    return null
+  }
+}
+
+const filterGraphData = (data: DoraRecord[], start: Date, end: Date) => {
+  const filteredData : DoraRecord[] = []
+
+  for(let index = 0; index < data.length; index++) {
+      const record = data[index]
+
+      const recordTime = record.created_at.getTime()
+
+      if(recordTime < end.getTime() && recordTime >= start.getTime()) {
+          filteredData.push(record)
+      }
+  }
+
+  return filteredData
+}
+
+type SharedLogicReturnType = [
+  Date,
+  Date,
+  string[],
+  string[],
+  boolean
+]
+
+export const useSharedLogic = (componentProps: ChartProps, graphDataComposer: (componentProps: ChartProps, data: DoraRecord[]) => any, setGraphData: Dispatch<SetStateAction<any>>, postCompose?: (componentProps: ChartProps, allData: DoraRecord[], composedData: any) => void) : SharedLogicReturnType => {
+  const [repositories, setRepositories] = useState<string[]>([])
+  const [colors, setColors] = useState<string[]>([])
+  const [noData, setNoData] = useState<boolean>(false)
+  const [startDate, setStartDate] = useState<Date>(componentProps.graphStart ?? getDateDaysInPast(defaultGraphStart))
+  const [endDate, setEndDate] = useState<Date>(componentProps.graphEnd ?? getDateDaysInPast(defaultGraphEnd))
+
+  const organizeData = (data: DoraRecord[], start: Date, end: Date) => {
+    if(!data || data.length === 0) {
+        setNoData(true)
+        setRepositories([])
+        setGraphData([])
+        setColors([])
+        return
+    }
+
+    setNoData(false)
+
+    const filteredData = filterGraphData(componentProps.data, start, end)
+
+    const composedData = graphDataComposer(componentProps, filteredData)
+
+    if(postCompose) {
+      postCompose(componentProps, filteredData, composedData)
+    }
+
+    setGraphData(composedData)
+    
+    const repositories = extractUniqueRepositories(filteredData)
+    
+    setRepositories(repositories)
+
+    setColors(generateDistinctColors(repositories.length))
+  }
+
+  useEffect(() => {
+    const start = componentProps.graphStart || getDateDaysInPast(defaultGraphStart) 
+    const end = componentProps.graphEnd || getDateDaysInPast(defaultGraphEnd)
+
+    setStartDate(start)
+    setEndDate(end)
+
+    organizeData(componentProps.data, start, end)
+  }, [componentProps.data, componentProps.graphEnd, componentProps.graphStart])
+
+  return [startDate, endDate, colors, repositories, noData]
+}

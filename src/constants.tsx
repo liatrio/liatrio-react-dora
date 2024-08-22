@@ -1,4 +1,3 @@
-import DeploymentFrequency from "./DeploymentFrequency"
 import { DoraMetric, DoraState } from "./interfaces/metricInterfaces"
 import { MetricThresholdSet } from "./interfaces/propInterfaces"
 
@@ -23,6 +22,16 @@ export const defaultDoraState: DoraState = {
   changeFailureRate: {...defaultDoraMetric},
   recoverTime: {...defaultDoraMetric},
 }
+
+export const changeFailureRateName = "changeFailureRate"
+export const changeLeadTimeName = "changeLeadTime"
+export const deploymentFrequencyName = "deploymentFrequency"
+export const recoverTimeName = "recoverTime"
+export const boardName = "board"
+
+export const defaultDaysToPull = 356
+export const defaultGraphStart = 30
+export const defaultGraphEnd = 0
 
 export const millisecondsToHours = 60 * 60 * 1000
 export const millisecondsToDays = 24 * millisecondsToHours

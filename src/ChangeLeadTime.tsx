@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import Loading from './Loading/Loading'
-import noDataImg from './assets/no_data.png'
 import TooltipContent from './ToolTip/TooltipContent'
 import { Tooltip } from 'react-tooltip'
 import CustomShape from './CustomShape'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { ChartProps } from './interfaces/propInterfaces'
-import { formatTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { fetchData } from './functions/fetchFunctions'
+import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
 import { buildDoraState } from './functions/metricFunctions'
-import { getDateDaysInPast } from './functions/dateFunctions'
+import { changeLeadTimeName } from './constants'
 
-export const extractChangeLeadTimePerRepository = (data: DoraRecord[]) => {
+export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
     let reduced = data.reduce((acc, record) => {
         if(!record.merged_at) {
-            return acc;
+            return acc
         }
 
         const repository = record.repository
@@ -24,7 +21,7 @@ export const extractChangeLeadTimePerRepository = (data: DoraRecord[]) => {
             acc.set(repository, [])
         }
 
-        let records = acc.get(repository);
+        let records = acc.get(repository)
 
         if(records) {
             records.push(record)
@@ -40,47 +37,26 @@ export const extractChangeLeadTimePerRepository = (data: DoraRecord[]) => {
 
 const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     const [graphData, setGraphData] = useState<Map<string, DoraRecord[]>>(new Map<string, DoraRecord[]>())
-    const [colors, setColors] = useState<string[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-    const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0))
     const [tooltipContent, setTooltipContent] = useState<any>(null)
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
     const [node, setNode] = useState<any>(null)
     const [position, setPosition] = useState<any>(null)
     const [yLabel, setYLabel] = useState<any>(' hrs')
 
-    const timeoutRef = useRef<any>(null)
-
-    const ticks = generateTicks(startDate, endDate, 5)
-
-    const organizeData = useCallback((data: DoraRecord[]) => {
-        if(!data || data.length === 0) {
-            setNoData(true)
-            setGraphData(new Map<string, DoraRecord[]>())
-            setColors([])
-            setLoading(false)
-            return
-        }
-
-        setNoData(false)
-
-        const extractedData = extractChangeLeadTimePerRepository(data)
-
-        const state = buildDoraState(props, data)
+    const postCompose = (componentProps: ChartProps, data: DoraRecord[], composedData: any) => {
+        const state = buildDoraState(componentProps, data)
 
         if(state.changeLeadTime.average > 48) {
-            extractedData.forEach((doraRecords, key) => {
-                doraRecords.forEach(record => {
+            composedData.forEach((doraRecords: any, key: any) => {
+                doraRecords.forEach((record: any) => {
                     record.totalCycle /= 24
                 })
             })
 
             setYLabel(" days")
         } else if(state.changeLeadTime.average < 1) {
-            extractedData.forEach((doraRecords, key) => {
-                doraRecords.forEach(record => {
+            composedData.forEach((doraRecords: any, key: any) => {
+                doraRecords.forEach((record: any) => {
                     record.totalCycle *= 24
                 })
             })
@@ -89,51 +65,32 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
         } else {
             setYLabel(" hrs")
         }
+    }
 
-        setGraphData(extractedData)
-        setColors(generateDistinctColors(extractedData.size))
-        setLoading(false)
-    }, [])
+    const [startDate, endDate, colors, _, noData] = useSharedLogic(props, composeGraphData, setGraphData, postCompose)
 
-    useEffect(() => {
-        setStartDate(props.start ?? getDateDaysInPast(30))
-        setEndDate(props.end ?? getDateDaysInPast(0))
-        setLoading(true)
-        fetchData(props, organizeData)
-    }, [props])
+    const timeoutRef = useRef<any>(null)
 
-    if (props.message) {
-      return (
-        <div data-testid="ChangeLeadTime" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <span style={{color: "white"}}>{props.message}</span>
-        </div>
-      );
-    } else if(loading || props.loading) {
-        return (
-            <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%"}}>
-                <Loading enabled={loading || (props.loading ?? false)} />
-            </div>
-        )
-    } else if(noData) {
-        return (
-            <div data-testid="ChangeLeadTime" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
-            </div>
-        )
+    const ticks = generateTicks(startDate, endDate, 5)
+
+    const nonGraphBody = buildNonGraphBody(props, noData, changeLeadTimeName)
+
+    if(nonGraphBody) {
+        return nonGraphBody
     }
 
     function getElementCenter(element: any) {
-        const rect = element.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        return { x: centerX, y: centerY };
+        const rect = element.getBoundingClientRect()
+        const centerX = rect.left + rect.width / 2
+        const centerY = rect.top + rect.height / 2
+        return { x: centerX, y: centerY }
     }
 
     const handleMouseOverDot = (payload: any, id: any, event: any) => {
         if(id !== node) {
             const repository = ""
             setNode(id)
-            setTooltipContent(<TooltipContent repository={repository} type="clt" payload={[payload]} />)
+            setTooltipContent(<TooltipContent repository={repository} type={changeLeadTimeName} payload={[payload]} />)
             setTooltipOpen(true)
         }
         const center = getElementCenter(event.target)
@@ -169,7 +126,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
     }
 
     return (
-        <div data-testid="ChangeLeadTime" className="chart-wrapper" onMouseMove={handleMouseMoveContainer} onMouseOut={handleMouseOut}>
+        <div data-testid={changeLeadTimeName} className="chart-wrapper" onMouseMove={handleMouseMoveContainer} onMouseOut={handleMouseOut}>
             <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
                     width={500}
@@ -184,7 +141,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
                     <YAxis type="number" dataKey="totalCycle" name="Time" unit={yLabel} tick={{fill: "#FFFFFF"}} />
-                    {Array.from(graphData.keys()).map((key, idx) => (
+                    {Array.from(graphData.keys()).map((key: string, idx: number) => (
                         <Scatter className={key} animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}
                             shape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}
                             activeShape={(props: any) => <CustomShape {...props} tooltipId="cltTooltip" />}

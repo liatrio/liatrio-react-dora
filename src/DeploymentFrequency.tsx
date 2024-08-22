@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import Loading from './Loading/Loading'
-import noDataImg from './assets/no_data.png'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
-import { millisecondsToDays } from './constants'
+import { deploymentFrequencyName, millisecondsToDays } from './constants'
 import { ChartProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
-import { extractUniqueRepositories, formatTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { getDateDaysInPast } from './functions/dateFunctions'
-import { fetchData } from './functions/fetchFunctions'
+import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
 
-export const extractDeploymentsPerDay = (props: ChartProps, data: DoraRecord[]) : [any[], number] => {
-    let max = 0
-
+export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
     const reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
         if(!record.status) {
             return acc
@@ -44,10 +38,6 @@ export const extractDeploymentsPerDay = (props: ChartProps, data: DoraRecord[]) 
             repo.count++
             repo.urls.push(record.deploy_url)
         }
-        
-        if(max < repo.count) {
-            max = repo.count
-        }
 
         return acc
     }, new Map<number, DoraRecord[]>())
@@ -55,83 +45,52 @@ export const extractDeploymentsPerDay = (props: ChartProps, data: DoraRecord[]) 
     let result = Array.from(reduced.values())
 
     result.sort((l, r) => new Date(l.date).getTime() - new Date(r.date).getTime())
-    
-    return [result, max]
+
+    return result
 }
 
 const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
     const [graphData, setGraphData] = useState<any[]>([])
-    const [repositories, setRepositories] = useState<string[]>([])
-    const [colors, setColors] = useState<string[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-    const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0))
     const [maxDeploys, setMaxDeploys] = useState<number>(0)
     const [tooltipContent, setTooltipContent] = useState<any>(null)
+    const [startDate, endDate, colors, repositories, noData] = useSharedLogic(props, composeGraphData, setGraphData)
 
     const ticks = generateTicks(startDate, endDate, 5)
     const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%"
+    
+    const nonGraphBody = buildNonGraphBody(props, noData, deploymentFrequencyName)
 
-    const organizeData = (data: DoraRecord[]) => {
-        if(!data || data.length === 0) {
-            setNoData(true)
-            setRepositories([])
-            setGraphData([])
-            setColors([])
-            setLoading(false)
-            setMaxDeploys(0)
-            return
-        }
-
-        setNoData(false)
-
-        const [extractedData, deploys] = extractDeploymentsPerDay(props, data)
-        setGraphData(extractedData)
-        setMaxDeploys(deploys)
-
-        const repositories = extractUniqueRepositories(data)
-
-        setRepositories(repositories)
-
-        setColors(generateDistinctColors(repositories.length))
-        setLoading(false)
+    if(nonGraphBody) {
+        return nonGraphBody
     }
 
     useEffect(() => {
-        setStartDate(props.start ?? getDateDaysInPast(30))
-        setEndDate(props.end ?? getDateDaysInPast(0))
-        setLoading(true)
-        fetchData(props, organizeData)
-    }, [props])
+        let max = 0
 
-    if (props.message) {
-      return (
-        <div data-testid="DeploymentFrequency" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <span style={{color: "white"}}>{props.message}</span>
-        </div>
-      )
-    } else if(loading || props.loading) {
-        return (
-            <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%"}}>
-                <Loading enabled={loading || (props.loading ?? false)} />
-            </div>
-        )
-    } else if(noData) {
-        return (
-            <div data-testid="DeploymentFrequency" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
-            </div>
-        )
-    }
+        graphData.forEach((entry: any) => {
+            Object.keys(entry).forEach((key: string) => {
+                if(key === 'date') {
+                    return
+                }
+
+                const count = entry[key].count
+
+                if(count > max) {
+                    max = count
+                }
+            })
+        })
+
+        setMaxDeploys(max)
+    }, [graphData])
 
     const handleMouseOverBar = (event: any, payload: any) => {
         const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
-        setTooltipContent(<TooltipContent type="df" repository={repository} payload={[payload]} />)
+        setTooltipContent(<TooltipContent type={deploymentFrequencyName} repository={repository} payload={[payload]} />)
     }
 
     return (
-        <div data-testid="DeploymentFrequency" className="chart-wrapper">
+        <div data-testid={deploymentFrequencyName} className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     width={500}

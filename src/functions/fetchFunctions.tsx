@@ -1,9 +1,8 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
-import { millisecondsToHours, recordDateKeys } from "../constants"
-import { subtractHolidays, subtractWeekends, dateToUtc, getDateDaysInPastUtc, utcDateToLocal } from "./dateFunctions"
-import { ChartProps } from "../interfaces/propInterfaces"
+import { defaultDaysToPull, millisecondsToHours, recordDateKeys } from "../constants"
+import { subtractHolidays, subtractWeekends, getDateDaysInPastUtc, utcDateToLocal } from "./dateFunctions"
 
-const recordReviver = (key: string, value: any) => {
+export const recordReviver = (key: string, value: any) => {
   if (recordDateKeys.includes(key) && value) {
       return new Date(value)
   }
@@ -11,7 +10,7 @@ const recordReviver = (key: string, value: any) => {
   return value
 }
 
-const expandData = (props: ChartProps, data: DoraRecord[]) => {
+export const expandFetchedData = (props: FetchProps, data: DoraRecord[]) => {
   data.forEach((record) => {
     if(record.merged_at) {
       const mergedAt = record.merged_at
@@ -42,7 +41,7 @@ const expandData = (props: ChartProps, data: DoraRecord[]) => {
       record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
-    const fixedAt = record.fixed_at ? record.fixed_at : props.end ? props.end : getDateDaysInPastUtc(1)
+    const fixedAt = record.fixed_at ? record.fixed_at : getDateDaysInPastUtc(0)
 
     if(record.failed_at) {
       const failedAt = record.failed_at.getTime()
@@ -57,43 +56,42 @@ const expandData = (props: ChartProps, data: DoraRecord[]) => {
   })
 }
 
-const filterData = (props: ChartProps, data: DoraRecord[]) : DoraRecord[] => {
+export const filterFetchedData = (props: FetchProps, data: DoraRecord[]) : DoraRecord[] => {
   return data.filter(record => {
     const repositoryMatch = props.repositories === undefined || props.repositories.length === 0 || props.repositories.includes(record.repository)
     const teamMatch = !props.team || record.team === props.team
 
     return repositoryMatch && teamMatch
-  });
+  })
 }
 
-export const fetchData = async (props: ChartProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
-  if(props.data) {
-    let data = props.data
-    let parsedData: any = {}
+export interface FetchProps {
+  api?: string
+  getAuthHeaderValue?: () => Promise<string | undefined>
+  team?: string
+  repositories?: string[]
+  daysToPull?: number
+  includeWeekendsInCalculations?: boolean
+  holidays?: Date[]
+}
 
-    if(typeof data === "string") {
-      parsedData = JSON.parse(data, recordReviver)
-    }
+export const processData = (json: string, props: FetchProps) => {
+  let parsedData = JSON.parse(json, recordReviver)
 
-    if(parsedData.records) {
-      parsedData = filterData(props, parsedData.records)
+  parsedData = filterFetchedData(props, parsedData.records)
 
-      expandData(props, parsedData)
+  expandFetchedData(props, parsedData)
 
-      onSuccess(parsedData)
-    } else {
-      onSuccess(props.data)
-    }
+  return parsedData
+}
 
-    return
-  }
-
+export const fetchData = async (props: FetchProps, onSuccess: (data: any) => void, onFailure?: (data: any) => void) => {
   if(!props.api) {
     return
   }
 
-  const start = props.start ? dateToUtc(props.start) : getDateDaysInPastUtc(31)
-  const end = props.end ? dateToUtc(props.end) : getDateDaysInPastUtc(1)
+  const start = props.daysToPull ? getDateDaysInPastUtc(props.daysToPull) : getDateDaysInPastUtc(defaultDaysToPull)
+  const end = getDateDaysInPastUtc(1)
 
   const body = {
       repositories: props.repositories,
@@ -125,11 +123,7 @@ export const fetchData = async (props: ChartProps, onSuccess: (data: any) => voi
       const response = await fetch(props.api, options)
       const json = await response.text()
 
-      let parsedData = JSON.parse(json, recordReviver)
-
-      parsedData = filterData(props, parsedData.records)
-
-      expandData(props, parsedData)
+      let parsedData = processData(json, props)
 
       onSuccess(parsedData)
   } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './TooltipContent.css'
 import {v4 as uuidv4} from 'uuid'
+import { changeFailureRateName, changeLeadTimeName, deploymentFrequencyName, recoverTimeName } from '../constants'
 
 export interface Props {
     active?: boolean
@@ -15,7 +16,7 @@ export interface Props {
 const getTitle = (type: string, payloads: any[]) => {
     const payload = payloads[0]
 
-    if(type === "clt") {
+    if(type === changeLeadTimeName) {
         return (<h3 key={uuidv4()}><a key={uuidv4()} className="toolTipLink" href={payload.deploy_url} target="_blank">{payload.title}</a></h3>)
     } else {
         const date = new Date(payload.date).toISOString().split("T")[0]
@@ -27,7 +28,7 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
     const payload = payloads[0]
     const repoData = payload[repository]
     
-    if(type === "clt") {
+    if(type === changeLeadTimeName) {
         let displayValue = ""
 
         switch(payload.cycleLabel) {
@@ -46,7 +47,7 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
             <p key={uuidv4()}>Repository: {payload.repository}</p>
             <p key={uuidv4()}>Total Cycle Time: {displayValue} {payload.cycleLabel}</p>
         </>)
-    } else if(type === "df") {
+    } else if(type === deploymentFrequencyName) {
         const urls = repoData.urls.slice(0, 5)
         const dots = repoData.urls.length > 5 ? '...' : ''
 
@@ -57,7 +58,7 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
                 })}{dots}
             </p>
         </>)
-    } else if(type === "cfr") {
+    } else if(type === changeFailureRateName) {
         const successUrls = repoData.successes.slice(0, 5)
         const successDots = repoData.successes.length > 5 ? '...' : ''
         const failureUrls = repoData.failures.slice(0, 5)
@@ -83,7 +84,7 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
                 </span>
             }
         </>)
-    } else if(type === "rt") {
+    } else if(type === recoverTimeName) {
         let displayValue = ""
 
         switch(repoData.avgLabel.trim()) {
@@ -108,7 +109,7 @@ const getBody = (repository: string, type: string, payloads: any[]) => {
 const getFooter = (type: string, payloads: any[]) => {
     const payload = payloads[0]
 
-    if(type === "clt") {
+    if(type === changeLeadTimeName) {
         return (
             <div key={uuidv4()} className="dora-tooltip-footer">
                 <span key={uuidv4()}>Commit By: {payload.user}</span>

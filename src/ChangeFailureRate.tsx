@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid,  ResponsiveContainer } from 'recharts'
-import Loading from './Loading/Loading'
-import noDataImg from './assets/no_data.png'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
 import { ChartProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
-import { getDateDaysInPast } from './functions/dateFunctions'
-import { extractUniqueRepositories, formatTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { millisecondsToDays } from './constants'
-import { fetchData } from './functions/fetchFunctions'
+import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
+import { changeFailureRateName, millisecondsToDays } from './constants'
 
-export const extractChangeFailureRatePerDay = (props: ChartProps, data: DoraRecord[]) => {
+export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
     let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
         const date = (new Date(Date.UTC(record.created_at.getUTCFullYear(), record.created_at.getUTCMonth(), record.created_at.getUTCDate()))).getTime()
         let entry = acc.get(date)
@@ -71,76 +67,27 @@ export const extractChangeFailureRatePerDay = (props: ChartProps, data: DoraReco
 }
 
 const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
-    const [graphData, setGraphData] = useState<any[]>([])
-    const [repositories, setRepositories] = useState<string[]>([])
-    const [colors, setColors] = useState<string[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-    const [noData, setNoData] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(props.start ?? getDateDaysInPast(30))
-    const [endDate, setEndDate] = useState<Date>(props.end ?? getDateDaysInPast(0))
     const [tooltipContent, setTooltipContent] = useState<any>(null)
+    const [graphData, setGraphData] = useState<any>(null)
 
-    const ticks = generateTicks(startDate, endDate, 5)
-    const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%"
+    const [startDate, endDate, colors, repositories, noData] = useSharedLogic(props, composeGraphData, setGraphData)
 
-    const organizeData = (data: DoraRecord[]) => {
-        if(!data || data.length === 0) {
-            setNoData(true)
-            setRepositories([])
-            setGraphData([])
-            setColors([])
-            setLoading(false)
-            return
-        }
+    const ticks = useMemo(() => generateTicks(startDate, endDate, 5), [startDate, endDate])
+    const maxBarWidth = useMemo(() => (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%", [startDate, endDate])
+    
+    const nonGraphBody = buildNonGraphBody(props, noData, changeFailureRateName)
 
-        setNoData(false)
-
-        const extractedData = extractChangeFailureRatePerDay(props, data)
-
-        setGraphData(extractedData)
-
-        const repositories = extractUniqueRepositories(data)
-
-        setRepositories(repositories)
-
-        setColors(generateDistinctColors(repositories.length))
-        setLoading(false)
-    }
-
-    useEffect(() => {
-        setStartDate(props.start ?? getDateDaysInPast(30))
-        setEndDate(props.end ?? getDateDaysInPast(0))
-        setLoading(true)
-        fetchData(props, organizeData)
-    }, [props])
-
-    if (props.message) {
-      return (
-        <div data-testid="ChangeFailureRate" style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <span style={{color: "white"}}>{props.message}</span>
-        </div>
-      );
-    } else if(loading || props.loading) {
-        return (
-            <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%"}}>
-              <Loading enabled={loading || (props.loading ?? false)} />
-            </div>
-        )
-    } else if(noData) {
-        return (
-            <div data-testid="ChangeFailureRate" style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <img alt="No Data" title="No Data" src={noDataImg} style={{width: "150px"}}/>
-            </div>
-        )
+    if(nonGraphBody) {
+        return nonGraphBody
     }
 
     const handleMouseOverBar = (event: any, payload: any) => {
         const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
-        setTooltipContent(<TooltipContent type="cfr" payload={[payload]} repository={repository}/>)
+        setTooltipContent(<TooltipContent type={changeFailureRateName} payload={[payload]} repository={repository}/>)
     }
 
     return (
-        <div data-testid="ChangeFailureRate" className="chart-wrapper">
+        <div data-testid={changeFailureRateName} className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
             <BarChart
                     width={500}
