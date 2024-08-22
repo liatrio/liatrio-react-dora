@@ -104,6 +104,9 @@ It is important that the chart component be wrapped in an element of some size s
 
 # Component Properties
 
+* **data**:
+  * A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
+
 * **graphStart** (*optional*):
   * If not supplied this will default to 30 days in the past.
   * This value is used to determine the starting date for the charts.
@@ -111,9 +114,6 @@ It is important that the chart component be wrapped in an element of some size s
 * **graphEnd** (*optional*):
   * If not supplied, this will default to 1 day in the past.
   * This value is used to determine the ending date for the charts.
-
-* **data** (*optional*):
-  * A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
 
 * **loading** (*optional*):
   * Boolean to allow a container component to control the loading status if it wants to supply **data**
