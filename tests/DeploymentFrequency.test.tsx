@@ -4,7 +4,7 @@ import DeploymentFrequency from '../src/DeploymentFrequency'
 import '@testing-library/jest-dom'
 
 test('renders component', () => {
-    render(<DeploymentFrequency team="" api="" repositories={[]} />)
-    const element = screen.getByTestId('DeploymentFrequency')
-    expect(element).toBeInTheDocument()
+  render(<DeploymentFrequency data={[]} />)
+  const element = screen.getByTestId('DeploymentFrequency')
+  expect(element).toBeInTheDocument()
 })

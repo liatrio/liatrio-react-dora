@@ -4,7 +4,7 @@ import '@testing-library/jest-dom'
 import ChangeLeadTime from '../src/ChangeLeadTime'
 
 test('renders component', () => {
-    render(<ChangeLeadTime />)
-    const element = screen.getByTestId('ChangeLeadTime')
-    expect(element).toBeInTheDocument()
+  render(<ChangeLeadTime  data={[]} />)
+  const element = screen.getByTestId('ChangeLeadTime')
+  expect(element).toBeInTheDocument()
 })

@@ -4,7 +4,7 @@ import '@testing-library/jest-dom'
 import ChangeFailureRate from '../src/ChangeFailureRate'
 
 test('renders component', () => {
-    render(<ChangeFailureRate  />)
-    const element = screen.getByTestId('ChangeFailureRate')
-    expect(element).toBeInTheDocument()
+  render(<ChangeFailureRate  data={[]} />)
+  const element = screen.getByTestId('ChangeFailureRate')
+  expect(element).toBeInTheDocument()
 })
