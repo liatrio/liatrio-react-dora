@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react'
 
 interface Props {
-  hexColor?: string
+  color?: string
+  scale?: number
 }
 
 const ChangeLeadTimeIcon : React.FC<Props> = (props: Props) => {
-  const color = useMemo(() => props.hexColor ? props.hexColor : '#000000', [props.hexColor])
+  const color = useMemo(() => props.color ? props.color : '#000000', [props.color])
+  const scale = props.scale ? props.scale : 1
 
   return (
     <svg
@@ -14,6 +16,7 @@ const ChangeLeadTimeIcon : React.FC<Props> = (props: Props) => {
       height="28px"
       viewBox="0 0 51 51"
       xmlns="http://www.w3.org/2000/svg"
+      transform={`scale(${scale} ${scale})`}
     >
       <g
         style={{fill: "none"}}

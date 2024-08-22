@@ -2,12 +2,12 @@
 import React, { Children, ReactNode, useMemo } from 'react'
 
 interface Props {
-  hexColor?: string
+  color?: string
   children: ReactNode
 }
 
 const IconRim : React.FC<Props> = (props) => {
-  const color = useMemo(() => props.hexColor ? props.hexColor : '#000000', [props.hexColor])
+  const color = useMemo(() => props.color ? props.color : '#000000', [props.color])
 
   return (<div style={{position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
     <svg

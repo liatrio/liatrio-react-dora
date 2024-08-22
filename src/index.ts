@@ -6,6 +6,7 @@ export { default as Board } from './Boards/Board'
 export { fetchData } from './functions/fetchFunctions'
 export { getDateDaysInPast, dateToUtc, getDateDaysInPastUtc, utcDateToLocal } from "./functions/dateFunctions"
 export { buildDoraState } from "./functions/metricFunctions"
+export { default as TrendIndicator } from './icons/TrendIndicator'
 
 export {
   grey,

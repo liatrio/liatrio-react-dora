@@ -31,11 +31,29 @@ import { DeploymentFrequency } from `liatrio-react-dora`
 It is important that the chart component be wrapped in an element of some size somewhere up the tree, otherwise the chart may have unexpected behavior.
 
 # Exposed Components
-  * Board
-  * DeploymentFrequency
-  * ChangeLeadTime
-  * ChangeFailureRate
-  * RecoverTime
+  * **Board**
+
+    This is a component to display an At a Glance board for the 4 DORA Metrics and can be setup to either display trends or color coded scores
+
+  * **DeploymentFrequency**
+
+    This is a component to display a graph of your deployments over the specified time period
+
+  * **ChangeLeadTime**
+
+    This is a component to display a graph of your change lead time over the specified time period
+
+  * **ChangeFailureRate**
+
+    This is a component to display a graph of your change failure rate over the specified time period
+
+  * **RecoverTime**
+
+    This is a component to display a graph of your recover time over the specified time period
+
+  * **TrendIndicator**
+
+    This component is a trend indicator you can use to display in parent components
 
 # Exposed Functionality
   * **fetchData**
@@ -44,20 +62,20 @@ It is important that the chart component be wrapped in an element of some size s
 
     The parameters of this function are as follows:
 
-    **FetchProps**
+    An object (**FetchProps**) containing the following properties
       * **api**:
         * This is the url to the API for gathering data.
-      
+
       * **getAuthHeaderValue** (*optional*):
         * This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
         * If not specified, no auth will be used
 
-      * **team** (*optional*): 
+      * **team** (*optional*):
         * The name of the team to show pull data for.
 
       * **repositories** (*optional*):
         * A list of repository names to pull data for.
-      
+
       * **daysToPull** (*optional*):
         * The number of days in the past from the current date to pull data for
         * If not specified, 365 is the default
@@ -132,7 +150,7 @@ It is important that the chart component be wrapped in an element of some size s
     high?: number
     medium?: number
   }
-  
+
   MetricThresholdSet {
     deploymentFrequency?: MetricThresholds
     changeLeadTime?: MetricThresholds

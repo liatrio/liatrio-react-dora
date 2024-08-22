@@ -20,5 +20,6 @@ Example.args = {
     includeWeekends: false,
     showDetails: false,
     graphStart: new Date(2024, 6, 16),
-    graphEnd: new Date(2024, 7, 15)
+    graphEnd: new Date(2024, 7, 15),
+    showTrends: true
 }

@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react'
 import './Board.css'
 import { Tooltip } from 'react-tooltip'
 import DeployFrequencyIcon from '../icons/DeploymentFrequency'
-import IconRim from '../icons/Rim'
 import ChangeLeadTimeIcon from '../icons/ChangeLeadTime'
 import ChangeFailureRateIcon from '../icons/ChangeFailureRate'
 import RecoverTimeIcon from '../icons/RecoverTime'
 import { BoardProps } from '../interfaces/propInterfaces'
-import { DoraState } from '../interfaces/metricInterfaces'
-import { boardName, defaultDoraState } from '../constants'
+import { DoraState, Trend } from '../interfaces/metricInterfaces'
+import { boardName, defaultDoraState, purple } from '../constants'
 import { buildDoraState } from '../functions/metricFunctions'
 import { buildNonGraphBody } from '../functions/chartFunctions'
+import ScoreIcon from '../icons/Score'
+import TrendIcon from '../icons/Trend'
 
 const Board : React.FC<BoardProps> = (props) => {
   const [state, setState] = useState<DoraState>({...defaultDoraState})
@@ -27,6 +28,11 @@ const Board : React.FC<BoardProps> = (props) => {
 
     const state = buildDoraState(props, props.data)
 
+    state.changeFailureRate.trend = Trend.Declining
+    state.changeLeadTime.trend = Trend.Improving
+    state.recoverTime.trend = Trend.Unknown
+    state.deploymentFrequency.trend = Trend.Neutral
+
     setState(state)
   }, [props.data, props.graphEnd, props.graphStart, props.includeWeekendsInCalculations, props.holidays, props.metricThresholdSet])
 
@@ -36,53 +42,47 @@ const Board : React.FC<BoardProps> = (props) => {
       return nonGraphBody
   }
 
-  return (
-    <div data-testid={boardName} className="board">
-        <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Deployment Frequency: ${state.deploymentFrequency.display}`)}>
-            <IconRim hexColor={state.deploymentFrequency.color}>
-              <DeployFrequencyIcon hexColor="#FFFFFF"/>
-            </IconRim>
-          </div>
-          {props.alwaysShowDetails &&
-            <div className="detail-content"><span>Deployment Frequency:<br/>{state.deploymentFrequency.display}</span></div>
-          }
-        </div>
-        <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Lead Time: ${state.changeLeadTime.display}`)}>
-            <IconRim hexColor={state.changeLeadTime.color}>
-              <ChangeLeadTimeIcon hexColor="#FFFFFF"/>
-            </IconRim>
-          </div>
-          {props.alwaysShowDetails &&
-            <div className="detail-content"><span>Change Lead Time:<br/>{state.changeLeadTime.display}</span></div>
-          }
-        </div>
-        <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Change Failure Rate: ${state.changeFailureRate.display}`)}>
-            <IconRim hexColor={state.changeFailureRate.color}>
-              <ChangeFailureRateIcon hexColor="#FFFFFF"/>
-            </IconRim>
-          </div>
-          {props.alwaysShowDetails &&
-            <div className="detail-content"><span>Change Failure Rate:<br/>{state.changeFailureRate.display}</span></div>
-          }
-        </div>
-        <div className="score_container">
-          <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => setTooltipContent(`Recovery Time: ${state.recoverTime.display}`)}>
-            <IconRim hexColor={state.recoverTime.color}>
-              <RecoverTimeIcon hexColor="#FFFFFF"/>
-            </IconRim>
-          </div>
-          {props.alwaysShowDetails &&
-            <div className="detail-content"><span>Recovery Time:<br/>{state.recoverTime.display}</span></div>
-          }
-        </div>
+  if(props.showTrends) {
+    return (
+      <div data-testid={boardName} className="board">
+        <TrendIcon metric={state.deploymentFrequency} metricTitle={"Deployment Frequency"} alwaysShowDetails={props.alwaysShowDetails} setTooltipContent={setTooltipContent}>
+          <DeployFrequencyIcon color="#FFFFFF"/>
+        </TrendIcon>
+        <TrendIcon metric={state.changeLeadTime} metricTitle={"Change Lead Time"} alwaysShowDetails={props.alwaysShowDetails} setTooltipContent={setTooltipContent}>
+          <ChangeLeadTimeIcon color="#FFFFFF"/>
+        </TrendIcon>
+        <TrendIcon metric={state.changeFailureRate} metricTitle={"Change Failure Rate"} alwaysShowDetails={props.alwaysShowDetails} setTooltipContent={setTooltipContent}>
+          <ChangeFailureRateIcon color="#FFFFFF"/>
+        </TrendIcon>
+        <TrendIcon metric={state.recoverTime} metricTitle={"Recover Time"} alwaysShowDetails={props.alwaysShowDetails} setTooltipContent={setTooltipContent}>
+          <RecoverTimeIcon color="#FFFFFF"/>
+        </TrendIcon>
         {!props.alwaysShowDetails &&
           <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
         }
-    </div>
-  )
+      </div>
+    )
+  } else {
+    return (
+      <div data-testid={boardName} className="board">
+        <ScoreIcon metric={state.deploymentFrequency} metricTitle={"Deployment Frequency"} alwaysShowDetails={props.alwaysShowDetails} showColors={props.showColors} setTooltipContent={setTooltipContent}>
+          <DeployFrequencyIcon color="#FFFFFF"/>
+        </ScoreIcon>
+        <ScoreIcon metric={state.changeLeadTime} metricTitle={"Change Lead Time"} alwaysShowDetails={props.alwaysShowDetails} showColors={props.showColors} setTooltipContent={setTooltipContent}>
+          <ChangeLeadTimeIcon color="#FFFFFF"/>
+        </ScoreIcon>
+        <ScoreIcon metric={state.changeFailureRate} metricTitle={"Change Failure Rate"} alwaysShowDetails={props.alwaysShowDetails} showColors={props.showColors} setTooltipContent={setTooltipContent}>
+          <ChangeFailureRateIcon color="#FFFFFF"/>
+        </ScoreIcon>
+        <ScoreIcon metric={state.recoverTime} metricTitle={"Recover Time"} alwaysShowDetails={props.alwaysShowDetails} showColors={props.showColors} setTooltipContent={setTooltipContent}>
+          <RecoverTimeIcon color="#FFFFFF"/>
+        </ScoreIcon>
+        {!props.alwaysShowDetails &&
+          <Tooltip className='scoreTooltip' id="scoreTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
+        }
+      </div>
+    )
+  }
 }
 
 export default Board

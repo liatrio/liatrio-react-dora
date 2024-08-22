@@ -11,6 +11,7 @@ export interface ChartProps {
   colors?: ThresholdColors
   showTrends?: boolean
   holidays?: Date[]
+  showColors?: boolean
 }
 
 export interface ThresholdColors {

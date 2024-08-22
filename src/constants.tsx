@@ -1,4 +1,4 @@
-import { DoraMetric, DoraState } from "./interfaces/metricInterfaces"
+import { DoraMetric, DoraState, Trend } from "./interfaces/metricInterfaces"
 import { MetricThresholdSet } from "./interfaces/propInterfaces"
 
 export const green = "#00FF00"
@@ -6,6 +6,7 @@ export const yellow = "#FFFF00"
 export const orange = "#FF8300"
 export const blue = "#00FFFF"
 export const grey = "#C0C0C0"
+export const purple = "#7F00FF"
 
 export const recordDateKeys = ['merged_at', 'created_at', 'fixed_at', 'failed_at']
 
@@ -13,7 +14,7 @@ export const defaultDoraMetric: DoraMetric = {
   average: NaN,
   display: '?',
   color: grey,
-  trend: 'unknown',
+  trend: Trend.Unknown,
 }
 
 export const defaultDoraState: DoraState = {

@@ -1,8 +1,8 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
-import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, orange, recoverTimeName, yellow } from "../constants"
+import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
-import { DoraMetric, DoraState } from "../interfaces/metricInterfaces"
+import { DoraMetric, DoraState, Trend } from "../interfaces/metricInterfaces"
 
 const calculateChangeFailureRateAverage = (props: ChartProps, data: DoraRecord[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
@@ -34,7 +34,7 @@ const calculateChangeLeadTimeAverage = (props: ChartProps, data: DoraRecord[]) :
 const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord[]) : number => {
   let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
-  
+
   if(sorted.length === 0) {
     return NaN
   }
@@ -60,9 +60,9 @@ const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord
 
     totalDeployTime += diff
   }
-  
+
   let avgDeployTime = (totalDeployTime / sorted.length) / (1000 * 60 * 60)
-  
+
   return avgDeployTime
 }
 
@@ -109,7 +109,7 @@ const calculateMetric = (metricName: string, props: ChartProps, data: DoraRecord
   metric.average = calculator(props, data)
   metric.color = determineMetricColor(metric.average, defaultThresholds, thresholds, props.colors)
   metric.display = generateMetricDisplay(metric.average, metricName)
-  
+
   return metric
 }
 
@@ -143,16 +143,13 @@ export const generateMetricDisplay = (value: number, metricName?: string) : stri
   }
 }
 
-export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraState => {
+export const buildDoraStateForPeriod = (props: ChartProps, data: DoraRecord[], start: Date, end: Date) : DoraState => {
   let state: any = {...defaultDoraState}
-
-  const start = (props.graphStart || getDateDaysInPast(defaultGraphStart)).getTime()
-  const end = (props.graphEnd || getDateDaysInPast(defaultGraphEnd)).getTime()
 
   const filteredData = [...data].filter((record: DoraRecord) => {
     const createdAt = record.created_at.getTime()
-    
-    return createdAt >= start && createdAt <= end
+
+    return createdAt >= start.getTime() && createdAt <= end.getTime()
   })
 
   Object.keys(state).forEach((metricName) => {
@@ -160,4 +157,45 @@ export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraStat
   })
 
   return state
+}
+
+export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraState => {
+  const start = (props.graphStart || getDateDaysInPast(defaultGraphStart))
+  const end = (props.graphEnd || getDateDaysInPast(defaultGraphEnd))
+
+  const period = (end.getTime() - start.getTime()) * millisecondsToDays
+
+  const previousStart = new Date(start)
+  previousStart.setDate(previousStart.getDate() - period)
+
+  const previousState: any = buildDoraStateForPeriod(props, data, previousStart, start)
+  const currentState: any = buildDoraStateForPeriod(props, data, start, end)
+
+  Object.keys(currentState).forEach((metricName) => {
+    const previousAvg = previousState[metricName].average
+    const currentAvg = currentState[metricName].average
+    const previousNaN = Number.isNaN(previousAvg)
+    const currentNaN = Number.isNaN(currentAvg)
+    let trend = Trend.Unknown
+
+    if(previousNaN && !currentNaN) {
+      trend = Trend.Improving
+    } else if(!previousNaN && currentNaN) {
+      trend = Trend.Declining
+    } else {
+      const diff = previousAvg - currentAvg
+
+      if(diff > 0) {
+        trend = Trend.Declining
+      } else if(diff < 0) {
+        trend = Trend.Improving
+      } else {
+        trend = Trend.Neutral
+      }
+    }
+
+    currentState[metricName].trend = trend
+  })
+
+  return currentState
 }

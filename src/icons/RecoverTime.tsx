@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react'
 
 interface Props {
-  hexColor?: string
+  color?: string
+  scale?: number
 }
 
 const RecoverTimeIcon : React.FC<Props> = (props: Props) => {
-  const color = useMemo(() => props.hexColor ? props.hexColor : '#000000', [props.hexColor])
+  const color = useMemo(() => props.color ? props.color : '#000000', [props.color])
+  const scale = props.scale ? props.scale : 1
 
   return (
     <svg
@@ -14,6 +16,7 @@ const RecoverTimeIcon : React.FC<Props> = (props: Props) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      transform={`scale(${scale} ${scale})`}
     >
       <path
         d="M18.5 9.00002H16.5M16.5 9.00002L14.5 9.00002M16.5 9.00002L16.5 7M16.5 9.00002L16.5 11"

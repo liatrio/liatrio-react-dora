@@ -4,7 +4,7 @@ export interface DoraMetric {
   average: number
   display: string
   color: string
-  trend: string
+  trend: Trend
 }
 
 export interface DoraState {
@@ -12,4 +12,11 @@ export interface DoraState {
   changeLeadTime: DoraMetric
   changeFailureRate: DoraMetric
   recoverTime: DoraMetric
+}
+
+export enum Trend {
+  Improving,
+  Declining,
+  Neutral,
+  Unknown
 }
