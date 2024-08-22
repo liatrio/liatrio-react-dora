@@ -40,27 +40,63 @@ It is important that the chart component be wrapped in an element of some size s
 # Exposed Functionality
   * **fetchData**
 
-    This function allows you to manually fetch data outside of the component to an API that returns our expected schema and process it to send it in as the **data** field
+    This is the function your parent component should use to pull data to supply in the **data** property of the components
+
+    The parameters of this function are as follows:
+
+    **FetchProps**
+      * **api**:
+        * This is the url to the API for gathering data.
+      
+      * **getAuthHeaderValue** (*optional*):
+        * This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
+        * If not specified, no auth will be used
+
+      * **team** (*optional*): 
+        * The name of the team to show pull data for.
+
+      * **repositories** (*optional*):
+        * A list of repository names to pull data for.
+      
+      * **daysToPull** (*optional*):
+        * The number of days in the past from the current date to pull data for
+        * If not specified, 365 is the default
+
+      * **includeWeekendsInCalculations** (*optional*):
+        * When calculating the averages for each metric in the **Board** component, this setting allows you to include/exclude weekends in those calculations.  This is useful when you don't have teams that work weekends.
+
+      * **holidays** (*optional*):
+        * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the **Board** component.
 
   * **buildDoraState**
 
-    This function takes in the processed data from **fetchData** and returns a **DoraState** that you can use to display information outside of the components:
+    This function returns a DoraState object with information about each DORA Metric:
 
     ```
-    DoraState {
-      deploymentFrequency: DoraMetric
-      changeLeadTime: DoraMetric
-      changeFailureRate: DoraMetric
-      recoverTime: DoraMetric
-    }
-
     DoraMetric {
       average: number
       display: string
       color: string
       trend: string
     }
+
+    DoraState {
+      deploymentFrequency: DoraMetric
+      changeLeadTime: DoraMetric
+      changeFailureRate: DoraMetric
+      recoverTime: DoraMetric
+    }
     ```
+
+    * **average** - Is the average of the metric of the supplied time frame
+    * **display** - Is a formated display string for the metric
+    * **color** - Is the color for the displays string based on the **colors** supplied in the component properties
+    * **trend** - Is whether this period measured is improving, falling behind, or staying even with the requested period
+
+    It takes the following values as parameters:
+
+    * **props** - An object contianing the [Component Properties](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#component-properties)
+    * **data** - The data supplied by the **fetchData** function
 
   * **getDateDaysInPast** and **getDateDaysInPastUtc**
 
@@ -68,32 +104,13 @@ It is important that the chart component be wrapped in an element of some size s
 
 # Component Properties
 
-* **start** (*optional*):
-  * If not supplied this will default to 31 days in the past.
+* **graphStart** (*optional*):
+  * If not supplied this will default to 30 days in the past.
   * This value is used to determine the starting date for the charts.
-  * If `api` is supplied, this date is sent to the API for data gathering.
 
-* **end** (*optional*):
+* **graphEnd** (*optional*):
   * If not supplied, this will default to 1 day in the past.
   * This value is used to determine the ending date for the charts.
-  * If `api` is supplied, this date is sent to the API for data gathering.
-
-* **team** (*optional*): 
-  * The name of the team to show information about in the chart.
-  * If `data` is supplied, this acts as a filter on that data.
-  * If `api` is supplied, this is sent to the API for data gathering.
-
-* **repositories** (*optional*):
-  * A list of repository names to show in the chart.
-  * If `data` is supplied, this acts as a filter on that data.
-  * If `api` is supplied, this is sent to the API for data gathering.
-
-* **api** (*optional*):
-  * This is the url to the API for gathering data.
-  * This must be filled in if `data` is omitted
-
-* **getAuthHeaderValue** (*optional*):
-  * This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
 
 * **data** (*optional*):
   * A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
@@ -124,6 +141,8 @@ It is important that the chart component be wrapped in an element of some size s
   }
   ```
 
+  The threshold values for **elite**, **high** and **medium** are measured in hours.  **low** is considered anything longer than medium.
+
 * **colors** (*optional*):
   * This allows you to customize the colors used by the **Board** component, they support any of the standard color formats
 
@@ -152,12 +171,7 @@ It is important that the chart component be wrapped in an element of some size s
 
 # Dependencies
 
-These charts need to be supplied data for display.  This data can be provided in two ways.
-
-1. You can use the `data` property on each chart to send in a JSON string containing the data necessary that you have gathered from somewhere else.
-
-2. You can use the `api` property to supply a url to an API that can provide the data necessary.
-    * We do offer an API that currently integrates with Loki DB to query the data and supply it in the schema necessary [here](https://github.com/liatrio/liatrio-dora-api)
+These components rely on **data** being supplied to them.  We supply the [liatrio-dora-api](https://github.com/liatrio/liatrio-dora-api) to gather this data out of a Loki DB that is fed by our [liatrio-otel-collector](https://github.com/liatrio/liatrio-otel-collector).  If you want to create your own API, it just needs to return the [Data Schema](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#data-schemas).
 
 # Data Schemas
 
