@@ -12,7 +12,7 @@ export {
   green,
   blue,
   yellow,
-  orange
+  orange,
 } from './constants'
 
 export type {
@@ -20,9 +20,14 @@ export type {
   MetricThresholdSet,
   MetricThresholds,
   ChartProps,
-  BoardProps
+  BoardProps,
 } from './interfaces/propInterfaces'
 
 export type {
-  DoraRecord
+  DoraState,
+  DoraMetric,
+} from './interfaces/metricInterfaces'
+
+export type {
+  DoraRecord,
 } from './interfaces/apiInterfaces'
