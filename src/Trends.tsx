@@ -8,7 +8,7 @@ import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
 import { blue, defaultGraphEnd, defaultGraphStart, green, grey, millisecondsToDays, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
-import { getDateDaysInPast, getStartOfWeek } from './functions/dateFunctions'
+import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { Rank } from './interfaces/metricInterfaces'
 
 interface GraphData {
@@ -58,7 +58,7 @@ const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
   dates.forEach((key: number) => {
     const data = dataByDate.get(key)
     const start = new Date(key)
-    const end = new Date(key + millisecondsToWeeks + millisecondsToDays)
+    const end = new Date(getEndOfWeek(start))
 
     const state = buildDoraStateForPeriod(props, data!, start, end)
 
@@ -72,10 +72,17 @@ const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
 
   if(dates.length === 1) {
     start = new Date(dates[0])
-    end = new Date(dates[0] + millisecondsToWeeks)
+    end = new Date(getEndOfWeek(new Date(dates[0])))
+    
+    const lastRecord = {...result[0]}
+
+    lastRecord.date = end.getTime()
+
+    result.push(lastRecord)
   } else {
     start = new Date(dates[0])
-    end = new Date(dates[dates.length - 1])
+    end = new Date(getEndOfWeek(new Date(dates[dates.length - 1])))
+    result[result.length - 1].date = end.getTime()
   }
 
   return [result, start, end]
