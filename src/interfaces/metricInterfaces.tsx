@@ -5,6 +5,7 @@ export interface DoraMetric {
   display: string
   color: string
   trend: Trend
+  rank: Rank
 }
 
 export interface DoraState {
@@ -12,6 +13,14 @@ export interface DoraState {
   changeLeadTime: DoraMetric
   changeFailureRate: DoraMetric
   recoverTime: DoraMetric
+}
+
+export enum Rank {
+  unknown,
+  low,
+  medium,
+  high,
+  elite
 }
 
 export enum Trend {

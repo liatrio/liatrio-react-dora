@@ -1,16 +1,16 @@
 import React from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import Board from '../src/Boards/Board'
+import Trends from '../src/Trends'
 import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import data from './data'
 
 export default {
-  title: 'Board',
-  component: Board,
+  title: 'Trends',
+  component: Trends,
 } as Meta
 
-const Template: StoryFn<ChartProps> = (args: any) => (<div style={{height: "200px"}}><Board {...args} /></div>)
+const Template: StoryFn<ChartProps> = (args: any) => (<div style={{height: "200px"}}><Trends {...args} /></div>)
 
 export const Example = Template.bind({})
 
@@ -21,5 +21,5 @@ Example.args = {
   showDetails: false,
   graphStart: new Date(2024, 6, 16),
   graphEnd: new Date(2024, 7, 15),
-  showColors: true,
+  showTrends: true
 }

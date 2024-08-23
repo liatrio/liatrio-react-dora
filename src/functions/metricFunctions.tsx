@@ -2,16 +2,16 @@ import { DoraRecord } from "../interfaces/apiInterfaces"
 import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
-import { DoraMetric, DoraState, Trend } from "../interfaces/metricInterfaces"
+import { DoraMetric, DoraState, Rank, Trend } from "../interfaces/metricInterfaces"
 
-const calculateChangeFailureRateAverage = (props: ChartProps, data: DoraRecord[]) : number => {
+const calculateChangeFailureRateAverage = (_: ChartProps, data: DoraRecord[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
   const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
 
   return (totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)) * 100
 }
 
-const calculateChangeLeadTimeAverage = (props: ChartProps, data: DoraRecord[]) : number => {
+const calculateChangeLeadTimeAverage = (_: ChartProps, data: DoraRecord[]) : number => {
   let totalSuccessfulRecords = 0
   let totalLeadTime = 0
 
@@ -66,7 +66,7 @@ const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord
   return avgDeployTime
 }
 
-const calculateRecoverTimeAverage = (props: ChartProps, data: DoraRecord[]) : number => {
+const calculateRecoverTimeAverage = (_: ChartProps, data: DoraRecord[]) : number => {
   let totalFailedRecords = 0
   let totalRecoveryTime = 0
 
@@ -107,22 +107,35 @@ const calculateMetric = (metricName: string, props: ChartProps, data: DoraRecord
   const metric : DoraMetric = {...defaultDoraMetric}
 
   metric.average = calculator(props, data)
-  metric.color = determineMetricColor(metric.average, defaultThresholds, thresholds, props.colors)
+  metric.rank = determineMetricRank(metric.average, defaultThresholds, thresholds)
+  metric.color = determineMetricColor(metric.rank, props.colors)
   metric.display = generateMetricDisplay(metric.average, metricName)
 
   return metric
 }
 
-const determineMetricColor = (value: number, defaultThresholds?: MetricThresholds, thresholds?: MetricThresholds, thresholdColors?: ThresholdColors) : string => {
+const determineMetricRank = (value: number, defaultThresholds?: MetricThresholds, thresholds?: MetricThresholds) : Rank => {
   if(Number.isNaN(value)) {
-    return grey
-  }
-
-  if(value < (thresholds?.elite ? thresholds.elite : defaultThresholds?.elite ?? 0)) {
-    return thresholdColors?.elite ? thresholdColors.elite : green
+    return Rank.unknown
+  } else if(value < (thresholds?.elite ? thresholds.elite : defaultThresholds?.elite ?? 0)) {
+    return Rank.elite
   } else if(value < (thresholds?.high ? thresholds.high : defaultThresholds?.high ?? 0)) {
-    return thresholdColors?.high ? thresholdColors.high : blue
+    return Rank.high
   } else if(value < (thresholds?.medium ? thresholds.medium : defaultThresholds?.medium ?? 0)) {
+    return Rank.medium
+  } else {
+    return Rank.low
+  }
+}
+
+const determineMetricColor = (rank: Rank, thresholdColors?: ThresholdColors) : string => {
+  if(rank === Rank.unknown) {
+    return grey
+  } else if(rank === Rank.elite) {
+    return thresholdColors?.elite ? thresholdColors.elite : green
+  } else if(rank === Rank.high) {
+    return thresholdColors?.high ? thresholdColors.high : blue
+  } else if(rank === Rank.medium) {
     return thresholdColors?.medium ? thresholdColors.medium : yellow
   } else {
     return thresholdColors?.low ? thresholdColors.low : orange

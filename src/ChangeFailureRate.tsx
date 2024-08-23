@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
 import { ChartProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
-import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
+import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
 import { changeFailureRateName, millisecondsToDays } from './constants'
 
 export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
@@ -99,7 +99,7 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+          <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
           {repositories.map((repo, idx) => (
             <Bar animationDuration={0} key={repo} className={repo} dataKey={`${repo}.total`} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>

@@ -6,7 +6,7 @@ import TooltipContent from "./ToolTip/TooltipContent"
 import { Tooltip } from "react-tooltip"
 import { ChartProps } from "./interfaces/propInterfaces"
 import { DoraRecord } from "./interfaces/apiInterfaces"
-import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from "./functions/chartFunctions"
+import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from "./functions/chartFunctions"
 import { buildDoraState } from "./functions/metricFunctions"
 import { recoverTimeName } from "./constants"
 
@@ -151,7 +151,7 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
             tick={{ fill: "#FFFFFF" }}
             ticks={ticks}
             domain={[startDate.getTime(), endDate.getTime()]}
-            tickFormatter={formatTicks}
+            tickFormatter={formatDateTicks}
           />
           <YAxis name="Time" unit={yLabel} tick={{ fill: "#FFFFFF" }} />
           {usedRepositories.map((repo, idx) => (

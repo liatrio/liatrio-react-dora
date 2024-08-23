@@ -3,6 +3,7 @@ export { default as ChangeFailureRate } from './ChangeFailureRate'
 export { default as ChangeLeadTime } from './ChangeLeadTime'
 export { default as DeploymentFrequency } from './DeploymentFrequency'
 export { default as Board } from './Boards/Board'
+export { default as Trends } from './Trends'
 export { fetchData } from './functions/fetchFunctions'
 export { getDateDaysInPast, dateToUtc, getDateDaysInPastUtc, utcDateToLocal } from "./functions/dateFunctions"
 export { buildDoraState } from "./functions/metricFunctions"
@@ -28,6 +29,8 @@ export type {
   DoraState,
   DoraMetric,
 } from './interfaces/metricInterfaces'
+
+export type { FetchProps } from './functions/fetchFunctions'
 
 export type {
   DoraRecord,

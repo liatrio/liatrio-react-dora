@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip'
 import CustomShape from './CustomShape'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { ChartProps } from './interfaces/propInterfaces'
-import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
+import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
 import { buildDoraState } from './functions/metricFunctions'
 import { changeLeadTimeName } from './constants'
 
@@ -139,7 +139,7 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
           onMouseLeave={handleMouseOut}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+          <XAxis padding={{left: 9, right: 9}} dataKey="start" tickSize={15} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type="number" dataKey="totalCycle" name="Time" unit={yLabel} tick={{fill: "#FFFFFF"}} />
           {Array.from(graphData.keys()).map((key: string, idx: number) => (
             <Scatter className={key} animationDuration={0} key={key} name={key} data={graphData.get(key)} fill={colors[idx]} onMouseOver={handleMouseOverDot}

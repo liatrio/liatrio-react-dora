@@ -28,11 +28,6 @@ const Board : React.FC<BoardProps> = (props) => {
 
     const state = buildDoraState(props, props.data)
 
-    state.changeFailureRate.trend = Trend.Declining
-    state.changeLeadTime.trend = Trend.Improving
-    state.recoverTime.trend = Trend.Unknown
-    state.deploymentFrequency.trend = Trend.Neutral
-
     setState(state)
   }, [props.data, props.graphEnd, props.graphStart, props.includeWeekendsInCalculations, props.holidays, props.metricThresholdSet])
 

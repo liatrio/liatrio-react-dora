@@ -49,7 +49,7 @@ export const generateTicks = (start: Date, end: Date, numIntervals: number) => {
   return ticks
 }
 
-export const formatTicks = (tick: any) : string => {
+export const formatDateTicks = (tick: any) : string => {
   return new Date(tick).toLocaleDateString();
 }
 

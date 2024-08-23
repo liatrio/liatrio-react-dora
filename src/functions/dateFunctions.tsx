@@ -65,3 +65,22 @@ export const subtractWeekends = (diff: number, start: Date, end: Date) : number 
 
   return diff
 }
+
+export const getStartOfWeek = (date: Date): number => {
+  const day = date.getDay()
+  const diff = date.getDate() - day
+  const startOfWeek = new Date(date.setDate(diff))
+  
+  startOfWeek.setHours(0, 0, 0, 0)
+  
+  return startOfWeek.getTime()
+}
+
+export const getEndOfWeek = (startOfWeek: Date): number => {
+  const endOfWeek = new Date(startOfWeek)
+  
+  endOfWeek.setDate(startOfWeek.getDate() + 6)
+  endOfWeek.setHours(23, 59, 59, 999)
+
+  return endOfWeek.getTime()
+}

@@ -1,4 +1,4 @@
-import { DoraMetric, DoraState, Trend } from "./interfaces/metricInterfaces"
+import { DoraMetric, DoraState, Rank, Trend } from "./interfaces/metricInterfaces"
 import { MetricThresholdSet } from "./interfaces/propInterfaces"
 
 export const green = "#00FF00"
@@ -14,6 +14,7 @@ export const defaultDoraMetric: DoraMetric = {
   average: NaN,
   display: '?',
   color: grey,
+  rank: Rank.unknown,
   trend: Trend.Unknown,
 }
 
@@ -28,6 +29,7 @@ export const changeFailureRateName = "changeFailureRate"
 export const changeLeadTimeName = "changeLeadTime"
 export const deploymentFrequencyName = "deploymentFrequency"
 export const recoverTimeName = "recoverTime"
+export const trendName = "trends"
 export const boardName = "board"
 
 export const defaultDaysToPull = 356
@@ -36,6 +38,7 @@ export const defaultGraphEnd = 0
 
 export const millisecondsToHours = 60 * 60 * 1000
 export const millisecondsToDays = 24 * millisecondsToHours
+export const millisecondsToWeeks = 7 * millisecondsToDays
 export const dayInHours = 24
 export const weekInHours = dayInHours * 7
 export const monthInHours = dayInHours * 30

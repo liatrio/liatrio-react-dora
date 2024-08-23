@@ -6,7 +6,7 @@ import TooltipContent from './ToolTip/TooltipContent'
 import { deploymentFrequencyName, millisecondsToDays } from './constants'
 import { ChartProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
-import { buildNonGraphBody, formatTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
+import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
 
 export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
   const reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
@@ -103,7 +103,7 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatTicks} />
+          <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
           {repositories.map((repo, idx) => { 
             const key = `${repo}.count`

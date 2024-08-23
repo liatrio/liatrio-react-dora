@@ -3,7 +3,7 @@ import { Trend } from '../interfaces/metricInterfaces'
 import { green, grey, purple, yellow } from '../constants'
 
 interface Props {
-	trend: Trend
+  trend: Trend
   }
 
 const TrendIndicator : React.FC<Props> = (props: Props) => {
