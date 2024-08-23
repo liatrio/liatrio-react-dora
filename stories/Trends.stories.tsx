@@ -12,7 +12,7 @@ export default {
 
 const Template: StoryFn<ChartProps> = () => {
   const [data, setData] = useState<any>(dataSet[0])
-  const [showIndividualTrends, setShowIndividualTrends] = useState<boolean>(true)
+  const [showIndividualTrends, setShowIndividualTrends] = useState<boolean>(false)
 
   const changeDataSet = (event: any) => {
     setData(dataSet[event.target.value])
