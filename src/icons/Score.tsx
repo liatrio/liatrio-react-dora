@@ -8,7 +8,7 @@ interface Props {
   metricTitle: string
   children: ReactNode
   setTooltipContent: Dispatch<SetStateAction<string>>
-  showColors?: boolean
+  hideColors?: boolean
   alwaysShowDetails?: boolean
 }
 
@@ -20,7 +20,7 @@ const ScoreIcon : React.FC<Props> = (props: Props) => {
   return (
     <div className="score_container">
       <div className="icon_container" data-tooltip-id="scoreTooltip" onMouseOver={() => props.setTooltipContent(`${props.metricTitle}: ${props.metric.display}`)}>
-        <IconRim color={props.showColors ? props.metric.color : purple}>
+        <IconRim color={props.hideColors ? purple : props.metric.color}>
           {childrenWithOverriddenProps}
         </IconRim>
       </div>
