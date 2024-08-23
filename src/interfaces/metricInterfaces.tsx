@@ -4,8 +4,8 @@ export interface DoraMetric {
   average: number
   display: string
   color: string
-  trend: Trend
-  rank: Rank
+  trend: DoraTrend
+  rank: DoraRank
 }
 
 export interface DoraState {
@@ -15,7 +15,7 @@ export interface DoraState {
   recoverTime: DoraMetric
 }
 
-export enum Rank {
+export enum DoraRank {
   unknown,
   low,
   medium,
@@ -23,7 +23,7 @@ export enum Rank {
   elite
 }
 
-export enum Trend {
+export enum DoraTrend {
   Improving,
   Declining,
   Neutral,

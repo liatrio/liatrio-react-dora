@@ -1,28 +1,28 @@
 import React from 'react'
-import { Trend } from '../interfaces/metricInterfaces'
+import { DoraTrend } from '../interfaces/metricInterfaces'
 import { green, grey, purple, yellow } from '../constants'
 
 interface Props {
-  trend: Trend
-  }
+  trend: DoraTrend
+}
 
 const TrendIndicator : React.FC<Props> = (props: Props) => {
   let indicator = <></>
 
-  if (props.trend === Trend.Unknown) {
+  if (props.trend === DoraTrend.Unknown) {
     indicator =
       <svg className='lrd_unknownIndicator' viewBox="0 0 24 24" fill={grey} xmlns="http://www.w3.org/2000/svg">
         <rect x="10.75" y="15.75" width="2.5" height="2.5" fill={grey}/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M12 8C10.8048 8 10 9.08576 10 10H8C8 8.19752 9.49569 6 12 6C14.4955 6 16 8.14203 16 10C16 11.5781 14.8917 12.3782 14.2062 12.8732C14.1659 12.9023 14.1271 12.9303 14.09 12.9574C13.3354 13.5088 13 13.8231 13 14.5H11C11 12.7382 12.1612 11.8897 12.9067 11.345L12.91 11.3426C13.7425 10.7343 14 10.5038 14 10C14 9.0498 13.2039 8 12 8Z" fill={grey} />
       </svg>
-  } else if (props.trend === Trend.Neutral) {
+  } else if (props.trend === DoraTrend.Neutral) {
     indicator =
     <svg className='lrd_neutralIndicator' fill={purple} viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg">
       <path d="M.289 6.883a1.03 1.03 0 0 1 1.03-1.03h10.363a1.03 1.03 0 0 1 0 2.059H1.318A1.03 1.03 0 0 1 .29 6.882zm12.422 4.604a1.03 1.03 0 0 1-1.03 1.03H1.319a1.03 1.03 0 1 1 0-2.059h10.364a1.03 1.03 0 0 1 1.029 1.03z"/>
     </svg>
   } else {
-    const rotation = props.trend === Trend.Declining ? 90 : 270
-    const color = props.trend === Trend.Declining ? yellow : green
+    const rotation = props.trend === DoraTrend.Declining ? 90 : 270
+    const color = props.trend === DoraTrend.Declining ? yellow : green
 
     indicator = (
       <svg className='lrd_arrowIndicator' fill={color} transform={`rotate(${rotation})`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.027 512.027">

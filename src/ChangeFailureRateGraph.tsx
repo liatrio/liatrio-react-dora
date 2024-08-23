@@ -50,7 +50,7 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
         count.failed++
         count.failures.push(record)
       }
-    }    
+    }
 
     const total = entry[key].failed + entry[key].successful
 
@@ -66,7 +66,7 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
   return result
 }
 
-const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
+const ChangeFailureRateGraph : React.FC<ChartProps> = (props: ChartProps) => {
   const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [graphData, setGraphData] = useState<any>(null)
 
@@ -74,7 +74,7 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
 
   const ticks = useMemo(() => generateTicks(startDate, endDate, 5), [startDate, endDate])
   const maxBarWidth = useMemo(() => (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%", [startDate, endDate])
-  
+
   const nonGraphBody = buildNonGraphBody(props, noData, changeFailureRateName)
 
   if(nonGraphBody) {
@@ -111,4 +111,4 @@ const ChangeFailureRate : React.FC<ChartProps> = (props: ChartProps) => {
   )
 }
 
-export default ChangeFailureRate
+export default ChangeFailureRateGraph

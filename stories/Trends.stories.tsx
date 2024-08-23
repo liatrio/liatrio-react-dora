@@ -1,22 +1,19 @@
 import React, { useState } from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import Trends from '../src/Trends'
+import TrendGraph from '../src/TrendGraph'
 import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import dataSet from './data'
 
 export default {
-  title: 'Trends',
-  component: Trends,
+  title: 'TrendGraph',
+  component: TrendGraph,
 } as Meta
 
 const Template: StoryFn<ChartProps> = () => {
   const [data, setData] = useState<any>(dataSet[0])
 
   const args = {
-    showWeekends: true,
-    graphStart: new Date(2024, 6, 16),
-    graphEnd: new Date(2024, 7, 15)
   }
 
   const onChange = (event: any) => {
@@ -34,19 +31,9 @@ const Template: StoryFn<ChartProps> = () => {
       </select>
       <br/>
       <br/>
-      <Trends {...args} data={data} />
+      <TrendGraph {...args} data={data} />
     </div>
   )
 }
 
 export const Example = Template.bind({})
-
-Example.args = {
-  api: "",
-  data: dataSet[0],
-  includeWeekends: false,
-  showDetails: false,
-  graphStart: new Date(2024, 6, 16),
-  graphEnd: new Date(2024, 7, 15),
-  showTrends: true
-}

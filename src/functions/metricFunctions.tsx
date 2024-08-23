@@ -2,7 +2,7 @@ import { DoraRecord } from "../interfaces/apiInterfaces"
 import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
-import { DoraMetric, DoraState, Rank, Trend } from "../interfaces/metricInterfaces"
+import { DoraMetric, DoraState, DoraRank, DoraTrend } from "../interfaces/metricInterfaces"
 
 const calculateChangeFailureRateAverage = (_: ChartProps, data: DoraRecord[]) : number => {
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
@@ -114,28 +114,28 @@ const calculateMetric = (metricName: string, props: ChartProps, data: DoraRecord
   return metric
 }
 
-const determineMetricRank = (value: number, defaultThresholds?: MetricThresholds, thresholds?: MetricThresholds) : Rank => {
+const determineMetricRank = (value: number, defaultThresholds?: MetricThresholds, thresholds?: MetricThresholds) : DoraRank => {
   if(Number.isNaN(value)) {
-    return Rank.unknown
+    return DoraRank.unknown
   } else if(value < (thresholds?.elite ? thresholds.elite : defaultThresholds?.elite ?? 0)) {
-    return Rank.elite
+    return DoraRank.elite
   } else if(value < (thresholds?.high ? thresholds.high : defaultThresholds?.high ?? 0)) {
-    return Rank.high
+    return DoraRank.high
   } else if(value < (thresholds?.medium ? thresholds.medium : defaultThresholds?.medium ?? 0)) {
-    return Rank.medium
+    return DoraRank.medium
   } else {
-    return Rank.low
+    return DoraRank.low
   }
 }
 
-const determineMetricColor = (rank: Rank, thresholdColors?: ThresholdColors) : string => {
-  if(rank === Rank.unknown) {
+const determineMetricColor = (rank: DoraRank, thresholdColors?: ThresholdColors) : string => {
+  if(rank === DoraRank.unknown) {
     return grey
-  } else if(rank === Rank.elite) {
+  } else if(rank === DoraRank.elite) {
     return thresholdColors?.elite ? thresholdColors.elite : green
-  } else if(rank === Rank.high) {
+  } else if(rank === DoraRank.high) {
     return thresholdColors?.high ? thresholdColors.high : blue
-  } else if(rank === Rank.medium) {
+  } else if(rank === DoraRank.medium) {
     return thresholdColors?.medium ? thresholdColors.medium : yellow
   } else {
     return thresholdColors?.low ? thresholdColors.low : orange
@@ -189,21 +189,21 @@ export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraStat
     const currentAvg = currentState[metricName].average
     const previousNaN = Number.isNaN(previousAvg)
     const currentNaN = Number.isNaN(currentAvg)
-    let trend = Trend.Unknown
+    let trend = DoraTrend.Unknown
 
     if(previousNaN && !currentNaN) {
-      trend = Trend.Improving
+      trend = DoraTrend.Improving
     } else if(!previousNaN && currentNaN) {
-      trend = Trend.Declining
+      trend = DoraTrend.Declining
     } else {
       const diff = previousAvg - currentAvg
 
       if(diff > 0) {
-        trend = Trend.Declining
+        trend = DoraTrend.Declining
       } else if(diff < 0) {
-        trend = Trend.Improving
+        trend = DoraTrend.Improving
       } else {
-        trend = Trend.Neutral
+        trend = DoraTrend.Neutral
       }
     }
 

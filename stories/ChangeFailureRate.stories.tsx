@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import ChangeFailureRate from '../src/ChangeFailureRate'
+import ChangeFailureRateGraph from '../src/ChangeFailureRateGraph'
 import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import dataSet from './data'
 
 export default {
-  title: 'ChangeFailureRate',
-  component: ChangeFailureRate,
+  title: 'ChangeFailureRateGraph',
+  component: ChangeFailureRateGraph,
 } as Meta
 
 const Template: StoryFn<ChartProps> = () => {
@@ -34,16 +34,9 @@ const Template: StoryFn<ChartProps> = () => {
       </select>
       <br/>
       <br/>
-      <ChangeFailureRate {...args} data={data} />
+      <ChangeFailureRateGraph {...args} data={data} />
     </div>
   )
 }
 
 export const Example = Template.bind({})
-
-Example.args = {
-  api: "",
-  data: dataSet[0],
-  graphStart: new Date(2024, 6, 16),
-  graphEnd: new Date(2024, 7, 15)
-}

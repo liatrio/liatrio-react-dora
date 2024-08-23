@@ -1,4 +1,4 @@
-import { DoraMetric, DoraState, Rank, Trend } from "./interfaces/metricInterfaces"
+import { DoraMetric, DoraState, DoraRank, DoraTrend } from "./interfaces/metricInterfaces"
 import { MetricThresholdSet } from "./interfaces/propInterfaces"
 
 export const green = "#00FF00"
@@ -14,8 +14,8 @@ export const defaultDoraMetric: DoraMetric = {
   average: NaN,
   display: '?',
   color: grey,
-  rank: Rank.unknown,
-  trend: Trend.Unknown,
+  rank: DoraRank.unknown,
+  trend: DoraTrend.Unknown,
 }
 
 export const defaultDoraState: DoraState = {

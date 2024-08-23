@@ -8,10 +8,7 @@ export interface ChartProps {
   includeWeekendsInCalculations?: boolean
   metricThresholdSet?: MetricThresholdSet
   message?: string
-  colors?: ThresholdColors
-  showTrends?: boolean
   holidays?: Date[]
-  hideColors?: boolean
 }
 
 export interface ThresholdColors {
@@ -23,6 +20,13 @@ export interface ThresholdColors {
 
 export interface BoardProps extends ChartProps {
   alwaysShowDetails?: boolean
+  colors?: ThresholdColors
+  showTrends?: boolean
+  hideColors?: boolean
+}
+
+export interface TrendProps extends ChartProps {
+  showIndividualTrends?: boolean
 }
 
 export interface MetricThresholds {

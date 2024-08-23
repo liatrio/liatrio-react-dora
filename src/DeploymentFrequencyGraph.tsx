@@ -49,7 +49,7 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
   return result
 }
 
-const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
+const DeploymentFrequencyGraph : React.FC<ChartProps> = (props: ChartProps) => {
   const [graphData, setGraphData] = useState<any[]>([])
   const [maxDeploys, setMaxDeploys] = useState<number>(0)
   const [tooltipContent, setTooltipContent] = useState<any>(null)
@@ -57,7 +57,7 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
 
   const ticks = generateTicks(startDate, endDate, 5)
   const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%"
-  
+
   const nonGraphBody = buildNonGraphBody(props, noData, deploymentFrequencyName)
 
   if(nonGraphBody) {
@@ -105,7 +105,7 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
-          {repositories.map((repo, idx) => { 
+          {repositories.map((repo, idx) => {
             const key = `${repo}.count`
             return (
               <Bar animationDuration={0} className={repo} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
@@ -118,4 +118,4 @@ const DeploymentFrequency : React.FC<ChartProps> = (props: ChartProps) => {
   )
 }
 
-export default DeploymentFrequency
+export default DeploymentFrequencyGraph

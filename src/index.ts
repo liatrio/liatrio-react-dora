@@ -1,13 +1,14 @@
-export { default as RecoverTime } from './RecoverTime'
-export { default as ChangeFailureRate } from './ChangeFailureRate'
-export { default as ChangeLeadTime } from './ChangeLeadTime'
-export { default as DeploymentFrequency } from './DeploymentFrequency'
+export { default as RecoverTimeGraph } from './RecoverTimeGraph'
+export { default as ChangeFailureRateGraph } from './ChangeFailureRateGraph'
+export { default as ChangeLeadTimeGraph } from './ChangeLeadTimeGraph'
+export { default as DeploymentFrequencyGraph } from './DeploymentFrequencyGraph'
 export { default as Board } from './Boards/Board'
-export { default as Trends } from './Trends'
+export { default as TrendGraph } from './TrendGraph'
+export { default as TrendIndicator } from './icons/TrendIndicator'
+
 export { fetchData } from './functions/fetchFunctions'
 export { getDateDaysInPast, dateToUtc, getDateDaysInPastUtc, utcDateToLocal } from "./functions/dateFunctions"
-export { buildDoraState } from "./functions/metricFunctions"
-export { default as TrendIndicator } from './icons/TrendIndicator'
+export { buildDoraStateForPeriod } from "./functions/metricFunctions"
 
 export {
   grey,
@@ -23,11 +24,13 @@ export type {
   MetricThresholds,
   ChartProps,
   BoardProps,
+  TrendProps,
 } from './interfaces/propInterfaces'
 
 export type {
   DoraState,
   DoraMetric,
+  DoraRank,
 } from './interfaces/metricInterfaces'
 
 export type { FetchProps } from './functions/fetchFunctions'

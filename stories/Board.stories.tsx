@@ -40,13 +40,3 @@ const Template: StoryFn<ChartProps> = () => {
 }
 
 export const Example = Template.bind({})
-
-Example.args = {
-  api: "",
-  data: dataSet[0],
-  includeWeekends: false,
-  showDetails: false,
-  graphStart: new Date(2024, 6, 16),
-  graphEnd: new Date(2024, 7, 15),
-  showColors: true,
-}

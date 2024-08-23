@@ -19,11 +19,12 @@ yarn add liatrio-react-dora@https://github.com/liatrio/liatrio-react-dora/releas
 To use these charts, you can do as follows:
 
 ```
-import { DeploymentFrequency } from `liatrio-react-dora`
-
+import { DeploymentFrequency, fetchData } from `liatrio-react-dora`
+...
+const fetchedData = fetchData(fetchProps, onSuccess, onFailure)
 ...
 <div style={{width: "600px", height: "400px"}}>
-    <DeploymentFrequency api="http://some.url" />
+    <DeploymentFrequencyGraph data={fetchedData} />
 </div>
 
 ```
@@ -31,165 +32,151 @@ import { DeploymentFrequency } from `liatrio-react-dora`
 It is important that the chart component be wrapped in an element of some size somewhere up the tree, otherwise the chart may have unexpected behavior.
 
 # Exposed Components
-  * **Board**
+  * `Board`
 
     This is a component to display an At a Glance board for the 4 DORA Metrics and can be setup to either display trends or color coded scores
 
-  * **DeploymentFrequency**
+  * `DeploymentFrequencyGraph`
 
     This is a component to display a graph of your deployments over the specified time period
 
-  * **ChangeLeadTime**
+  * `ChangeLeadTimeGraph`
 
     This is a component to display a graph of your change lead time over the specified time period
 
-  * **ChangeFailureRate**
+  * `ChangeFailureRateGraph`
 
     This is a component to display a graph of your change failure rate over the specified time period
 
-  * **RecoverTime**
+  * `RecoverTimeGraph`
 
-    This is a component to display a graph of your recover time over the specified time period
+    This is a component to display a graph of your recover time over the specified time period\
 
-  * **TrendIndicator**
+  * `TrendGraph`
+
+    This is a component to display an the overall trend of the data supplied
+
+  * `TrendIndicator`
 
     This component is a trend indicator you can use to display in parent components
 
 # Exposed Functionality
-  * **fetchData**
+  * `fetchData`
 
-    This is the function your parent component should use to pull data to supply in the **data** property of the components
+    This is the function your parent component should use to pull data to supply in the `data` property of the components
 
     The parameters of this function are as follows:
 
-    An object (**FetchProps**) containing the following properties
-      * **api**:
+    An object (`FetchProps`) containing the following properties
+      * `api`:
         * This is the url to the API for gathering data.
 
-      * **getAuthHeaderValue** (*optional*):
+      * `getAuthHeaderValue` (*optional*):
         * This is a function that should provide the value of the `Authorization` HTTP Header for the `api`.
         * If not specified, no auth will be used
 
-      * **team** (*optional*):
+      * `team` (*optional*):
         * The name of the team to show pull data for.
 
-      * **repositories** (*optional*):
+      * `repositories` (*optional*):
         * A list of repository names to pull data for.
 
-      * **daysToPull** (*optional*):
+      * `daysToPull` (*optional*):
         * The number of days in the past from the current date to pull data for
         * If not specified, 365 is the default
 
-      * **includeWeekendsInCalculations** (*optional*):
-        * When calculating the averages for each metric in the **Board** component, this setting allows you to include/exclude weekends in those calculations.  This is useful when you don't have teams that work weekends.
+      * `includeWeekendsInCalculations` (*optional*):
+        * When calculating the averages for each metric in the `Board` component, this setting allows you to include/exclude weekends in those calculations.  This is useful when you don't have teams that work weekends.
 
-      * **holidays** (*optional*):
-        * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the **Board** component.
+      * `holidays` (*optional*):
+        * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the `Board` component.
 
-  * **buildDoraState**
+  * `buildDoraStateForPeriod`
 
-    This function returns a DoraState object with information about each DORA Metric:
+    This function returns a `DoraState` object with information about each DORA Metric.
 
-    ```
-    DoraMetric {
-      average: number
-      display: string
-      color: string
-      trend: string
-    }
-
-    DoraState {
-      deploymentFrequency: DoraMetric
-      changeLeadTime: DoraMetric
-      changeFailureRate: DoraMetric
-      recoverTime: DoraMetric
-    }
-    ```
-
-    * **average** - Is the average of the metric of the supplied time frame
-    * **display** - Is a formated display string for the metric
-    * **color** - Is the color for the displays string based on the **colors** supplied in the component properties
-    * **trend** - Is whether this period measured is improving, falling behind, or staying even with the requested period
 
     It takes the following values as parameters:
 
-    * **props** - An object contianing the [Component Properties](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#component-properties)
-    * **data** - The data supplied by the **fetchData** function
+    * `props` - An object contianing the [Component Properties](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#component-properties)
+    * `data` - The data supplied by the `fetchData` function
+    * `start` - The start date of the period you want to know the trend for
+    * `end` - The end date of the period you want to know the trend for
 
-  * **getDateDaysInPast** and **getDateDaysInPastUtc**
+    To get the trend value, the evaluation will use the previous period of the same length agains your request period.
+
+    The `DoraState` object that is returned contains the following for each metric:
+
+    * `average` - Is the average of the metric of the supplied time frame
+    * `display` - Is a formated display string for `average` field including a postfix of hrs, days, mins, or % depending on the metric and time scale
+    * `color` - Is the color for the displays string based on the `colors` supplied in the component properties
+    * `trend` - Is whether this period measured is improving, falling behind, or staying even with the requested period
+    * `rank` - Is a enum of `Rank` that provides whether you are elite, high, medium, low or unknown for this metric
+
+  * `getDateDaysInPast` and `getDateDaysInPastUtc`
 
     These functions are just shortcuts to get a Date a certain number of days in the past
 
 # Component Properties
 
-* **data**:
-  * A JSON string containing the data for the chart to display.  If this is supplied with the `api` property, the `api` property will be ignored.
+* Common to the `...Graph`* components
+  * `data`:
+    * An array of `DoraRecord` objects used to display the graphs.
 
-* **graphStart** (*optional*):
-  * If not supplied this will default to 30 days in the past.
-  * This value is used to determine the starting date for the charts.
+  * `graphStart` (*optional*):
+    * If not supplied this will default to 30 days in the past.
+    * This value is used to determine the starting date for the charts.
 
-* **graphEnd** (*optional*):
-  * If not supplied, this will default to 1 day in the past.
-  * This value is used to determine the ending date for the charts.
+  * `graphEnd` (*optional*):
+    * If not supplied, this will default to 1 day in the past.
+    * This value is used to determine the ending date for the charts.
 
-* **loading** (*optional*):
-  * Boolean to allow a container component to control the loading status if it wants to supply **data**
+  * `loading` (*optional*):
+    * Boolean to allow a container component to control the loading status if it wants to supply `data`
 
-* **includeWeekendsInCalculations** (*optional*):
-  * When calculating the averages for each metric in the **Board** component, this setting allows you to include/exclude weekends in those calculations.  This is useful when you don't have teams that work weekends.
+  * `includeWeekendsInCalculations` (*optional*):
+    * When calculating the averages for each metric, this setting allows you to include/exclude weekends in those calculations.  This is useful when you don't have teams that work weekends.
 
-* **metricThresholdSet** (*optional*):
-  * This allows you to customize the metric thresholds use for the **Board** component coloring.  You only have to override the ones you need. There are defaults based on the official DORA Report that are used when these are not supplied.
+  * `metricThresholdSet` (*optional*):
+    * This allows you to customize the metric thresholds used for determining the rank of each metric.  You only have to override the ones you need. There are defaults based on the official DORA Report that are used when these are not supplied.  This takes in a `MetricThresholdSet` object which contains a `MetricThresholds` object for each metric.
 
-  The format for this field is:
+    The threshold values for `elite`, `high` and `medium` are measured in hours.  `low` is considered anything longer than medium, so it is not able to be supplied as a value in this object.
 
-  ```
-  MetricThresholds {
-    elite?: number
-    high?: number
-    medium?: number
-  }
+  * `message` (*optional*):
+    * This allows a parent component to display a custom message while it does something.  This setting overrides `loading` and the nodata state that happens if `data` is empty or the `api` returns no data
 
-  MetricThresholdSet {
-    deploymentFrequency?: MetricThresholds
-    changeLeadTime?: MetricThresholds
-    changeFailureRate?: MetricThresholds
-    recoverTime?: MetricThresholds
-  }
-  ```
+  * `holidays` (*optional*):
+    * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the components
 
-  The threshold values for **elite**, **high** and **medium** are measured in hours.  **low** is considered anything longer than medium.
+* Specific to the `Board` component in addition to the properties for the `...Graph` components:
 
-* **colors** (*optional*):
-  * This allows you to customize the colors used by the **Board** component, they support any of the standard color formats
+  * `alwaysShowDetails` (*optional*):
+    * This field controls whether the `Board` component shows the details on hover or statically below the icon
 
-  The format for this field is:
+  * `showTrends` (*optional*):
+    * This field controls whether trends or rank base coloring is shown in the `Board` component
 
-  ```
-  ThresholdColors {
-    elite?: string
-    high?: string
-    medium?: string
-    low?: string
-  }
-  ```
+  * `colors` (*optional*):
+    * This takes a `ThresholdColors` object and allows you to customize the colors used by the `Board` component, they support any of the standard color formats
 
-* **message** (*optional*):
-  * This allows a parent component to display a custom message while it does something.  This setting overrides **loading** and the nodata state that happens if **data** is empty or the **api** returns no data
+  * `hideColors` (*optional*):
+    * This allows you to change the `Board` component to hide the rank based coloring on the icons and instead just use a shade of purple
 
-* **showTrends** (*optional*):
-  * This field controls whether trends or coloring is shown in the **Board** component
+* Specific to the `Trend` component in addition to the properties for the *...Graph` components:
 
-* **holidays** (*optional*):
-  * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the **Board** component
+  * `showIndividualTrends` (*optional*):
+    * Enabling this property will show a line for each individual metric trend in addition to the overall DORA trend
 
-* **alwaysShowDetails** (*optional*):
-  * This field controls whether the **Board** component shows the details on hover or statically below the icon
+* Specific to the `TrendIndicator` component:
+
+  * `trend`:
+    * This is a `Trend` enum value that controls what is displayed inside
 
 # Dependencies
 
-These components rely on **data** being supplied to them.  We supply the [liatrio-dora-api](https://github.com/liatrio/liatrio-dora-api) to gather this data out of a Loki DB that is fed by our [liatrio-otel-collector](https://github.com/liatrio/liatrio-otel-collector).  If you want to create your own API, it just needs to return the [Data Schema](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#data-schemas).
+These components rely on `data` being supplied to them.  We supply the [liatrio-dora-api](https://github.com/liatrio/liatrio-dora-api) to gather this data out of a Loki DB that is fed by our [liatrio-otel-collector](https://github.com/liatrio/liatrio-otel-collector).  If you want to create your own API, it just needs to return the [Data Schema](https://github.com/liatrio/liatrio-react-dora?tab=readme-ov-file#data-schemas).
+
+We also expose the `fetchData` function to fetch this data for you and do some preprocessing of the data before sending it into the components.  If you would like to use your own function you will need to examine the preprocessing done by this function and replicate it for yours.
 
 # Data Schemas
 

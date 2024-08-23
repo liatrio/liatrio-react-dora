@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { StoryFn, Meta } from '@storybook/react'
-import DeploymentFrequency from '../src/DeploymentFrequency'
+import DeploymentFrequencyGraph from '../src/DeploymentFrequencyGraph'
 import { ChartProps } from '../src/interfaces/propInterfaces'
 
 import dataSet from './data'
 
 export default {
-  title: 'DeploymentFrequency',
-  component: DeploymentFrequency,
+  title: 'DeploymentFrequencyGraph',
+  component: DeploymentFrequencyGraph,
 } as Meta
 
 const Template: StoryFn<ChartProps> = () => {
@@ -34,7 +34,7 @@ const Template: StoryFn<ChartProps> = () => {
       </select>
       <br/>
       <br/>
-      <DeploymentFrequency {...args} data={data} />
+      <DeploymentFrequencyGraph {...args} data={data} />
     </div>
   )
 }

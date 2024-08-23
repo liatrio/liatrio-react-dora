@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import CustomBar from './CustomBar'
 import { Tooltip } from 'react-tooltip'
 import TooltipContent from './ToolTip/TooltipContent'
-import { ChartProps } from './interfaces/propInterfaces'
+import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
 import { blue, defaultGraphEnd, defaultGraphStart, green, grey, millisecondsToDays, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
 import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
-import { Rank } from './interfaces/metricInterfaces'
+import { DoraRank } from './interfaces/metricInterfaces'
 
 interface GraphData {
   date: number
-  avg: number
+  overallAvg: number
+  deploymentFrequencyAvg: number
+  changeLeadTimeAvg: number
+  changeFailureRateAvg: number
+  recoverTimeAvg: number
 }
 
-const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
+const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
   let start = getDateDaysInPast(defaultGraphStart)
   let end = getDateDaysInPast(defaultGraphEnd)
 
@@ -65,7 +69,11 @@ const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
     const averageRank = (state.changeFailureRate.rank + state.changeLeadTime.rank + state.deploymentFrequency.rank + state.recoverTime.rank) / 4
 
     result.push({
-      avg: averageRank,
+      overallAvg: averageRank,
+      changeFailureRateAvg: state.changeFailureRate.rank,
+      deploymentFrequencyAvg: state.deploymentFrequency.rank,
+      changeLeadTimeAvg: state.changeLeadTime.rank,
+      recoverTimeAvg: state.recoverTime.rank,
       date: key
     })
   })
@@ -73,7 +81,7 @@ const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
   if(dates.length === 1) {
     start = new Date(dates[0])
     end = new Date(getEndOfWeek(new Date(dates[0])))
-    
+
     const lastRecord = {...result[0]}
 
     lastRecord.date = end.getTime()
@@ -89,20 +97,20 @@ const composeGraphData = (props: ChartProps) : [GraphData[], Date, Date] => {
 }
 
 const formatRankTicks = (tick: any): string => {
-  if(tick === Rank.unknown) {
+  if(tick === DoraRank.unknown) {
     return ""
-  } else if(tick === Rank.elite) {
+  } else if(tick === DoraRank.elite) {
     return "Elite"
-  } else if(tick === Rank.high) {
+  } else if(tick === DoraRank.high) {
     return "High"
-  } else if(tick === Rank.medium) {
+  } else if(tick === DoraRank.medium) {
     return "Medium"
   } else {
     return "Low"
   }
 }
 
-const Trends : React.FC<ChartProps> = (props: ChartProps) => {
+const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
   const [graphData, setGraphData] = useState<GraphData[]>([])
   const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [noData, setNoData] = useState<boolean>(false)
@@ -124,13 +132,14 @@ const Trends : React.FC<ChartProps> = (props: ChartProps) => {
     setStartDate(start)
     setEndDate(end)
   }, [props.data])
-  
+
   const nonGraphBody = buildNonGraphBody(props, noData, trendName)
 
   if(nonGraphBody) {
     return nonGraphBody
   }
 
+  const colors = generateDistinctColors(4)
   const ticks = generateTicks(startDate, endDate, 5)
 
   // const handleMouseOverBar = (event: any, payload: any) => {
@@ -141,7 +150,7 @@ const Trends : React.FC<ChartProps> = (props: ChartProps) => {
   return (
     <div data-testid={trendName} className="chart-wrapper">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
+        <ComposedChart
           width={500}
           height={300}
           data={graphData}
@@ -160,18 +169,24 @@ const Trends : React.FC<ChartProps> = (props: ChartProps) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
-          <Area type="monotone" dataKey="avg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
-          {/* {graphData.map((repo, idx) => { 
+          <Area type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
+          {props.showIndividualTrends && <>
+            <Line type="monotone" dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
+            <Line type="monotone" dataKey="changeLeadTimeAvg" stroke={colors[1]} />
+            <Line type="monotone" dataKey="changeFailureRateAvg" stroke={colors[2]} />
+            <Line type="monotone" dataKey="recoverTimeAvg" stroke={colors[3]} />
+          </>}
+          {/* {graphData.map((repo, idx) => {
             const key = `${repo}.count`
             return (
               <Bar animationDuration={0} className={repo} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
             )
           })} */}
-        </AreaChart>
+        </ComposedChart>
       </ResponsiveContainer>
       <Tooltip className='chartTooltip' delayHide={2000} clickable={true} classNameArrow='chartTooltipArrow' id="dfTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
     </div>
   )
 }
 
-export default Trends
+export default TrendGraph

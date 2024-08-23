@@ -35,7 +35,7 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) => {
   return reduced
 }
 
-const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
+const ChangeLeadTimeGraph : React.FC<ChartProps> = (props: ChartProps) => {
   const [graphData, setGraphData] = useState<Map<string, DoraRecord[]>>(new Map<string, DoraRecord[]>())
   const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
@@ -154,4 +154,4 @@ const ChangeLeadTime : React.FC<ChartProps> = (props: ChartProps) => {
   )
 }
 
-export default ChangeLeadTime
+export default ChangeLeadTimeGraph

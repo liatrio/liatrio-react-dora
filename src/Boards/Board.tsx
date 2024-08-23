@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import './Board.css'
 import { Tooltip } from 'react-tooltip'
-import DeployFrequencyIcon from '../icons/DeploymentFrequency'
-import ChangeLeadTimeIcon from '../icons/ChangeLeadTime'
-import ChangeFailureRateIcon from '../icons/ChangeFailureRate'
-import RecoverTimeIcon from '../icons/RecoverTime'
+import DeployFrequencyIcon from '../icons/DeploymentFrequencyIcon'
+import ChangeLeadTimeIcon from '../icons/ChangeLeadTimeIcon'
+import ChangeFailureRateIcon from '../icons/ChangeFailureRateIcon'
+import RecoverTimeIcon from '../icons/RecoverTimeIcon'
 import { BoardProps } from '../interfaces/propInterfaces'
 import { DoraState } from '../interfaces/metricInterfaces'
 import { boardName, defaultDoraState } from '../constants'
 import { buildDoraState } from '../functions/metricFunctions'
 import { buildNonGraphBody } from '../functions/chartFunctions'
-import ScoreIcon from '../icons/Score'
-import TrendIcon from '../icons/Trend'
+import ScoreIcon from '../icons/ScoreIcon'
+import TrendIcon from '../icons/TrendIcon'
 
 const Board : React.FC<BoardProps> = (props) => {
   const [state, setState] = useState<DoraState>({...defaultDoraState})

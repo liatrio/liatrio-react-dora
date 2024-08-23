@@ -26,7 +26,7 @@ export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
 
       acc.set(date, entry)
     }
-    
+
     let payload = entry[record.repository]
 
     if (!payload) {
@@ -54,7 +54,7 @@ export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
   return result
 }
 
-const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
+const RecoverTimeGraph: React.FC<ChartProps> = (props: ChartProps) => {
   const [graphData, setGraphData] = useState<any[]>([])
   const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [usedRepositories, setUsedRepositories] = useState<string[]>([])
@@ -184,4 +184,4 @@ const RecoverTime: React.FC<ChartProps> = (props: ChartProps) => {
   )
 }
 
-export default RecoverTime
+export default RecoverTimeGraph
