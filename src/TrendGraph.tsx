@@ -157,15 +157,15 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
               <stop offset="95%" stopColor={grey} stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke='#FFFFFF44' />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
           <Area animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
           {props.showIndividualTrends && <>
-            <Line animationDuration={0} type="monotone" dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
-            <Line animationDuration={0} type="monotone" dataKey="changeLeadTimeAvg" stroke={colors[1]} />
-            <Line animationDuration={0} type="monotone" dataKey="changeFailureRateAvg" stroke={colors[2]} />
-            <Line animationDuration={0} type="monotone" dataKey="recoverTimeAvg" stroke={colors[3]} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={colors[1]} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={colors[2]} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={colors[3]} />
           </>}
         </ComposedChart>
       </ResponsiveContainer>

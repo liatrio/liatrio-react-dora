@@ -1,7 +1,7 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
 import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
-import { ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
+import { BoardProps, ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
 import { DoraMetric, DoraState, DoraRank, DoraTrend } from "../interfaces/metricInterfaces"
 
 const calculateChangeFailureRateAverage = (_: ChartProps, data: DoraRecord[]) : number => {
@@ -108,7 +108,7 @@ const calculateMetric = (metricName: string, props: ChartProps, data: DoraRecord
 
   metric.average = calculator(props, data)
   metric.rank = determineMetricRank(metric.average, defaultThresholds, thresholds)
-  metric.color = determineMetricColor(metric.rank, props.colors)
+  metric.color = determineMetricColor(metric.rank, (props as BoardProps).colors)
   metric.display = generateMetricDisplay(metric.average, metricName)
 
   return metric

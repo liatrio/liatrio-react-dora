@@ -12,27 +12,37 @@ export default {
 
 const Template: StoryFn<ChartProps> = () => {
   const [data, setData] = useState<any>(dataSet[0])
+  const [showIndividualTrends, setShowIndividualTrends] = useState<boolean>(true)
 
-  const args = {
-    showIndividualTrends: true
+  const changeDataSet = (event: any) => {
+    setData(dataSet[event.target.value])
   }
 
-  const onChange = (event: any) => {
-    setData(dataSet[event.target.value])
+  const changeShowMetricTrends = (event: any) => {
+    setShowIndividualTrends(event.target.checked)
   }
 
   return (
     <div style={{height: "200px", width: "600px"}}>
-      <select onChange={onChange}>
-        <option value={0} selected>Low</option>
-        <option value={1}>High</option>
-        <option value={2}>Medium</option>
-        <option value={3}>Elite</option>
-        <option value={4}>Team</option>
-      </select>
+      <div style={{display: "flex", justifyContent: "space-evenly", alignItems:"center", color: "white"}}>
+        <div>
+          <label>Data Set:</label>
+          <select onChange={changeDataSet}>
+            <option value={0} selected>Low</option>
+            <option value={1}>High</option>
+            <option value={2}>Medium</option>
+            <option value={3}>Elite</option>
+            <option value={4}>Team</option>
+          </select>
+        </div>
+        <div>
+          <label>Show Metric Trends:</label>
+          <input type='checkbox' checked={showIndividualTrends} onChange={changeShowMetricTrends} />
+        </div>
+      </div>
       <br/>
       <br/>
-      <TrendGraph {...args} data={data} />
+      <TrendGraph showIndividualTrends={showIndividualTrends} data={data} />
     </div>
   )
 }
