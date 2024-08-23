@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import CustomBar from './CustomBar'
-import { Tooltip } from 'react-tooltip'
-import TooltipContent from './ToolTip/TooltipContent'
 import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { blue, defaultGraphEnd, defaultGraphStart, green, grey, millisecondsToDays, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
+import { defaultGraphEnd, defaultGraphStart, grey, purple, trendName } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
 import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { DoraRank } from './interfaces/metricInterfaces'
@@ -112,7 +109,6 @@ const formatRankTicks = (tick: any): string => {
 
 const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
   const [graphData, setGraphData] = useState<GraphData[]>([])
-  const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [noData, setNoData] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<Date>(getDateDaysInPast(defaultGraphStart))
   const [endDate, setEndDate] = useState<Date>(getDateDaysInPast(defaultGraphEnd))
@@ -142,11 +138,6 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
   const colors = generateDistinctColors(4)
   const ticks = generateTicks(startDate, endDate, 5)
 
-  // const handleMouseOverBar = (event: any, payload: any) => {
-  //   const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
-  //   setTooltipContent(<TooltipContent type={trendName} repository={repository} payload={[payload]} />)
-  // }
-
   return (
     <div data-testid={trendName} className="chart-wrapper">
       <ResponsiveContainer width="100%" height="100%">
@@ -169,22 +160,15 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
-          <Area type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
+          <Area animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
           {props.showIndividualTrends && <>
-            <Line type="monotone" dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
-            <Line type="monotone" dataKey="changeLeadTimeAvg" stroke={colors[1]} />
-            <Line type="monotone" dataKey="changeFailureRateAvg" stroke={colors[2]} />
-            <Line type="monotone" dataKey="recoverTimeAvg" stroke={colors[3]} />
+            <Line animationDuration={0} type="monotone" dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
+            <Line animationDuration={0} type="monotone" dataKey="changeLeadTimeAvg" stroke={colors[1]} />
+            <Line animationDuration={0} type="monotone" dataKey="changeFailureRateAvg" stroke={colors[2]} />
+            <Line animationDuration={0} type="monotone" dataKey="recoverTimeAvg" stroke={colors[3]} />
           </>}
-          {/* {graphData.map((repo, idx) => {
-            const key = `${repo}.count`
-            return (
-              <Bar animationDuration={0} className={repo} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
-            )
-          })} */}
         </ComposedChart>
       </ResponsiveContainer>
-      <Tooltip className='chartTooltip' delayHide={2000} clickable={true} classNameArrow='chartTooltipArrow' id="dfTooltip"  border="1px solid white" opacity="1" content={tooltipContent}/>
     </div>
   )
 }

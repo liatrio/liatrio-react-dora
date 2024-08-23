@@ -14,6 +14,7 @@ const Template: StoryFn<ChartProps> = () => {
   const [data, setData] = useState<any>(dataSet[0])
 
   const args = {
+    showIndividualTrends: true
   }
 
   const onChange = (event: any) => {
