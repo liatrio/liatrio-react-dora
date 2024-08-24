@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import TrendGraph from '../src/TrendGraph'
 import { ChartProps } from '../src/interfaces/propInterfaces'
-
 import dataSet from './data'
 
 export default {
@@ -23,19 +22,19 @@ const Template: StoryFn<ChartProps> = () => {
   }
 
   return (
-    <div style={{height: "200px", width: "600px"}}>
-      <div style={{display: "flex", justifyContent: "space-evenly", alignItems:"center", color: "white"}}>
-        <div>
+    <div className="graphContainer">
+      <div className="editor">
+        <div className="editorFieldContainer">
           <label>Data Set:</label>
           <select onChange={changeDataSet}>
             <option value={0} selected>Low</option>
-            <option value={1}>High</option>
-            <option value={2}>Medium</option>
+            <option value={1}>Medium</option>
+            <option value={2}>High</option>
             <option value={3}>Elite</option>
             <option value={4}>Team</option>
           </select>
         </div>
-        <div>
+        <div className="editorFieldContainer">
           <label>Show Metric Trends:</label>
           <input type='checkbox' checked={showIndividualTrends} onChange={changeShowMetricTrends} />
         </div>

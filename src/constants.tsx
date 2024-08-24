@@ -39,6 +39,7 @@ export const defaultGraphEnd = 0
 export const millisecondsToHours = 60 * 60 * 1000
 export const millisecondsToDays = 24 * millisecondsToHours
 export const millisecondsToWeeks = 7 * millisecondsToDays
+export const millisecondsToMonth = 30 * millisecondsToDays
 export const dayInHours = 24
 export const weekInHours = dayInHours * 7
 export const monthInHours = dayInHours * 30

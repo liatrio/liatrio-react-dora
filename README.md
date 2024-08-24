@@ -119,7 +119,7 @@ It is important that the chart component be wrapped in an element of some size s
 
 # Component Properties
 
-* Common to the `...Graph`* components
+## ...Graph Component Properties
   * `data`:
     * An array of `DoraRecord` objects used to display the graphs.
 
@@ -148,7 +148,8 @@ It is important that the chart component be wrapped in an element of some size s
   * `holidays` (*optional*):
     * This field allows you to specify holidays for that your organization follows to exclude from the calculations for the components
 
-* Specific to the `Board` component in addition to the properties for the `...Graph` components:
+## Board Component Properties
+  * All the `Common Properties`
 
   * `alwaysShowDetails` (*optional*):
     * This field controls whether the `Board` component shows the details on hover or statically below the icon
@@ -156,18 +157,15 @@ It is important that the chart component be wrapped in an element of some size s
   * `showTrends` (*optional*):
     * This field controls whether trends or rank base coloring is shown in the `Board` component
 
-  * `colors` (*optional*):
-    * This takes a `ThresholdColors` object and allows you to customize the colors used by the `Board` component, they support any of the standard color formats
-
   * `hideColors` (*optional*):
     * This allows you to change the `Board` component to hide the rank based coloring on the icons and instead just use a shade of purple
 
-* Specific to the `Trend` component in addition to the properties for the *...Graph` components:
+## Trend Component Properties
 
   * `showIndividualTrends` (*optional*):
     * Enabling this property will show a line for each individual metric trend in addition to the overall DORA trend
 
-* Specific to the `TrendIndicator` component:
+## TrendIndicator Component Properties
 
   * `trend`:
     * This is a `Trend` enum value that controls what is displayed inside

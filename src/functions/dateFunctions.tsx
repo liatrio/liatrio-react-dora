@@ -1,4 +1,6 @@
-import { millisecondsToDays } from "../constants";
+import { startCase } from "lodash";
+import { millisecondsToDays, millisecondsToMonth } from "../constants";
+import { DoraRecord } from "../interfaces/apiInterfaces";
 
 export const getDateDaysInPast = (daysInPast: number, dateOnly: boolean = true) : Date => {
   let date = new Date();
@@ -34,6 +36,35 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
   } else {
     return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()))
   }
+}
+
+export const getDateRange = (data: DoraRecord[]) : {start: Date, end: Date} => {
+  const defaultStart = getDateDaysInPast(-30000)
+  const defaultEnd = getDateDaysInPast(30000)
+
+  const result = data.reduce(
+    (acc, item) => {
+      if (item.created_at < acc.start) {
+        acc.start = item.created_at;
+      }
+      if (item.created_at > acc.end) {
+        acc.end = item.created_at;
+      }
+      return acc;
+    },
+    { start: defaultStart, end: defaultEnd }
+  )
+
+  const diff = result.end.getTime() - result.start.getTime()
+
+  if(diff < millisecondsToMonth) {
+    const middle = (result.start.getTime() + diff / 2)
+
+    result.start = new Date(middle - millisecondsToMonth / 2)
+    result.end = new Date(middle + millisecondsToMonth / 2)
+  }
+
+  return result
 }
 
 export const subtractHolidays = (diff: number, start: Date, end: Date, holidays: Date[]) : number => {
