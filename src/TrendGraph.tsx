@@ -3,7 +3,7 @@ import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveCont
 import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { defaultGraphEnd, defaultGraphStart, grey, purple, trendName } from './constants'
+import { blue, defaultGraphEnd, defaultGraphStart, green, grey, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
 import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { DoraRank } from './interfaces/metricInterfaces'
@@ -162,13 +162,23 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
           <Area animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
           {props.showIndividualTrends && <>
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={colors[0]} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={colors[1]} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={colors[2]} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={colors[3]} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={orange} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={yellow} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={green} />
+            <Line animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={blue} />
           </>}
         </ComposedChart>
       </ResponsiveContainer>
+      <br/>
+      {props.showIndividualTrends && <>
+        <div style={{width: "75%", display: "flex", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap"}}>
+          <span style={{color: orange}}>&#9643; Deployment Frequency</span>
+          <span style={{color: yellow}}>&#9643; Change Lead Time</span>
+          <span style={{color: green}}>&#9643; Change Failure Rate</span>
+          <span style={{color: blue}}>&#9643; Recover Time</span>
+          <span style={{color: purple}}>&#9643; Overall</span>
+        </div>
+      </>}
     </div>
   )
 }
