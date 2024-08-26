@@ -36,25 +36,43 @@ It is important that the chart component be wrapped in an element of some size s
 
     This is a component to display an At a Glance board for the 4 DORA Metrics and can be setup to either display trends or color coded scores
 
+    ![Board](/screenshots/board_hover.png?raw=true "Board")
+
+    ![Board with details](/screenshots/board_with_details.png?raw=true "Board with details")
+
+    ![Board with trends](/screenshots/board_with_trends.png?raw=true "Board with trends")
+
   * `DeploymentFrequencyGraph`
 
     This is a component to display a graph of your deployments over the specified time period
 
+    ![DeploymentFrequency](/screenshots/deployment_frequency.png?raw=true "DeploymentFrequency")
+
   * `ChangeLeadTimeGraph`
 
     This is a component to display a graph of your change lead time over the specified time period
+    
+    ![Change Lead Time](/screenshots/change_lead_time.png?raw=true "Change Lead Time")
 
   * `ChangeFailureRateGraph`
 
     This is a component to display a graph of your change failure rate over the specified time period
+    
+    ![Change Failure Rate](/screenshots/change_failure_rate.png?raw=true "Change Failure Rate")
 
   * `RecoverTimeGraph`
 
-    This is a component to display a graph of your recover time over the specified time period\
+    This is a component to display a graph of your recover time over the specified time period
+    
+    ![Recover Time](/screenshots/recover_time.png?raw=true "Recover Time")
 
   * `TrendGraph`
 
     This is a component to display an the overall trend of the data supplied
+    
+    ![Overall Trend](/screenshots/trend_overall.png?raw=true "Overall Trend")
+
+    ![Overall Trend with individual Metric Trends](/screenshots/trend_with_metrics.png?raw=true "Overall Trend with individual Metric Trends")
 
   * `TrendIndicator`
 

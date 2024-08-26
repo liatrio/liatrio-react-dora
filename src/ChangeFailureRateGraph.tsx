@@ -97,12 +97,15 @@ const ChangeFailureRateGraph : React.FC<ChartProps> = (props: ChartProps) => {
             right: 40,
             top: 10
           }}
+          barCategoryGap={0}
+          barGap={0}
+          barSize={10}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} type="number" tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type="number" tick={{fill: "#FFFFFF"}} tickFormatter={(tick) => tick * 100 + "%"}/>
           {repositories.map((repo, idx) => (
-            <Bar animationDuration={0} key={repo} className={repo} dataKey={`${repo}.total`} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>
+            <Bar animationDuration={0} key={repo} className={repo} dataKey={`${repo}.total`} fill={colors[idx]} shape={(props: any) => <CustomBar {...props} tooltipId="cfrTooltip" mouseOver={handleMouseOverBar} />}/>
           ))}
         </BarChart>
       </ResponsiveContainer>
