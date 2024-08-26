@@ -1,10 +1,10 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import ChangeFailureRate from '../src/ChangeFailureRate'
 import '@testing-library/jest-dom'
+import ChangeFailureRateGraph from '../src/ChangeFailureRateGraph'
 
 test('renders component', () => {
-    render(<ChangeFailureRate />)
-    const element = screen.getByTestId('ChangeFailureRate')
-    expect(element).toBeInTheDocument()
+  render(<ChangeFailureRateGraph  data={[]} />)
+  const element = screen.getByTestId('ChangeFailureRateGraph')
+  expect(element).toBeInTheDocument()
 })
