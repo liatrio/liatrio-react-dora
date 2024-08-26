@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v2.0.1 (2024-08-26)
+
+### Fix
+
+* fix: fix x axis labels and other bugs (#95)
+
+* fix: don&#39;t penalize teams for not having data for a metric in trends
+
+* fix: fix broken charts
+
+* fix: scenario where df could fail to render ([`166778a`](https://github.com/liatrio/liatrio-react-dora/commit/166778a093abdc1a6052cd7311a3b9c8a1496217))
+
 ## v2.0.0 (2024-08-26)
 
 ### Breaking
