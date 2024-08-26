@@ -104,11 +104,18 @@ export const getStartOfWeek = (date: Date): number => {
   return startOfWeek.getTime()
 }
 
-export const getEndOfWeek = (startOfWeek: Date): number => {
+export const getEndOfWeek = (date: Date): number => {
+  const startOfWeek = new Date(getStartOfWeek(date))
   const endOfWeek = new Date(startOfWeek)
 
   endOfWeek.setDate(startOfWeek.getDate() + 6)
   endOfWeek.setHours(23, 59, 59, 999)
 
   return endOfWeek.getTime()
+}
+
+export const isWeekend = (date: Date) => {
+  const day = date.getDay()
+
+  return day === 0 || day === 6
 }

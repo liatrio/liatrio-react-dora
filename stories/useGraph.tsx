@@ -2,7 +2,7 @@ import { useState } from "react"
 import { getDateRange } from "../src/functions/dateFunctions"
 import { MetricThresholdSet } from "../src/interfaces/propInterfaces"
 import { DoraRecord } from "../src/interfaces/apiInterfaces"
-import { defaultMetricThresholdSet } from "../src/constants"
+import { defaultMetricThresholdSet, millisecondsToDays } from "../src/constants"
 
 export interface GraphProperties {
   data: DoraRecord[]
@@ -25,8 +25,13 @@ export interface GraphProperties {
 }
 
 export const useGraph = (dataSet: any[]) : GraphProperties => {
-  const {start, end} = getDateRange(dataSet[0])
+  let {start, end} = getDateRange(dataSet[0])
 
+  if(end.getTime() - start.getTime() < millisecondsToDays) {
+    start = new Date(start.getTime() - millisecondsToDays)
+    end = new Date(end.getTime() + millisecondsToDays)
+  }
+  
   const [data, setData] = useState<any>(dataSet[0])
   const [loading, setLoading] = useState<boolean>(false)
   const [includeWeekends, setIncludeWeekends] = useState<boolean>(false)
@@ -45,7 +50,12 @@ export const useGraph = (dataSet: any[]) : GraphProperties => {
   const changeDataSet = (event: any) => {
     setData(dataSet[event.target.value])
 
-    const {start, end} = getDateRange(dataSet[event.target.value])
+    let {start, end} = getDateRange(dataSet[event.target.value])
+    console.log(start, end)
+    if(end.getTime() - start.getTime() < millisecondsToDays) {
+      start = new Date(start.getTime() - millisecondsToDays)
+      end = new Date(end.getTime() + millisecondsToDays)
+    }
 
     setGraphStartDate(start)
     setGraphEndDate(end)
@@ -68,13 +78,18 @@ export const useGraph = (dataSet: any[]) : GraphProperties => {
   }
 
   const changeDateRange = (dates: any) => {
-    const [start, end] = dates
+    let [start, end] = dates
 
     setCalendarStartDate(start)
     setCalendarEndDate(end)
 
     if(!start || !end) {
       return
+    }
+
+    if(end.getTime() - start.getTime() < millisecondsToDays) {
+      start = new Date(start.getTime() - millisecondsToDays)
+      end = new Date(end.getTime() + millisecondsToDays)
     }
 
     setGraphStartDate(start)

@@ -1,8 +1,10 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { GraphProperties } from './useGraph'
 import DatePicker from 'react-datepicker'
 import './general.css'
 import "react-datepicker/dist/react-datepicker.css"
+import {v4 as uuidv4} from 'uuid'
+import { isWeekend } from '../src/functions/dateFunctions'
 
 interface Props {
   children: ReactNode,
@@ -10,16 +12,20 @@ interface Props {
   showStandardFields: boolean,
 }
 
-const spliter = (
-  <div className="editorSplit"></div>
-)
-
 const EditPanel : React.FC<Props> = (props: Props) => {
+  const [dataSet, setDataSet] = useState<number>(0)
+
   const children = React.Children.toArray(props.children)
+
+  const makeSplitter = () => {
+    return (
+      <div className="editorSplit"></div>
+    )
+  }
 
   const childrenWithSeparator = children.reduce<React.ReactNode[]>((acc, child, index) => {
     if (index > 0 && index % 2 === 0) {
-      acc.push(spliter)
+      acc.push(makeSplitter())
     }
 
     acc.push(<div className="editorFieldContainer">{child}</div>)
@@ -27,11 +33,19 @@ const EditPanel : React.FC<Props> = (props: Props) => {
     return acc
   }, [])
 
+  const onSelect = (event: any) => {
+    props.args.changeDataSet(event)
+
+    setDataSet(event.target.value)
+  }
+
+  const caledarChange = props.args.changeDateRange
+
   return (<>
     <div className="editor">
       <div className="editorFieldContainer">
         <label>Data Set:</label>
-        <select onChange={props.args.changeDataSet}>
+        <select onChange={onSelect} value={dataSet}>
           <option value={0} selected>Low</option>
           <option value={1}>Medium</option>
           <option value={2}>High</option>
@@ -44,16 +58,16 @@ const EditPanel : React.FC<Props> = (props: Props) => {
           <label>Message:</label>
           <input type='text' value={props.args.message ?? ""} onChange={props.args.changeMessage} />
         </div>
-        {spliter}
+        {makeSplitter()}
         <div className="editorFieldContainer">
           <label>Loading:</label>
           <input type='checkbox' checked={props.args.loading} onChange={props.args.changeLoading} />
         </div>
         <div className="editorFieldContainer">
           <label>Include Weekends:</label>
-          <input type='checkbox' checked={props.args.loading} onChange={props.args.changeIncludeWeekends} />
+          <input type='checkbox' checked={props.args.includeWeekends} onChange={props.args.changeIncludeWeekends} />
         </div>
-        {spliter}
+        {makeSplitter()}
         {/* todo
         holidays
         */}
@@ -63,11 +77,12 @@ const EditPanel : React.FC<Props> = (props: Props) => {
         <label>Graph Date Range:</label>
         <DatePicker
             selected={props.args.calendarStartDate}
-            onChange={props.args.changeDateRange}
+            onChange={caledarChange}
             startDate={props.args.calendarStartDate}
             endDate={props.args.calendarEndDate}
             selectsRange
             popperPlacement="bottom"
+            filterDate={isWeekend}
           />
       </div>
     </div>

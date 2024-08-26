@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { StoryFn, Meta } from '@storybook/react'
 import TrendGraph from '../src/TrendGraph'
 import { ChartProps } from '../src/interfaces/propInterfaces'
 import dataSet from './data'
-import { getDateRange } from '../src/functions/dateFunctions'
+import { getDateRange, isWeekend } from '../src/functions/dateFunctions'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
+import { millisecondsToDays } from '../src/constants'
 
 export default {
   title: 'TrendGraph',
@@ -13,8 +14,14 @@ export default {
 } as Meta
 
 const Template: StoryFn<ChartProps> = () => {
-  const {start, end} = getDateRange(dataSet[0])
+  let {start, end} = getDateRange(dataSet[0])
 
+  if(end.getTime() - start.getTime() < millisecondsToDays) {
+    start = new Date(start.getTime() - millisecondsToDays)
+    end = new Date(end.getTime() + millisecondsToDays)
+  }
+
+  const [dataSetIndex, setDataSetIndex] = useState<number>(0)
   const [data, setData] = useState<any>(dataSet[0])
   const [showIndividualTrends, setShowIndividualTrends] = useState<boolean>(false)
   const [calendarStartDate, setCalendarStartDate] = useState<Date>(start)
@@ -34,6 +41,8 @@ const Template: StoryFn<ChartProps> = () => {
 
     setGraphStartDate(start)
     setGraphEndDate(end)
+
+    setDataSetIndex(event.target.value)
   }
 
   const changeShowMetricTrends = (event: any) => {
@@ -59,8 +68,8 @@ const Template: StoryFn<ChartProps> = () => {
       <div className="editor">
         <div className="editorFieldContainer">
           <label>Data Set:</label>
-          <select onChange={changeDataSet}>
-            <option value={0} selected>Low</option>
+          <select onChange={changeDataSet} value={dataSetIndex}>
+            <option value={0}>Low</option>
             <option value={1}>Medium</option>
             <option value={2}>High</option>
             <option value={3}>Elite</option>
@@ -80,6 +89,7 @@ const Template: StoryFn<ChartProps> = () => {
               endDate={calendarEndDate}
               selectsRange
               popperPlacement="bottom"
+              filterDate={isWeekend}
             />
         </div>
       </div>

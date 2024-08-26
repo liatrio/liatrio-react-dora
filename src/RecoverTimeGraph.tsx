@@ -16,7 +16,7 @@ export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
       return acc
     }
 
-    const date = record.created_at.getTime()
+    const date = (new Date(Date.UTC(record.created_at.getUTCFullYear(), record.created_at.getUTCMonth(), record.created_at.getUTCDate()))).getTime()
     let entry = acc.get(date)
 
     if (!entry) {
