@@ -5,7 +5,7 @@ import { ChartProps } from '../interfaces/propInterfaces'
 import Loading from '../Loading/Loading'
 import noDataImg from '../assets/no_data.png'
 import { getDateDaysInPast } from "./dateFunctions"
-import { defaultGraphEnd, defaultGraphStart, millisecondsToDays } from "../constants"
+import { defaultGraphEnd, defaultGraphStart } from "../constants"
 
 const hslToHex = (h: number, s: number, l: number) => {
   const hue = Math.round(360 * h)

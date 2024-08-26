@@ -8,13 +8,17 @@ const calculateChangeFailureRateAverage = (_: ChartProps, data: DoraRecord[]) : 
   const totalSuccessfulRecords = data.filter(f => f.status === true && !f.failed_at).length
   const totalFailedRecords = data.filter(f => f.status === false || (f.status === true && f.failed_at)).length
 
+  if(totalFailedRecords === 0 && totalSuccessfulRecords === 0) {
+    return NaN
+  }
+
   return (totalFailedRecords / (totalSuccessfulRecords === 0 ? 1 : totalSuccessfulRecords)) * 100
 }
 
 const calculateChangeLeadTimeAverage = (_: ChartProps, data: DoraRecord[]) : number => {
   let totalSuccessfulRecords = 0
   let totalLeadTime = 0
-
+  
   data.forEach(record => {
     if(record.totalCycle === undefined) {
       return
@@ -35,12 +39,12 @@ const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord
   let sorted = data
     .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
 
-  if(sorted.length === 0) {
+  if(sorted.length <= 0) {
     return NaN
   }
 
   if(sorted.length === 1) {
-    return ((props.graphEnd?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.graphStart?.getTime() ?? getDateDaysInPast(31).getTime())) / (1000 * 60 * 60)
+    return ((props.graphEnd?.getTime() ?? getDateDaysInPast(1).getTime()) - (props.graphStart?.getTime() ?? getDateDaysInPast(31).getTime())) / millisecondsToHours
   }
 
   let totalDeployTime = 0
@@ -162,10 +166,11 @@ export const buildDoraStateForPeriod = (props: ChartProps, data: DoraRecord[], s
   const filteredData = [...data].filter((record: DoraRecord) => {
     const createdAt = record.created_at.getTime()
 
-    return createdAt >= start.getTime() && createdAt <= end.getTime()
+    return createdAt >= start.getTime() && createdAt < end.getTime()
   })
 
   Object.keys(state).forEach((metricName) => {
+  console.log(metricName, [...filteredData])
     state[metricName] = calculateMetric(metricName, props, filteredData)
   })
 
@@ -194,7 +199,7 @@ export const buildDoraState = (props: ChartProps, data: DoraRecord[]) : DoraStat
     if(previousNaN && !currentNaN) {
       trend = DoraTrend.Improving
     } else if(!previousNaN && currentNaN) {
-      trend = DoraTrend.Declining
+      trend = DoraTrend.Neutral
     } else {
       const diff = previousAvg - currentAvg
 

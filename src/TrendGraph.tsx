@@ -3,7 +3,7 @@ import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveCont
 import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateTicks } from './functions/chartFunctions'
-import { blue, green, grey, orange, purple, trendName, yellow } from './constants'
+import { blue, green, grey, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
 import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { DoraRank } from './interfaces/metricInterfaces'
@@ -60,14 +60,35 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 
   const graphData: GraphData[] = []
 
-  dates.forEach((key: number) => {
+
+
+  dates.forEach((key: number, index: number) => {
     const data = dataByDate.get(key)
     const start = new Date(key)
     const end = new Date(getEndOfWeek(start))
 
     const state = buildDoraStateForPeriod(props, data!, start, end)
 
-    const averageRank = (state.changeFailureRate.rank + state.changeLeadTime.rank + state.deploymentFrequency.rank + state.recoverTime.rank) / 4
+    const stateObj = state as any;
+
+    let ranksFound = 0
+    let rankTotal = 0
+
+    Object.keys(state as any).forEach((metric: any) => {
+      let rank = stateObj[metric].rank
+
+      if(rank === 0 && index > 0) {
+        rank = (graphData[index - 1] as any)[`${metric}Avg`]
+        stateObj[metric].rank = rank
+      }
+
+      if(rank !== 0) {
+        ranksFound++
+        rankTotal += rank
+      }
+    })
+
+    const averageRank = rankTotal / (ranksFound === 0 ? 1 : ranksFound)
 
     graphData.push({
       overallAvg: averageRank,
@@ -103,7 +124,7 @@ const filterGraphData = (data: GraphData[], start: number, end: number) : GraphD
   const filtered = data.filter((entry: GraphData) => {
     return entry.date >= start && entry.date <= end
   })
-
+  
   return filtered
 }
 
@@ -141,17 +162,33 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
     let newEnd = new Date(dataEndDate)
 
     if(props.graphStart && props.graphEnd) {
-      newStart = new Date(getStartOfWeek(props.graphStart))
-      newEnd = new Date(getEndOfWeek(props.graphEnd))
+      let suppliedStart = getStartOfWeek(props.graphStart)
+      let suppliedEnd = getEndOfWeek(props.graphEnd)
 
-      setStartDate(props.graphStart)
-      setEndDate(props.graphEnd)
+      if(suppliedEnd - suppliedStart < millisecondsToWeeks * 3 - 3) {
+        if(suppliedEnd + millisecondsToWeeks * 2 < dataEndDate.getTime()) {
+          suppliedEnd += millisecondsToWeeks * 2
+        } else if(suppliedStart - millisecondsToWeeks * 2 > dataStartDate.getTime()) {
+          suppliedStart -= millisecondsToWeeks * 2
+        }
+      }
+
+      if(suppliedStart > dataStartDate.getTime()) {
+        newStart = new Date(suppliedStart)
+      }
+
+      if(suppliedEnd < dataEndDate.getTime()) {
+        newEnd = new Date(suppliedEnd)
+      }
+
+      setStartDate(newStart)
+      setEndDate(newEnd)
     } else {
       setStartDate(dataStartDate)
       setEndDate(dataEndDate)
     }
 
-    const filteredData = filterGraphData(allData, newStart.getTime(), newEnd.getTime())
+    const filteredData = filterGraphData(allData, newStart.getTime(), newEnd.getTime() + millisecondsToWeeks)
 
     setGraphData(filteredData)
   }, [props.graphEnd, props.graphStart, allData])
