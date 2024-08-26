@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.0.2 (2024-08-26)
+
+### Fix
+
+* fix: adjust failure rate graph to show bars side by side, update readme (#96) ([`f66fb48`](https://github.com/liatrio/liatrio-react-dora/commit/f66fb489e3e15c9ec53c9c93c1da2149e79dafbb))
+
 ## v2.0.1 (2024-08-26)
 
 ### Fix
