@@ -1,6 +1,15 @@
-import { startCase } from "lodash";
-import { millisecondsToDays, millisecondsToMonth } from "../constants";
+import { millisecondsToDays } from "../constants";
 import { DoraRecord } from "../interfaces/apiInterfaces";
+
+export const stripTime = (date: Date, end?: boolean): Date => {
+  let newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+  if(end) {
+    newDate.setMilliseconds(date.getMilliseconds() - 1)
+  }
+
+  return newDate
+}
 
 export const getDateDaysInPast = (daysInPast: number, dateOnly: boolean = true) : Date => {
   let date = new Date();
@@ -54,15 +63,6 @@ export const getDateRange = (data: DoraRecord[]) : {start: Date, end: Date} => {
     },
     { start: defaultStart, end: defaultEnd }
   )
-
-  const diff = result.end.getTime() - result.start.getTime()
-
-  if(diff < millisecondsToMonth) {
-    const middle = (result.start.getTime() + diff / 2)
-
-    result.start = new Date(middle - millisecondsToMonth / 2)
-    result.end = new Date(middle + millisecondsToMonth / 2)
-  }
 
   return result
 }

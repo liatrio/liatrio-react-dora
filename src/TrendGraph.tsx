@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
-import { buildNonGraphBody, formatDateTicks, generateDistinctColors, generateTicks } from './functions/chartFunctions'
-import { blue, defaultGraphEnd, defaultGraphStart, green, grey, orange, purple, trendName, yellow } from './constants'
+import { buildNonGraphBody, formatDateTicks, generateTicks } from './functions/chartFunctions'
+import { blue, defaultGraphEnd, defaultGraphStart, green, grey, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
-import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
+import { getDateDaysInPast, stripTime, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { DoraRank } from './interfaces/metricInterfaces'
 
 interface GraphData {
@@ -17,23 +17,32 @@ interface GraphData {
   recoverTimeAvg: number
 }
 
-const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
-  let start = getDateDaysInPast(defaultGraphStart)
-  let end = getDateDaysInPast(defaultGraphEnd)
+const defaultGraphData : GraphData = {
+  date: 0,
+  overallAvg: 0,
+  deploymentFrequencyAvg: 0,
+  changeFailureRateAvg: 0,
+  changeLeadTimeAvg: 0,
+  recoverTimeAvg: 0,
+}
 
-  if(!props.data || props.data.length === 0) {
-    return [[], start, end]
-  }
+const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
+  let allStart = getDateDaysInPast(-30000)
+  let allEnd = getDateDaysInPast(30000)
 
   const dataByDate = props.data.reduce((acc: Map<number, DoraRecord[]>, record: DoraRecord) => {
-    if(!record.status) {
-      return acc
-    }
-
     const date = (new Date(Date.UTC(record.created_at.getUTCFullYear(), record.created_at.getUTCMonth(), record.created_at.getUTCDate())))
     const weekStart = getStartOfWeek(date)
 
     let entry = acc.get(weekStart)
+
+    if (record.created_at < allStart) {
+      allStart = record.created_at
+    }
+
+    if (record.created_at > allEnd) {
+      allEnd = record.created_at
+    }
 
     if (!entry) {
       entry = [record]
@@ -48,13 +57,9 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 
   const dates = Array.from(dataByDate.keys())
 
-  if(dates.length === 0) {
-    return [[], start, end]
-  }
-
   dates.sort((left, right) => left - right)
 
-  const result: GraphData[] = []
+  const graphData: GraphData[] = []
 
   dates.forEach((key: number) => {
     const data = dataByDate.get(key)
@@ -65,7 +70,7 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 
     const averageRank = (state.changeFailureRate.rank + state.changeLeadTime.rank + state.deploymentFrequency.rank + state.recoverTime.rank) / 4
 
-    result.push({
+    graphData.push({
       overallAvg: averageRank,
       changeFailureRateAvg: state.changeFailureRate.rank,
       deploymentFrequencyAvg: state.deploymentFrequency.rank,
@@ -75,22 +80,10 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
     })
   })
 
-  if(dates.length === 1) {
-    start = new Date(dates[0])
-    end = new Date(getEndOfWeek(new Date(dates[0])))
+  graphData[0].date = allStart.getTime()
+  graphData[graphData.length - 1].date = allEnd.getTime()
 
-    const lastRecord = {...result[0]}
-
-    lastRecord.date = end.getTime()
-
-    result.push(lastRecord)
-  } else {
-    start = new Date(dates[0])
-    end = new Date(getEndOfWeek(new Date(dates[dates.length - 1])))
-    result[result.length - 1].date = end.getTime()
-  }
-
-  return [result, start, end]
+  return [graphData, allStart, allEnd]
 }
 
 const formatRankTicks = (tick: any): string => {
@@ -107,16 +100,28 @@ const formatRankTicks = (tick: any): string => {
   }
 }
 
+const filterGraphData = (data: GraphData[], start: number, end: number) : GraphData[] => {
+  const filtered = data.filter((entry: GraphData) => {
+    return entry.date >= start && entry.date <= end
+  })
+
+  return filtered
+}
+
 const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
   const [graphData, setGraphData] = useState<GraphData[]>([])
+  const [allData, setAllData] = useState<GraphData[]>([])
   const [noData, setNoData] = useState<boolean>(false)
-  const [startDate, setStartDate] = useState<Date>(getDateDaysInPast(defaultGraphStart))
-  const [endDate, setEndDate] = useState<Date>(getDateDaysInPast(defaultGraphEnd))
+  const [startDate, setStartDate] = useState<Date>(new Date())
+  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [dataStartDate, setDataStartDate] = useState<Date>(new Date())
+  const [dataEndDate, setDataEndDate] = useState<Date>(new Date())
 
   useEffect(() => {
     if(!props.data || props.data.length === 0) {
         setNoData(true)
         setGraphData([])
+        setAllData([])
         return
     }
 
@@ -124,18 +129,49 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
 
     const [composedData, start, end] = composeGraphData(props)
 
-    setGraphData(composedData)
-    setStartDate(start)
-    setEndDate(end)
+    setDataStartDate(start)
+    setDataEndDate(end)
+    setAllData(composedData)
   }, [props.data])
 
-  const nonGraphBody = buildNonGraphBody(props, noData, trendName)
+  useEffect(() => {
+    if(allData.length === 0) {
+      return
+    }
+    console.log("=========")
+    console.log(props.graphStart, props.graphEnd)
+    console.log(dataStartDate, dataEndDate)
+    let newStart = dataStartDate
+    let newEnd = dataEndDate
 
+    if(props.graphStart && props.graphEnd) {
+      newStart = new Date(getStartOfWeek(props.graphStart))
+      newEnd = new Date(getEndOfWeek(props.graphEnd))
+
+      setStartDate(stripTime(props.graphStart))
+      setEndDate(stripTime(props.graphEnd))
+    } else {
+      setStartDate(dataStartDate)
+      setEndDate(dataEndDate)
+    }
+
+    const filteredData = filterGraphData(allData, newStart.getTime(), newEnd.getTime())
+
+    setGraphData(filteredData)
+  }, [props.graphEnd, props.graphStart, allData])
+
+  const nonGraphBody = buildNonGraphBody(props, noData, trendName)
+  
   if(nonGraphBody) {
     return nonGraphBody
+  } else if(graphData.length <= 1) {
+    return (
+      <div data-testid={trendName} style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+        <span style={{color: "white"}}>Not Enough Data to calculate a Trend</span>
+      </div>
+    )
   }
-
-  const colors = generateDistinctColors(4)
+  
   const ticks = generateTicks(startDate, endDate, 5)
 
   return (
