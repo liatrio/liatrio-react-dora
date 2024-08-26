@@ -1,5 +1,63 @@
 # CHANGELOG
 
+## v2.0.0 (2024-08-26)
+
+### Breaking
+
+* feat!: Add Trend Chart (#91)
+
+* fix!: major refactor to clean up code
+
+* chore: update readme
+
+* fix!: more refactoring
+
+* chore: update readme
+
+* chore: update readme
+
+* fix: filter the buildDoraState by the dates supplied in props
+
+* chore: add trend files
+
+* feat: Update Board to support showing trends instead of scores
+
+* chore: fix leading spacing in some files
+
+* feat: Add Trend Chart
+
+* fix: adjust trends to always end on a week end
+
+* chore: update stories to allow switching out the data viewed
+
+* fix: update readme, rename some components &amp; types to be more clear
+
+* chore: cleanup code
+
+* chore: update tests
+
+* fix: update storybook stories to be editable in the browser
+
+* fix: update story book to be more streamlined and have editor options
+
+* chore: get rid of the addon toolbar in storybook
+
+* chore: make a storybook ci that doesn&#39;t open the browser
+
+* feat: add legend to trend graph
+
+* fix: adjusting trend time display
+
+* fix: found the error with the timing
+
+* fix: make lines thicker, remove logging, simplify a few things
+
+* fix: simplify these
+
+---------
+
+Co-authored-by: Wolftousen &lt;eliot.t.eikenberry@perilforge.com&gt; ([`ab5d1f2`](https://github.com/liatrio/liatrio-react-dora/commit/ab5d1f2a66014f0e060235c0b201e290b95e23d9))
+
 ## v1.0.37 (2024-08-21)
 
 ### Fix
