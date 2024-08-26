@@ -48,23 +48,19 @@ export const dateToUtc = (date: Date, dateOnly: boolean = true) => {
 }
 
 export const getDateRange = (data: DoraRecord[]) : {start: Date, end: Date} => {
-  const defaultStart = getDateDaysInPast(-30000)
-  const defaultEnd = getDateDaysInPast(30000)
+  let start = getDateDaysInPast(-30000)
+  let end = getDateDaysInPast(30000)
 
-  const result = data.reduce(
-    (acc, item) => {
-      if (item.created_at < acc.start) {
-        acc.start = item.created_at;
-      }
-      if (item.created_at > acc.end) {
-        acc.end = item.created_at;
-      }
-      return acc;
-    },
-    { start: defaultStart, end: defaultEnd }
-  )
+  data.forEach((value: DoraRecord) => {
+    if(value.created_at.getTime() < start.getTime()) {
+      start = value.created_at
+    }
+    if(value.created_at.getTime() > end.getTime()) {
+      end = value.created_at
+    }
+  })
 
-  return result
+  return {start, end}
 }
 
 export const subtractHolidays = (diff: number, start: Date, end: Date, holidays: Date[]) : number => {
@@ -98,18 +94,19 @@ export const subtractWeekends = (diff: number, start: Date, end: Date) : number 
 }
 
 export const getStartOfWeek = (date: Date): number => {
+  date = new Date(date)
   const day = date.getDay()
   const diff = date.getDate() - day
   const startOfWeek = new Date(date.setDate(diff))
-  
+
   startOfWeek.setHours(0, 0, 0, 0)
-  
+
   return startOfWeek.getTime()
 }
 
 export const getEndOfWeek = (startOfWeek: Date): number => {
   const endOfWeek = new Date(startOfWeek)
-  
+
   endOfWeek.setDate(startOfWeek.getDate() + 6)
   endOfWeek.setHours(23, 59, 59, 999)
 

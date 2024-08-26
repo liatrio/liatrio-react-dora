@@ -24,11 +24,11 @@ const Template: StoryFn<ChartProps> = () => {
 
   const changeDataSet = (event: any) => {
     const data = dataSet[event.target.value]
-    
-    setData(data)
-    
-    const {start, end} = getDateRange(data)
 
+    setData(data)
+
+    const {start, end} = getDateRange(data)
+    console.log(new Date(start), new Date(end))
     setCalendarStartDate(start)
     setCalendarEndDate(end)
 

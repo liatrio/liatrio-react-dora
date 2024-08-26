@@ -128,7 +128,7 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
     setNoData(false)
 
     const [composedData, start, end] = composeGraphData(props)
-
+console.log("Data Range:", start, end)
     setDataStartDate(start)
     setDataEndDate(end)
     setAllData(composedData)
@@ -138,18 +138,17 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
     if(allData.length === 0) {
       return
     }
-    console.log("=========")
-    console.log(props.graphStart, props.graphEnd)
-    console.log(dataStartDate, dataEndDate)
-    let newStart = dataStartDate
-    let newEnd = dataEndDate
+
+    let newStart = new Date(dataStartDate)
+    let newEnd = new Date(dataEndDate)
 
     if(props.graphStart && props.graphEnd) {
       newStart = new Date(getStartOfWeek(props.graphStart))
       newEnd = new Date(getEndOfWeek(props.graphEnd))
-
+console.log("New Range:", newStart, newEnd)
       setStartDate(stripTime(props.graphStart))
       setEndDate(stripTime(props.graphEnd))
+      console.log("New Display:", props.graphStart, props.graphEnd)
     } else {
       setStartDate(dataStartDate)
       setEndDate(dataEndDate)
@@ -161,7 +160,7 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
   }, [props.graphEnd, props.graphStart, allData])
 
   const nonGraphBody = buildNonGraphBody(props, noData, trendName)
-  
+
   if(nonGraphBody) {
     return nonGraphBody
   } else if(graphData.length <= 1) {
@@ -171,7 +170,7 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
       </div>
     )
   }
-  
+
   const ticks = generateTicks(startDate, endDate, 5)
 
   return (
