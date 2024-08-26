@@ -58,12 +58,6 @@ const DeploymentFrequencyGraph : React.FC<ChartProps> = (props: ChartProps) => {
   const ticks = generateTicks(startDate, endDate, 5)
   const maxBarWidth = (1 / ((endDate.getTime() - startDate.getTime()) / millisecondsToDays)) * 33 + "%"
 
-  const nonGraphBody = buildNonGraphBody(props, noData, deploymentFrequencyName)
-
-  if(nonGraphBody) {
-    return nonGraphBody
-  }
-
   useEffect(() => {
     let max = 0
 
@@ -83,6 +77,12 @@ const DeploymentFrequencyGraph : React.FC<ChartProps> = (props: ChartProps) => {
 
     setMaxDeploys(max)
   }, [graphData])
+
+  const nonGraphBody = buildNonGraphBody(props, noData, deploymentFrequencyName)
+
+  if(nonGraphBody) {
+    return nonGraphBody
+  }
 
   const handleMouseOverBar = (event: any, payload: any) => {
     const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
