@@ -3,9 +3,9 @@ import { ComposedChart , Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveCont
 import { TrendProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateTicks } from './functions/chartFunctions'
-import { blue, defaultGraphEnd, defaultGraphStart, green, grey, millisecondsToWeeks, orange, purple, trendName, yellow } from './constants'
+import { blue, green, grey, orange, purple, trendName, yellow } from './constants'
 import { buildDoraStateForPeriod } from './functions/metricFunctions'
-import { getDateDaysInPast, stripTime, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
+import { getDateDaysInPast, getEndOfWeek, getStartOfWeek } from './functions/dateFunctions'
 import { DoraRank } from './interfaces/metricInterfaces'
 
 interface GraphData {
@@ -31,10 +31,9 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
   let allEnd = getDateDaysInPast(30000)
 
   const dataByDate = props.data.reduce((acc: Map<number, DoraRecord[]>, record: DoraRecord) => {
-    const date = (new Date(Date.UTC(record.created_at.getUTCFullYear(), record.created_at.getUTCMonth(), record.created_at.getUTCDate())))
-    const weekStart = getStartOfWeek(date)
+    let time = getStartOfWeek(record.created_at)
 
-    let entry = acc.get(weekStart)
+    let entry = acc.get(time)
 
     if (record.created_at < allStart) {
       allStart = record.created_at
@@ -47,7 +46,7 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
     if (!entry) {
       entry = [record]
 
-      acc.set(weekStart, entry)
+      acc.set(time, entry)
     } else {
       entry.push(record)
     }
@@ -87,17 +86,17 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 }
 
 const formatRankTicks = (tick: any): string => {
-  if(tick === DoraRank.unknown) {
-    return ""
-  } else if(tick === DoraRank.elite) {
+  if(tick === DoraRank.elite) {
     return "Elite"
   } else if(tick === DoraRank.high) {
     return "High"
   } else if(tick === DoraRank.medium) {
     return "Medium"
-  } else {
+  } else if(tick === DoraRank.low) {
     return "Low"
   }
+
+  return ""
 }
 
 const filterGraphData = (data: GraphData[], start: number, end: number) : GraphData[] => {
@@ -128,7 +127,6 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
     setNoData(false)
 
     const [composedData, start, end] = composeGraphData(props)
-console.log("Data Range:", start, end)
     setDataStartDate(start)
     setDataEndDate(end)
     setAllData(composedData)
@@ -145,10 +143,9 @@ console.log("Data Range:", start, end)
     if(props.graphStart && props.graphEnd) {
       newStart = new Date(getStartOfWeek(props.graphStart))
       newEnd = new Date(getEndOfWeek(props.graphEnd))
-console.log("New Range:", newStart, newEnd)
-      setStartDate(stripTime(props.graphStart))
-      setEndDate(stripTime(props.graphEnd))
-      console.log("New Display:", props.graphStart, props.graphEnd)
+
+      setStartDate(props.graphStart)
+      setEndDate(props.graphEnd)
     } else {
       setStartDate(dataStartDate)
       setEndDate(dataEndDate)
@@ -195,12 +192,12 @@ console.log("New Range:", newStart, newEnd)
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke='#FFFFFF44' />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
-          <Area animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
+          <Area strokeWidth={2} animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
           {props.showIndividualTrends && <>
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={orange} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={yellow} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={green} />
-            <Line animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={blue} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={orange} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={yellow} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={green} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={blue} />
           </>}
         </ComposedChart>
       </ResponsiveContainer>

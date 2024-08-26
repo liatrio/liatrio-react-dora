@@ -11,7 +11,6 @@ export const recordReviver = (key: string, value: any) => {
 }
 
 export const expandFetchedData = (props: FetchProps, data: DoraRecord[]) => {
-  console.log("===================================")
   data.forEach((record) => {
     if(record.merged_at) {
       const mergedAt = record.merged_at
@@ -49,7 +48,7 @@ export const expandFetchedData = (props: FetchProps, data: DoraRecord[]) => {
 
       record.recoverTime = parseFloat(((fixedAt.getTime() - failedAt) / millisecondsToHours).toFixed(2))
     }
-    
+
     record.created_at = record.created_at ? utcDateToLocal(record.created_at, false) : record.created_at
     record.merged_at = record.merged_at ? utcDateToLocal(record.merged_at, false) : record.merged_at
     record.fixed_at = record.failed_at ? utcDateToLocal(fixedAt, false) : fixedAt

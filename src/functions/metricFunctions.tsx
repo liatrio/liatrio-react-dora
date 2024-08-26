@@ -1,5 +1,5 @@
 import { DoraRecord } from "../interfaces/apiInterfaces"
-import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, orange, recoverTimeName, yellow } from "../constants"
+import { blue, changeFailureRateName, changeLeadTimeName, defaultDoraMetric, defaultDoraState, defaultGraphEnd, defaultGraphStart, defaultMetricThresholdSet, deploymentFrequencyName, green, grey, millisecondsToDays, millisecondsToHours, orange, recoverTimeName, yellow } from "../constants"
 import { getDateDaysInPast, subtractHolidays, subtractWeekends } from "./dateFunctions"
 import { BoardProps, ChartProps, MetricThresholds, ThresholdColors } from "../interfaces/propInterfaces"
 import { DoraMetric, DoraState, DoraRank, DoraTrend } from "../interfaces/metricInterfaces"
@@ -61,7 +61,7 @@ const calculateDeploymentFrequencyAverage = (props: ChartProps, data: DoraRecord
     totalDeployTime += diff
   }
 
-  let avgDeployTime = (totalDeployTime / sorted.length) / (1000 * 60 * 60)
+  let avgDeployTime = (totalDeployTime / sorted.length) / millisecondsToHours
 
   return avgDeployTime
 }
