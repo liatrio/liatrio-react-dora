@@ -67,7 +67,21 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 
     const state = buildDoraStateForPeriod(props, data!, start, end)
 
-    const averageRank = (state.changeFailureRate.rank + state.changeLeadTime.rank + state.deploymentFrequency.rank + state.recoverTime.rank) / 4
+    const stateObj = state as any;
+
+    let ranksFound = 0
+    let rankTotal = 0
+
+    Object.keys(state as any).forEach((metric: any) => {
+      const rank = stateObj[metric].rank
+
+      if(rank !== 0) {
+        ranksFound++
+        rankTotal += rank
+      }
+    })
+
+    const averageRank = rankTotal / (ranksFound === 0 ? 1 : ranksFound)
 
     graphData.push({
       overallAvg: averageRank,
@@ -194,10 +208,10 @@ const TrendGraph : React.FC<TrendProps> = (props: TrendProps) => {
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, 4]} tickFormatter={formatRankTicks}/>
           <Area strokeWidth={2} animationDuration={0} type="monotone" dataKey="overallAvg" stroke={purple} fillOpacity={1} fill="url(#colorAvg)" />
           {props.showIndividualTrends && <>
-            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="deploymentFrequencyAvg" stroke={orange} />
-            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="changeLeadTimeAvg" stroke={yellow} />
-            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="changeFailureRateAvg" stroke={green} />
-            <Line strokeWidth={2} animationDuration={0} type="monotone" dot={false} dataKey="recoverTimeAvg" stroke={blue} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dataKey="deploymentFrequencyAvg" stroke={orange} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dataKey="changeLeadTimeAvg" stroke={yellow} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dataKey="changeFailureRateAvg" stroke={green} />
+            <Line strokeWidth={2} animationDuration={0} type="monotone" dataKey="recoverTimeAvg" stroke={blue} />
           </>}
         </ComposedChart>
       </ResponsiveContainer>
