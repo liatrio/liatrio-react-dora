@@ -1,13 +1,16 @@
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
 
 interface Props {
-  color?: string
-  scale?: number
+  color?: string;
+  scale?: number;
 }
 
-const ChangeLeadTimeIcon : React.FC<Props> = (props: Props) => {
-  const color = useMemo(() => props.color ? props.color : '#000000', [props.color])
-  const scale = props.scale ? props.scale : 1
+const ChangeLeadTimeIcon: React.FC<Props> = (props: Props) => {
+  const color = useMemo(
+    () => (props.color ? props.color : '#000000'),
+    [props.color],
+  );
+  const scale = props.scale ? props.scale : 1;
 
   return (
     <svg
@@ -19,7 +22,7 @@ const ChangeLeadTimeIcon : React.FC<Props> = (props: Props) => {
       transform={`scale(${scale} ${scale})`}
     >
       <g
-        style={{fill: "none"}}
+        style={{ fill: 'none' }}
         transform="matrix(2.125,0,0,2.125,-0.07661427,-0.03851964)"
       >
         <path
@@ -31,7 +34,7 @@ const ChangeLeadTimeIcon : React.FC<Props> = (props: Props) => {
         />
       </g>
     </svg>
-  )
-}
+  );
+};
 
-export default ChangeLeadTimeIcon
+export default ChangeLeadTimeIcon;

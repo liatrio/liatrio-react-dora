@@ -41,7 +41,6 @@ jobs:
 
       - name: npm tsc
         run: npm run tsc:full
-
 #  test:
 #    name: Unit Tests
 #    runs-on: ubuntu-latest

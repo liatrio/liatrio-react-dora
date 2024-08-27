@@ -1,12 +1,12 @@
-name: "Release"
+name: 'Release'
 on:
   push:
     branches:
       - main
     paths-ignore:
-      - "LICENSE"
-      - "CHANGELOG.md"
-      - "manifests/base/kustomization.yaml"
+      - 'LICENSE'
+      - 'CHANGELOG.md'
+      - 'manifests/base/kustomization.yaml'
     tags-ignore:
       - '*'
 
