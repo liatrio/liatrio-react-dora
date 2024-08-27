@@ -7,9 +7,20 @@ import { deploymentFrequencyName, millisecondsToDays } from './constants'
 import { ChartProps } from './interfaces/propInterfaces'
 import { DoraRecord } from './interfaces/apiInterfaces'
 import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from './functions/chartFunctions'
+import {v4 as uuidv4} from 'uuid'
+
+interface ProcessRepository {
+  count: number
+  urls: string[]
+}
+
+interface ProcessData {
+  date: number
+  repositories: Map<string, ProcessRepository>
+}
 
 export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
-  const reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
+  const reduced = data.reduce((acc: Map<number, ProcessData>, record: DoraRecord) => {
     if(!record.status) {
       return acc
     }
@@ -19,13 +30,14 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
 
     if (!entry) {
       entry = {
-        date: date
+        date: date,
+        repositories: new Map<string, ProcessRepository>()
       }
 
       acc.set(date, entry)
     }
 
-    let repo = entry[record.repository]
+    let repo = entry.repositories.get(record.repository)
 
     if(!repo) {
       repo = {
@@ -33,14 +45,14 @@ export const composeGraphData = (_: ChartProps, data: DoraRecord[]) : any[] => {
         urls: [record.deploy_url]
       }
 
-      entry[record.repository] = repo
+      entry.repositories.set(record.repository, repo)
     } else {
       repo.count++
       repo.urls.push(record.deploy_url)
     }
 
     return acc
-  }, new Map<number, DoraRecord[]>())
+  }, new Map<number, ProcessData>())
 
   let result = Array.from(reduced.values())
 
@@ -84,9 +96,38 @@ const DeploymentFrequencyGraph : React.FC<ChartProps> = (props: ChartProps) => {
     return nonGraphBody
   }
 
-  const handleMouseOverBar = (event: any, payload: any) => {
-    const repository = event.target.parentNode.parentNode.parentNode.parentNode.className.baseVal.split(' ').filter((item: any) => !item.includes('recharts'))[0]
-    setTooltipContent(<TooltipContent type={deploymentFrequencyName} repository={repository} payload={[payload]} />)
+  const handleMouseOverBar = (event: any, payload: ProcessData, repository: string) => {
+    const repositoryData = payload.repositories.get(repository)
+
+    if(!repositoryData) {
+      return
+    }
+
+    const urls = repositoryData.urls.slice(0, 5)
+    const dots = repositoryData.urls.length > 5 ? '...' : ''
+
+    const body = (<>
+      <p>{repository}: 
+        {urls.map((url: string, index: number) => {
+          return <a key={uuidv4()} className="toolTipLink" href={url} target="_blank">{index + 1}</a>
+        })}{dots}
+      </p>
+    </>)
+
+    const date = new Date(payload.date).toISOString().split("T")[0]
+    const title = (<h3>{date}</h3>)
+    
+    setTooltipContent(<TooltipContent body={body} title={title}/>)
+  }
+
+  const dataKeyFunc = (obj: ProcessData, repository: string) : any => {
+    const repositoryData = obj.repositories.get(repository)
+    
+    if(!repositoryData) {
+      return 0
+    }
+
+    return repositoryData.count
   }
 
   return (
@@ -105,10 +146,19 @@ const DeploymentFrequencyGraph : React.FC<ChartProps> = (props: ChartProps) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis padding={{left: 9, right: 9}} dataKey="date" tickSize={15} interval={0} type={"number"} tick={{fill: "#FFFFFF"}} ticks={ticks} domain={[startDate.getTime(), endDate.getTime()]} tickFormatter={formatDateTicks} />
           <YAxis type={"number"} tick={{fill: "#FFFFFF"}} allowDecimals={false} domain={[0, maxDeploys]}/>
-          {repositories.map((repo, idx) => {
-            const key = `${repo}.count`
+          {repositories.map((repository, idx) => {
             return (
-              <Bar animationDuration={0} className={repo} key={idx} dataKey={key} stackId="a" fill={colors[idx]} barSize={maxBarWidth} shape={(props: any) => <CustomBar {...props} tooltipId="dfTooltip" mouseOver={handleMouseOverBar} />}/>
+              <Bar
+                animationDuration={0}
+                key={repository}
+                dataKey={(obj: ProcessData) => dataKeyFunc(obj, repository)}
+                stackId="a"
+                fill={colors[idx]}
+                barSize={maxBarWidth}
+                shape={(props: any) =>
+                  <CustomBar {...props} tooltipId="dfTooltip" mouseOver={(event: any, payload: ProcessData) => handleMouseOverBar(event, payload, repository)} />
+                }
+              />
             )
           })}
         </BarChart>

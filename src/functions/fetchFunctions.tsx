@@ -27,18 +27,6 @@ export const expandFetchedData = (props: FetchProps, data: DoraRecord[]) => {
       }
 
       record.totalCycle = diff / millisecondsToHours
-      record.totalCycleHrs = record.totalCycle
-      record.totalCycleDays = record.totalCycle / 24
-      record.totalCycleMins = record.totalCycle * 60
-      record.cycleLabel = 'hrs'
-
-      if(record.totalCycle > 48) {
-        record.cycleLabel = 'days'
-      } else if(record.totalCycle < 1) {
-        record.cycleLabel = 'mins'
-      }
-
-      record.start = (new Date(record.merged_at.toISOString().split('T')[0])).getTime()
     }
 
     const fixedAt = record.fixed_at ? record.fixed_at : getDateDaysInPastUtc(0)

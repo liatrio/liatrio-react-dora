@@ -108,16 +108,16 @@ const composeGraphData = (props: TrendProps) : [GraphData[], Date, Date] => {
 
 const formatRankTicks = (tick: any): string => {
   if(tick === DoraRank.elite) {
-    return "Elite"
+    return ""
   } else if(tick === DoraRank.high) {
-    return "High"
+    return "Elite"
   } else if(tick === DoraRank.medium) {
-    return "Medium"
+    return "High"
   } else if(tick === DoraRank.low) {
-    return "Low"
+    return "Medium"
   }
 
-  return ""
+  return "Low"
 }
 
 const filterGraphData = (data: GraphData[], start: number, end: number) : GraphData[] => {

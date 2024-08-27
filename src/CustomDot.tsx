@@ -4,24 +4,25 @@ import { DotProps } from 'recharts';
 interface CustomDotProps extends DotProps {
   payload: any
   tooltipId: string
-  mouseOver: (event: any, payload: any) => void
-  className: string
+  mouseOver: (event: any, payload: any, repository: string) => void
+  repository: string
 }
 
-const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, payload, mouseOver, tooltipId, className}) => {
-  if(!Object.keys(payload).includes(className)) {
-    return (<></>)
-  }
+const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, fill, repository, payload, mouseOver, tooltipId}) => {
+  const repositoryData = payload.repositories.get(repository)
 
+  if(!repositoryData) {
+    return
+  }
+  
   const mOver = (e: any) => {
     if(mouseOver) {
-      mouseOver(e, payload)
+      mouseOver(e, payload, repository)
     }
   }
 
   return (
     <circle
-      className={className}
       cx={cx}
       cy={cy}
       r={4}

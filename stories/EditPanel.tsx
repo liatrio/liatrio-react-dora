@@ -28,7 +28,7 @@ const EditPanel : React.FC<Props> = (props: Props) => {
       acc.push(makeSplitter())
     }
 
-    acc.push(<div className="editorFieldContainer">{child}</div>)
+    acc.push(<div key={uuidv4()} className="editorFieldContainer">{child}</div>)
 
     return acc
   }, [])
@@ -46,7 +46,7 @@ const EditPanel : React.FC<Props> = (props: Props) => {
       <div className="editorFieldContainer">
         <label>Data Set:</label>
         <select onChange={onSelect} value={dataSet}>
-          <option value={0} selected>Low</option>
+          <option value={0}>Low</option>
           <option value={1}>Medium</option>
           <option value={2}>High</option>
           <option value={3}>Elite</option>
