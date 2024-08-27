@@ -10,14 +10,9 @@ export interface DoraRecord {
   created_at: Date
   fixed_at?: Date
   totalCycle: number
-  totalCycleHrs: number
-  totalCycleDays: number
-  totalCycleMins: number
-  cycleLabel: string
-  cycleType: string
-  start: number
   recoverTime: number
   deploy_url: string
-  fixed_url: string
+  fixed_url?: string
   change_url: string
+  issue_url?: string
 }

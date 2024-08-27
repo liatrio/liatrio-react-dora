@@ -9,9 +9,22 @@ import { DoraRecord } from "./interfaces/apiInterfaces"
 import { buildNonGraphBody, formatDateTicks, generateTicks, useSharedLogic } from "./functions/chartFunctions"
 import { buildDoraState } from "./functions/metricFunctions"
 import { recoverTimeName } from "./constants"
+import {v4 as uuidv4} from 'uuid'
+
+interface ProcessRepository {
+  count: number
+  totalTime: number
+  avgTime: number
+  avgLabel: string
+}
+
+interface ProcessData {
+  date: number
+  repositories: Map<string, ProcessRepository>
+}
 
 export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
-  let reduced = data.reduce((acc: Map<number, any>, record: DoraRecord) => {
+  let reduced = data.reduce((acc: Map<number, ProcessData>, record: DoraRecord) => {
     if (record.recoverTime === undefined) {
       return acc
     }
@@ -22,30 +35,29 @@ export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
     if (!entry) {
       entry = {
         date: date,
+        repositories: new Map<string, ProcessRepository>()
       }
 
       acc.set(date, entry)
     }
 
-    let payload = entry[record.repository]
+    let payload = entry.repositories.get(record.repository)
 
     if (!payload) {
-      entry[record.repository] = {
+      entry.repositories.set(record.repository, {
         count: 1,
         totalTime: record.recoverTime,
         avgTime: record.recoverTime,
-        records: [record],
         avgLabel: " hrs",
-      }
+      })
     } else {
       payload.count++
       payload.totalTime += record.recoverTime
       payload.avgTime += payload.totalTime / payload.count
-      payload.records.push(record)
     }
 
     return acc
-  }, new Map<number, DoraRecord[]>())
+  }, new Map<number, ProcessData>())
 
   let result = Array.from(reduced.values())
 
@@ -55,62 +67,36 @@ export const composeGraphData = (props: ChartProps, data: DoraRecord[]) => {
 }
 
 const RecoverTimeGraph: React.FC<ChartProps> = (props: ChartProps) => {
-  const [graphData, setGraphData] = useState<any[]>([])
+  const [graphData, setGraphData] = useState<ProcessData[]>([])
   const [tooltipContent, setTooltipContent] = useState<any>(null)
   const [usedRepositories, setUsedRepositories] = useState<string[]>([])
   const [yLabel, setYLabel] = useState<any>(" hrs")
 
-  const postCompose = (componentProps: ChartProps, data: DoraRecord[], composedData: any) => {
+  const postCompose = (componentProps: ChartProps, data: DoraRecord[], composedData: ProcessData[]) => {
     const state = buildDoraState(componentProps, data)
 
     const repositories: string[] = []
+    let multiplier = 1
+    let label = " hrs"
 
     if (state.recoverTime.average > 48) {
-      composedData.forEach((entry: any) => {
-        Object.keys(entry).map((key: any) => {
-          if (key !== "date") {
-            repositories.push(key)
-
-            let payload = entry[key]
-
-            payload.avgTimeHrs = payload.avgTime
-            payload.avgTimeDays = payload.avgTime / 24
-            payload.avgTimeMins = payload.avgTime * 60
-            payload.avgTime /= 24
-            payload.avgLabel = " days"
-          }
-        })
-      })
-
-      setYLabel(" days")
+      multiplier = 1/24
+      label = " days"
     } else if (state.recoverTime.average < 1) {
-      composedData.forEach((entry: any) => {
-        Object.keys(entry).map((key: any) => {
-          if (key !== "date") {
-            repositories.push(key)
-
-            let payload = entry[key]
-
-            payload.avgTimeHrs = payload.avgTime
-            payload.avgTimeDays = payload.avgTime / 24
-            payload.avgTimeMins = payload.avgTime * 60
-            payload.avgTime *= 60
-            payload.avgLabel = " mins"
-          }
-        })
-      })
-
-      setYLabel(" mins")
-    } else {
-      setYLabel(" hrs")
-      composedData.forEach((entry: any) => {
-        Object.keys(entry).map((key: any) => {
-          if (key !== "date") {
-            repositories.push(key)
-          }
-        })
-      })
+      multiplier = 60
+      label = " mins"
     }
+
+    composedData.forEach((entry: ProcessData) => {
+      entry.repositories.forEach((repositoryData: ProcessRepository, key: string) => {
+        repositories.push(key)
+        
+        repositoryData.avgTime *= multiplier
+        repositoryData.avgLabel = " days"
+      })
+    })
+
+    setYLabel(label)
 
     setUsedRepositories(Array.from(new Set(repositories)))
   }
@@ -125,9 +111,31 @@ const RecoverTimeGraph: React.FC<ChartProps> = (props: ChartProps) => {
       return nonGraphBody
   }
 
-  const handleMouseOverDot = (event: any, payload: any) => {
-    const repository = event.target.className.baseVal
-    setTooltipContent(<TooltipContent repository={repository} type={recoverTimeName} payload={[payload]} />)
+  const handleMouseOverDot = (event: any, payload: ProcessData, repository: string) => {
+    const repositoryData = payload.repositories.get(repository)
+
+    if(!repositoryData) {
+      return
+    }
+
+    const body = (<>
+      <p key={uuidv4()}>{repository}: {repositoryData.avgTime.toFixed(2)} {repositoryData.avgLabel}</p>
+    </>)
+
+    const date = new Date(payload.date).toISOString().split("T")[0]
+    const title = (<h3>{date}</h3>)
+    
+    setTooltipContent(<TooltipContent body={body} title={title}/>)
+  }
+
+  const dataKeyFunc = (obj: ProcessData, repository: string) : any => {
+    const repositoryData = obj.repositories.get(repository)
+    
+    if(!repositoryData) {
+      return NaN
+    }
+
+    return repositoryData.avgTime
   }
 
   return (
@@ -154,18 +162,17 @@ const RecoverTimeGraph: React.FC<ChartProps> = (props: ChartProps) => {
             tickFormatter={formatDateTicks}
           />
           <YAxis name="Time" unit={yLabel} tick={{ fill: "#FFFFFF" }} />
-          {usedRepositories.map((repo, idx) => (
+          {usedRepositories.map((repository, idx) => (
             <Line
               connectNulls={true}
               type="monotone"
               animationDuration={0}
-              key={repo}
-              dataKey={`${repo}.avgTime`}
+              key={repository}
+              dataKey={(obj: ProcessData) => dataKeyFunc(obj, repository)}
               fill={colors[idx]}
-              className={repo}
               stroke={colors[idx]}
-              dot={(props: any) => <CustomDot {...props} className={repo} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}
-              activeDot={(props: any) => <CustomDot {...props} className={repo} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}
+              dot={(props: any) => <CustomDot {...props} repository={repository} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}
+              activeDot={(props: any) => <CustomDot {...props} repository={repository} tooltipId="rtTooltip" mouseOver={handleMouseOverDot} />}
             />
           ))}
         </LineChart>

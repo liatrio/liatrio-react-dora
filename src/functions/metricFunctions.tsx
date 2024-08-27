@@ -170,7 +170,6 @@ export const buildDoraStateForPeriod = (props: ChartProps, data: DoraRecord[], s
   })
 
   Object.keys(state).forEach((metricName) => {
-  console.log(metricName, [...filteredData])
     state[metricName] = calculateMetric(metricName, props, filteredData)
   })
 

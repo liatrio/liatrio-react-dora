@@ -51,7 +51,7 @@ export const useGraph = (dataSet: any[]) : GraphProperties => {
     setData(dataSet[event.target.value])
 
     let {start, end} = getDateRange(dataSet[event.target.value])
-    console.log(start, end)
+    
     if(end.getTime() - start.getTime() < millisecondsToDays) {
       start = new Date(start.getTime() - millisecondsToDays)
       end = new Date(end.getTime() + millisecondsToDays)
