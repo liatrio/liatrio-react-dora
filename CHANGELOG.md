@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.0.3 (2024-08-27)
+
+### Fix
+
+* fix: update cfr to be a layered bar graph, refactored tooltip (#97) ([`ca3f2bf`](https://github.com/liatrio/liatrio-react-dora/commit/ca3f2bf86a4b1b335b2643b0a33e7a555ec72399))
+
 ## v2.0.2 (2024-08-26)
 
 ### Fix
