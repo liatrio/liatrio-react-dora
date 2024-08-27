@@ -1,21 +1,30 @@
-import React from 'react'
-import { RectangleProps } from 'recharts'
-import {v4 as uuidv4} from 'uuid'
+import React from 'react';
+import { RectangleProps } from 'recharts';
+import { v4 as uuidv4 } from 'uuid';
 
 interface CustomBarProps extends RectangleProps {
-  payload: any
-  color: string
-  tooltipId: string
-  barWidth: number
-  mouseOver: (event: any, payload: any) => void
+  payload: any;
+  color: string;
+  tooltipId: string;
+  barWidth: number;
+  mouseOver: (event: any, payload: any) => void;
 }
 
-const CustomBar: React.FC<CustomBarProps> = ({ x, y, barWidth, height, payload, mouseOver, tooltipId, color }) => {
+const CustomBar: React.FC<CustomBarProps> = ({
+  x,
+  y,
+  barWidth,
+  height,
+  payload,
+  mouseOver,
+  tooltipId,
+  color,
+}) => {
   const mOver = (e: any) => {
-    if(mouseOver) {
-      mouseOver(e, payload)
+    if (mouseOver) {
+      mouseOver(e, payload);
     }
-  }
+  };
 
   return (
     <rect
@@ -29,7 +38,7 @@ const CustomBar: React.FC<CustomBarProps> = ({ x, y, barWidth, height, payload, 
       style={{ cursor: 'pointer' }}
       data-tooltip-id={tooltipId}
     />
-  )
-}
+  );
+};
 
 export default CustomBar;
