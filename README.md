@@ -200,18 +200,21 @@ The data schema for each chart is as follows:
 
 ```
 {
-  repository: string
-  team: string
-  title?: string
-  user?: string
-  sha: string
-  status: boolean
-  failed_at?: Date
-  merged_at?: Date
-  created_at: Date
-  fixed_at?: Date
-  totalCycle: number
-  start: number
-  recoverTime: number
+    records: [{
+      repository: string
+      team: string
+      title?: string
+      user?: string
+      sha: string
+      status: boolean
+      failed_at?: Date
+      merged_at?: Date
+      created_at: Date
+      fixed_at?: Date
+      deploy_url: string
+      fixed_url?: string
+      change_url: string
+      issue_url?: string
+    }, ...]
 }
 ```
