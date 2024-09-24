@@ -58,7 +58,7 @@
     "react-datepicker": "^7.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "rimraf": "^5.0.7",
-    "rollup": "^4.18.0",
+    "rollup": "^4.22.4",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
